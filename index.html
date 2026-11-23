@@ -455,10 +455,116 @@ const getTheme=()=>state.themeKey==='custom'?customTheme(state.custom||{}):(THEM
   <div class="sheet-foot"><button class="gbtn primary" id="legalClose">Close</button></div>
 </div></div>
 <script type="text/html" id="tplTerms">
-<!-- PASTE YOUR EXISTING TERMS OF USE HTML HERE (everything that was inside this script tag in your old file, unchanged) -->
+<p><i>Last updated: November 18, 2026</i></p>
+<p>Please read these Terms. They apply when you visit the LYNQ website, view or manage a digital Profile, claim a Card, submit a visitor note, or use another LYNQ online feature.</p>
+<h4>1. Who We Are and How You Agree</h4>
+<p><b>1.1 Operator.</b> LYNQ Systems is operated in Davao City by founder and developer Rex Belli R. Batenga, RCrim, and co-founder Jim Michael Z. Acman. “LYNQ,” “we,” and “our” refer to those operators.</p>
+<p><b>1.2 Users.</b> “You” includes website visitors, Profile viewers, Profile Owners, Customers, and anyone using the Platform.</p>
+<p><b>1.3 Acceptance.</b> You agree by clicking or tapping “I Agree,” “Accept,” “Continue,” “Save &amp; Publish,” or a similar control after these Terms are shown; by claiming a Card through Google sign-in after notice; or by continuing to use the Platform after receiving legally sufficient notice.</p>
+<p><b>1.4 Electronic contract.</b> Electronic documents, signatures, and contracts are legally recognized under Republic Act No. 8792, Sections 6–9 and 16–18. LYNQ may keep a limited record of the Terms version, date, time, acceptance action, and relevant account or Profile identifier.</p>
+<p><b>1.5 Capacity.</b> You must have legal capacity to agree. A person without full capacity must act through a parent, guardian, or authorized representative. See Civil Code Articles 1159, 1305, 1318, 1327, and 1330.</p>
+<h4>2. The Card and Digital Profile</h4>
+<p><b>2.1 Card.</b> A LYNQ Card is a physical ISO/IEC 14443 NFC card. Its chip stores a link containing the Card ID; the Profile information is stored online.</p>
+<p><b>2.2 Profile.</b> A Profile may display social links, contact details, photos, biography, work and education information, location, interests, a payment QR, and a visitor-note inbox.</p>
+<p><b>2.3 Access.</b> A Profile can open through an NFC tap or direct URL. Visitors generally need no app or LYNQ account, but they need internet access and a compatible browser.</p>
+<p><b>2.4 Price.</b> The Card costs ₱169, paid once. There is no subscription or renewal fee.</p>
+<p><b>2.5 Availability.</b> Card sales are presently limited to Davao City, with an initial run of approximately 800–900 Cards. Public Profiles may be viewed online from other locations.</p>
+<h4>3. Hosting and Service Availability</h4>
+<p><b>3.1 Free-tier infrastructure.</b> The Platform presently uses a Supabase cloud database with Google sign-in and a workers.dev address hosted through Cloudflare Workers.</p>
+<p><b>3.2 Meaning of “lifetime hosting.”</b> It means hosting for the operational life of the Service on then-available free-tier infrastructure. It does not guarantee perpetual service, uninterrupted uptime, permanent URLs, or unchanged features.</p>
+<p><b>3.3 Third-party changes.</b> Google, Supabase, Cloudflare, and other providers may impose limits, change free plans, pause projects, suspend services, or discontinue features.</p>
+<p><b>3.4 Maintenance.</b> LYNQ may perform maintenance, security updates, migrations, or emergency repairs. Temporary downtime may occur without advance notice when urgent.</p>
+<h4>4. Accounts and Device Requirements</h4>
+<h5>Google account security</h5>
+<p><b>4.1 Claiming.</b> The first person who successfully claims an unclaimed Card through Google sign-in may become its Profile Owner. Claim your Card promptly.</p>
+<p><b>4.2 Owner access.</b> Only the claiming Google Account is intended to edit the Profile. LYNQ does not receive or store your Google password.</p>
+<p><b>4.3 Your responsibility.</b> Protect your Google Account, recovery methods, devices, and sessions. Report suspected unauthorized access promptly.</p>
+<p><b>4.4 Third-party authentication.</b> LYNQ is not responsible for Google outages, OAuth changes, lost credentials, account suspensions, or restrictive in-app browsers, except where the loss is caused by LYNQ’s legally actionable conduct.</p>
+<h5>NFC and phone compatibility</h5>
+<p><b>4.5 Hardware dependency.</b> Compatibility depends on the phone model and regional version, operating system, browser, NFC hardware, antenna location, settings, device case, and internet connection.</p>
+<p><b>4.6 iPhone.</b> iPhone XS and newer models are expected to scan automatically. iPhone 7, 7 Plus, 8, 8 Plus, and X may require iOS 14 or later and “NFC Tag Reader” in Control Center. iPhone 6s and older are identified as incompatible.</p>
+<p><b>4.7 Android.</b> The phone must include NFC, and NFC may need to be enabled in Settings. Many entry-level and keypad phones do not support NFC.</p>
+<p><b>4.8 Compatibility checker.</b> The LYNQ checker covers approximately 726 models across 21 brands and is a guide based on manufacturer specifications, not a guarantee for a particular device.</p>
+<h4>5. User Content and Public Profiles</h4>
+<p><b>5.1 Your ownership.</b> You retain ownership of the content you submit.</p>
+<p><b>5.2 License to LYNQ.</b> You give LYNQ a limited, non-exclusive, royalty-free license to host, store, copy, resize, cache, display, transmit, secure, and back up your content only as needed to operate the Platform, follow your instructions, address complaints, or comply with law.</p>
+<p><b>5.3 Your promises.</b> You confirm that you own the content or have all permissions and lawful bases needed to publish it, and that it does not violate another person’s privacy, confidentiality, intellectual-property, contractual, or other rights.</p>
+<p><b>5.4 Public visibility.</b> Published Profile information is public. Anyone with the Card or URL may view, save, copy, screenshot, or share it. Publish only information you intend to make public.</p>
+<p><b>5.5 Visitor notes.</b> A visitor may leave a note. If signed in, the visitor’s email address may accompany it. Notes must not be used for spam, threats, fraud, harassment, malware, or unlawful marketing.</p>
+<p><b>5.6 No endorsement.</b> LYNQ does not verify or endorse a Profile Owner’s identity, qualifications, employment, links, goods, services, or representations.</p>
+<h4>6. Acceptable Use</h4>
+<p>You must not use the Platform to:</p>
+<p><b>6.1</b> gain unauthorized access to an account, editor, visitor inbox, database, server, token, or nonpublic area;</p>
+<p><b>6.2</b> bypass ownership checks, authentication, authorization, rate limits, or security controls;</p>
+<p><b>6.3</b> scrape, crawl, harvest, or systematically copy Profile data without written permission;</p>
+<p><b>6.4</b> perform denial-of-service attacks, flooding, excessive querying, resource exhaustion, or other interference;</p>
+<p><b>6.5</b> upload or execute malware, cross-site scripting, SQL injection, credential-stealing code, or other harmful code;</p>
+<p><b>6.6</b> alter, delete, corrupt, suppress, or make data or systems unavailable;</p>
+<p><b>6.7</b> publish unlawful, infringing, defamatory, threatening, obscene, deceptive, or privacy-invasive content; or</p>
+<p><b>6.8</b> use the Platform for phishing, impersonation, identity theft, fraud, spam, harassment, or another unlawful purpose.</p>
+<p>These restrictions reflect Republic Act No. 10175, Section 4(a)(1), Section 4(a)(3)–(5), Section 4(b)(1)–(2), Section 4(c)(4), and Section 5, addressing illegal access, data and system interference, misuse of devices, computer-related forgery or fraud, cyber libel, aiding, and attempt.</p>
+<h4>7. Third-Party Links and Payment QR Codes</h4>
+<p><b>7.1 External services.</b> Profiles may link to social media, messaging platforms, websites, telephone or email functions, and other third-party services. LYNQ does not control their content, availability, security, terms, or privacy practices.</p>
+<p><b>7.2 Payment QR codes.</b> A Profile may display a User-supplied GCash, Maya, or other payment QR. The User, not LYNQ, controls the QR code and payment account.</p>
+<p><b>7.3 LYNQ is not a payment provider.</b> LYNQ is not a bank, e-money issuer, payment gateway, payment system operator, merchant acquirer, remittance company, escrow service, or financial intermediary.</p>
+<p><b>7.4 Verify before paying.</b> The payer must verify the payee, account, amount, purpose, and transaction details in the payment provider’s service.</p>
+<p><b>7.5 Payment disclaimer.</b> To the fullest extent permitted by law, LYNQ has no liability for peer-to-peer transfers, misdirected or duplicate payments, fraud, chargebacks, QR substitution by a User, provider downtime, or payer-payee disputes. This does not exclude LYNQ’s liability for its own fraud, bad faith, willful misconduct, gross negligence, actionable security breach, or non-waivable legal duties.</p>
+<h4>8. Lost, Stolen, or Shared Cards</h4>
+<p><b>8.1 Report promptly.</b> Contact LYNQ as soon as a Card or Profile URL is lost, stolen, shared, exposed, or compromised. Provide reasonable proof of ownership.</p>
+<p><b>8.2 De-linking.</b> After verification, LYNQ will use reasonable efforts to de-link the Card, restrict or remove the Profile, and delete associated personal data from the active database when legally permitted.</p>
+<p><b>8.3 Limits.</b> De-linking is not instantaneous. Data already viewed, copied, saved, indexed, cached, screenshotted, or shared may remain outside LYNQ’s control.</p>
+<p><b>8.4 Unauthorized taps.</b> To the fullest extent permitted by law, LYNQ has no liability for unauthorized taps, URL access, copying, contact, or disclosure caused by a Card or URL that the Owner lost, shared, exposed, or failed to report promptly. This waiver does not cover LYNQ’s fraud, bad faith, gross negligence, or other non-waivable liability.</p>
+<h4>9. Privacy and Data Protection</h4>
+<p><b>9.1 Applicable law.</b> LYNQ processes personal data under Republic Act No. 10173, its Implementing Rules and Regulations, applicable National Privacy Commission issuances, and other applicable law.</p>
+<p><b>9.2 Data processed.</b> Data may include Google OAuth identifiers; Profile information and images; links and QR images; Card and Profile IDs; visitor notes and available email addresses; support and deletion requests; acceptance records; and security or technical data.</p>
+<p><b>9.3 Purposes.</b> Data is used to authenticate and claim Cards, host and publish Profiles, deliver notes, provide support, secure and troubleshoot the Platform, prevent misuse, prove acceptance, respond to rights requests, and comply with law.</p>
+<p><b>9.4 Public data.</b> Profile information selected for publication is visible to anyone who opens the URL or taps the Card.</p>
+<p><b>9.5 Administrative access.</b> LYNQ developers do not routinely review Profiles or inbox notes. Technical access must be limited to operating, supporting, securing, investigating, or complying with law.</p>
+<p><b>9.6 Cloud processing.</b> Data is presently processed through Supabase, Cloudflare, and Google services and may be handled outside the Philippines. LYNQ remains accountable for appropriate safeguards. See Republic Act No. 10173, Sections 11–14 and 20–21; IRR, Rules IV–VI.</p>
+<p><b>9.7 Your rights.</b> Subject to lawful conditions, you may be informed, object, access, correct, erase or block, obtain damages, request portability where applicable, and complain to the National Privacy Commission. See Republic Act No. 10173, Sections 16–18; IRR, Rules VIII–IX.</p>
+<p><b>9.8 Cookies and logs.</b> The source information confirms that Terms acceptance is remembered but does not identify the technology used. Necessary cookies or local storage may be used for acceptance, authentication, security, and requested functions. Any non-essential tracking must be separately disclosed. Exact technical logs and retention periods must reflect the deployed system.</p>
+<h4>10. Moderation and Termination</h4>
+<p><b>10.1 Platform action.</b> LYNQ may investigate reports and remove content, suspend editing, de-link a Card, revoke or redirect a URL, invalidate sessions, rate-limit traffic, preserve evidence, or block an account, device, network, or IP address.</p>
+<p><b>10.2 Immediate action.</b> LYNQ may act without prior notice for an active security incident, malicious code, fraud, unlawful access, credible threat, personal-data risk, legal order, or serious Terms violation.</p>
+<p><b>10.3 Other cases.</b> Where practicable, LYNQ should use proportionate measures and allow the User to respond.</p>
+<p><b>10.4 Hosting liability.</b> Republic Act No. 8792, Section 30, limits service-provider liability for merely providing access to User material only when its statutory conditions are met.</p>
+<p><b>10.5 User deletion.</b> A Profile Owner may request de-linking or deletion. Limited records may be retained where required for security, compliance, fraud prevention, or legal claims.</p>
+<h4>11. Warranties and Liability</h4>
+<p><b>11.1 Service basis.</b> The Platform, Profiles, links, compatibility checker, authentication, hosting, notes, and related functions are provided “AS IS” and “AS AVAILABLE,” except for warranties that cannot lawfully be excluded.</p>
+<p><b>11.2 No uptime guarantee.</b> LYNQ does not promise uninterrupted or error-free operation, universal device compatibility, permanent URLs, uninterrupted free-tier hosting, or continuous operation of Google OAuth or other third-party services.</p>
+<p><b>11.3 Consumer rights.</b> Mandatory rights under Republic Act No. 7394 remain available, including applicable protections concerning deceptive practices, warranties, defective products or services, and consumer remedies. See Articles 50, 52, 67–69, 97–106, and 159–167.</p>
+<p><b>11.4 Excluded damages.</b> To the maximum extent permitted by law, LYNQ and the founders are not liable for indirect, incidental, special, exemplary, punitive, or consequential losses; lost profits, opportunity, goodwill, contacts, data, or savings; downtime; device incompatibility; authentication failure; User conduct; external content; or QR-code transactions.</p>
+<p><b>11.5 ₱169 cap.</b> For a Customer who paid the Card fee, total liability arising from the Card, Profile, Platform, or these Terms is capped at ₱169 to the maximum extent permitted by law.</p>
+<p><b>11.6 Free visitors.</b> For a Visitor who paid no fee to LYNQ, contractual liability is limited to nominal damages lawfully established by final judgment, where such limitation is valid.</p>
+<p><b>11.7 Non-waivable liability.</b> The exclusions and caps do not apply to fraud, bad faith, willful misconduct, gross negligence, non-waivable consumer or privacy liability, Civil Code Article 1171, or liability that law prohibits LYNQ from limiting. Nothing creates immunity under Civil Code Articles 19–21, 1170–1174, 2176, and 2201–2208.</p>
+<h4>12. Disputes, Governing Law, and General Terms</h4>
+<p><b>12.1 Contact first.</b> Send a written complaint describing the issue and requested remedy to the contact details below.</p>
+<p><b>12.2 Negotiation.</b> The parties must attempt informal settlement for thirty (30) calendar days after the complaint is received.</p>
+<p><b>12.3 Urgent and statutory remedies.</b> The negotiation period does not prevent urgent relief, preservation of rights, reporting suspected crime, or complaints to the Department of Trade and Industry, National Privacy Commission, or another competent authority.</p>
+<p><b>12.4 Governing law.</b> Philippine law governs these Terms.</p>
+<p><b>12.5 Venue.</b> Court proceedings shall be filed exclusively in the proper courts of Davao City, Philippines, to the extent the venue clause is valid and enforceable. It does not remove a non-waivable consumer, privacy, criminal, regulatory, small-claims, barangay-conciliation, or statutory forum right.</p>
+<p><b>12.6 Changes.</b> LYNQ may update these Terms for legal, security, technical, or operational reasons. Updated Terms must show a revised date. Material adverse changes should receive reasonable notice and renewed acceptance where required.</p>
+<p><b>12.7 Severability and waiver.</b> An invalid provision shall be limited or severed, and the remainder shall continue. Failure to enforce a right is not a waiver.</p>
+<p><b>12.8 Entire agreement.</b> These Terms, an applicable purchase confirmation, and any incorporated Privacy Notice form the agreement concerning use of the Platform. Specific transaction terms control over inconsistent general terms.</p>
+<h4>13. Contact LYNQ</h4>
+<p><b>13.1 Email:</b> rbrbatenga@gmail.com</p>
+<p><b>13.2</b> Use these contact details for support, complaints, lost Cards, privacy requests, correction, or deletion.</p>
 </script>
 <script type="text/html" id="tplPrivacy">
-<!-- PASTE YOUR EXISTING PRIVACY POLICY HTML HERE (everything that was inside this script tag in your old file, unchanged) -->
+<p><i>Last updated: November 18, 2026</i></p>
+<p>This Privacy Policy is Section 9 of the LYNQ Terms of Use.</p>
+<h4>9. Privacy and Data Protection</h4>
+<p><b>9.1 Applicable law.</b> LYNQ processes personal data under Republic Act No. 10173, its Implementing Rules and Regulations, applicable National Privacy Commission issuances, and other applicable law.</p>
+<p><b>9.2 Data processed.</b> Data may include Google OAuth identifiers; Profile information and images; links and QR images; Card and Profile IDs; visitor notes and available email addresses; support and deletion requests; acceptance records; and security or technical data.</p>
+<p><b>9.3 Purposes.</b> Data is used to authenticate and claim Cards, host and publish Profiles, deliver notes, provide support, secure and troubleshoot the Platform, prevent misuse, prove acceptance, respond to rights requests, and comply with law.</p>
+<p><b>9.4 Public data.</b> Profile information selected for publication is visible to anyone who opens the URL or taps the Card.</p>
+<p><b>9.5 Administrative access.</b> LYNQ developers do not routinely review Profiles or inbox notes. Technical access must be limited to operating, supporting, securing, investigating, or complying with law.</p>
+<p><b>9.6 Cloud processing.</b> Data is presently processed through Supabase, Cloudflare, and Google services and may be handled outside the Philippines. LYNQ remains accountable for appropriate safeguards. See Republic Act No. 10173, Sections 11–14 and 20–21; IRR, Rules IV–VI.</p>
+<p><b>9.7 Your rights.</b> Subject to lawful conditions, you may be informed, object, access, correct, erase or block, obtain damages, request portability where applicable, and complain to the National Privacy Commission. See Republic Act No. 10173, Sections 16–18; IRR, Rules VIII–IX.</p>
+<p><b>9.8 Cookies and logs.</b> The source information confirms that Terms acceptance is remembered but does not identify the technology used. Necessary cookies or local storage may be used for acceptance, authentication, security, and requested functions. Any non-essential tracking must be separately disclosed. Exact technical logs and retention periods must reflect the deployed system.</p>
+<h4>Contact LYNQ</h4>
+<p><b>Email:</b> rbrbatenga@gmail.com</p>
+<p>Use these contact details for support, complaints, lost Cards, privacy requests, correction, or deletion.</p>
 </script>
 
 <div class="floating-actions">
