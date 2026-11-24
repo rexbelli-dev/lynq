@@ -811,6 +811,13 @@ $('legalX').onclick=closeLegal;
 $('legal').addEventListener('click',e=>{if(e.target.id==='legal'&&!needAgree)closeLegal()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!needAgree)closeLegal()});
 
+/* resolves once the user has agreed (instantly if already agreed in this browser) */
+function askTerms(){return new Promise(r=>{
+  if(termsOk())return r();
+  openLegal('terms',true);const c=$('legalClose'),old=c.onclick;
+  c.onclick=()=>{old();c.onclick=old;r()};
+})}
+
 /* ---------- dark flow: coded card, claim, success, setup ---------- */
 const CHAIN='<svg viewBox="0 0 24 24" fill="none" stroke="url(#chainG)" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>';
 const CARD_HTML=`<div class="lcard" id="lcard"><i class="lf f1 on"></i><i class="lf f2"></i><i class="lf f3"></i><i class="lf f4"></i>
@@ -919,6 +926,7 @@ async function handleNfcCardBinding(){
   if(session){
     if(rec.user_id===session.user.id)setOwnerUI();
     else if(!rec.user_id){
+      hideLoader();await askTerms();
       const{data:ok}=await supabaseClient.rpc('claim_card',{p_uid:uid});
       if(ok){
         let{data:pr}=await supabaseClient.from('profiles').select('*').eq('user_id',session.user.id).maybeSingle();
