@@ -343,9 +343,6 @@ body.editing #brandBadge{display:none}
 const STAFF=['rbrbatenga@gmail.com'];            /* add team Gmail addresses here, lowercase */
 const svgURI=s=>'data:image/svg+xml,'+encodeURIComponent(s);
 const CH='<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>';
-const LYNQ_COVER=svgURI(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 300"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C11C84"/><stop offset="1" stop-color="#4a0e36"/></linearGradient></defs><rect width="900" height="300" fill="url(#g)"/><g transform="translate(250 58) scale(5.2)" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${CH}</g><text x="398" y="152" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="88" letter-spacing="4" fill="#fff">LYNQ</text></svg>`);
-const LYNQ_BADGE=svgURI(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 105 32"><g transform="translate(1 4)" fill="none" stroke="#C11C84" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">${CH}</g><text x="30" y="24" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="22" fill="#C11C84">LYNQ</text></svg>`);
-const ZAP_BADGE=svgURI(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 122 32"><path transform="translate(-6 -3) scale(.55)" d="M30 10L18 38h11l-4 24 20-31H32z" fill="#1d6fe8"/><text x="24" y="24" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="20" fill="#1d6fe8">ZAP IT</text></svg>`);
 const LYNQ_PAT=`url("${svgURI(`<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140"><g transform="translate(16 18) scale(2.4)" fill="none" stroke="#C11C84" stroke-opacity=".12" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${CH}</g><g transform="translate(84 84) scale(1.6)" fill="none" stroke="#C11C84" stroke-opacity=".09" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${CH}</g></svg>`)}")`;
 const THEMES={
  'clean-light':{bg:'#f4f5f7',card:'rgba(255,255,255,0.78)',text:'#1a1a1a',sub:'#555555',accent:'#4472C4',cover:'linear-gradient(135deg,#4472C4,#2E5395)',border:'rgba(255,255,255,0.6)',wave:['#4472C4','#6ea8fe','#22d3ee']},
@@ -365,10 +362,10 @@ const THEMES={
   brand:{logo:'assets/davao-logo.webp',cover:'assets/davao-logo.webp',coverBg:'#fff',deco:'assets/davao-eagle.webp'}},
  'zap-it':{bg:'#f2f7ff',card:'rgba(255,255,255,0.82)',text:'#0f1b33',sub:'#4a5b78',accent:'#1d6fe8',cover:'linear-gradient(135deg,#1d6fe8,#38bdf8)',border:'rgba(255,255,255,0.7)',wave:['#1d6fe8','#38bdf8','#93c5fd'],
   pat:`url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='110' height='110'%3E%3Cpath d='M30 10L18 38h11l-4 24 20-31H32z' fill='%231d6fe8' fill-opacity='.09'/%3E%3Cpath d='M80 66L72 84h7l-3 16 13-20h-8z' fill='%2338bdf8' fill-opacity='.11'/%3E%3C/svg%3E")`,
-  brand:{logo:ZAP_BADGE/* when the real Zap it logo arrives: logo:'assets/zapit-logo.webp',cover:'assets/zapit-logo.webp',coverBg:'#fff' */}},
+  brand:{logo:'assets/zapit-logo.webp',cover:'assets/zapit-logo.webp',coverBg:'#fff'}},
  /* ---- LYNQ personnel theme (#C11C84) ---- */
  'lynq-team':{bg:'#120a15',card:'rgba(36,18,40,0.82)',text:'#fdf2f8',sub:'#e0b3d2',accent:'#C11C84',cover:'linear-gradient(135deg,#C11C84,#4a0e36)',border:'rgba(255,255,255,0.12)',wave:['#C11C84','#ff6fb5','#a855f7'],
-  pat:LYNQ_PAT,brand:{logo:LYNQ_BADGE,cover:LYNQ_COVER,full:true}}
+  pat:LYNQ_PAT,brand:{logo:'assets/lynq-logo.webp',cover:'assets/lynq-logo.webp',coverBg:'#fff'}}
 };
 function customTheme(c){const a=c.accent||'#4472C4',d=c.mode==='dark';
  return{bg:d?'#0d0f14':'#f4f5f7',card:d?'rgba(28,30,38,0.82)':'rgba(255,255,255,0.78)',text:d?'#f1f1f1':'#1a1a1a',sub:d?'#a0a0a0':'#555555',accent:a,
@@ -803,7 +800,8 @@ function render(){
   cv.style.backgroundImage=state.cover?`url(${state.cover})`:(brandCover?`url("${B.cover}")`:t.cover);
   cv.style.backgroundSize=brandCover&&!B.full?'auto 100px':'cover';cv.style.backgroundRepeat='no-repeat';cv.style.backgroundPosition=brandCover&&!B.full?'center 30px':'center';cv.style.height=brandCover?'250px':'';
   cv.style.backgroundColor=brandCover?(B.coverBg||'#fff'):'';cv.querySelector('.ov').style.display=brandCover?'none':'';
-  const bb=$('brandBadge');bb.classList.toggle('hidden',!(B&&B.logo));if(B&&B.logo)bb.src=B.logo;
+  if(brandCover){const im=new Image();im.onerror=()=>{cv.style.backgroundImage=t.cover;cv.style.backgroundSize='cover';cv.style.backgroundPosition='center';cv.style.backgroundColor='';cv.style.height='';cv.querySelector('.ov').style.display=''};im.src=B.cover}
+  const bb=$('brandBadge');bb.onerror=()=>bb.classList.add('hidden');bb.classList.toggle('hidden',!(B&&B.logo));if(B&&B.logo)bb.src=B.logo;
   const dc=$('decoEl');dc.classList.toggle('hidden',!(B&&B.deco));if(B&&B.deco)dc.src=B.deco;
   $('mainCardEl').classList.toggle('solo',!gPhotos().length);
   $('customBox').classList.toggle('hidden',state.themeKey!=='custom');
