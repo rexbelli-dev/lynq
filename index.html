@@ -608,6 +608,7 @@ async function persist(){
   const{data:{session}}=await supabaseClient.auth.getSession();
   if(!session)return false;
   const{error}=await supabaseClient.from('profiles').upsert({user_id:session.user.id,bio:JSON.stringify(state),card_title:state.name,updated_at:new Date().toISOString()});
+  if(error)console.warn('LYNQ save:',error.message);
   return !error;
 }
 
@@ -838,11 +839,11 @@ function claimScreen(uid){
     supabaseClient.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname+'?card='+uid}});
   };
 }
-function successScreen(){
+function successScreen(inh){
   flowShow(`<div class="bigcheck"><svg viewBox="0 0 52 52"><circle class="cc" cx="26" cy="26" r="24"/><path class="ck" d="M15 27l8 8 14-16"/></svg></div>
-  <h2>Claimed successfully</h2><p>Your LYNQ card is now linked to your account.</p>
-  <button class="gbtn primary" id="editYourCard" style="margin-top:10px">Edit your card</button>`);
-  $('editYourCard').onclick=()=>wiz(0);
+  <h2>${inh?'Card added':'Claimed successfully'}</h2><p>${inh?'This card now shows your existing profile.':'Your LYNQ card is now linked to your account.'}</p>
+  <button class="gbtn primary" id="editYourCard" style="margin-top:10px">${inh?'View my profile':'Edit your card'}</button>`);
+  $('editYourCard').onclick=inh?()=>{flowClose();scrollTo(0,0)}:()=>wiz(0);
 }
 const HINTS={
  instagram:'Open Instagram, go to your profile, tap Share profile, then Copy link.',
@@ -920,7 +921,11 @@ async function handleNfcCardBinding(){
     else if(!rec.user_id){
       const{data:ok}=await supabaseClient.rpc('claim_card',{p_uid:uid});
       if(ok){
-        const{data:pr}=await supabaseClient.from('profiles').select('*').eq('user_id',session.user.id).maybeSingle();
+        let{data:pr}=await supabaseClient.from('profiles').select('*').eq('user_id',session.user.id).maybeSingle();
+        if(!(pr&&pr.bio)){
+          const{data:old}=await supabaseClient.from('nfc_cards').select('bio,card_title').eq('user_id',session.user.id).not('bio','is',null).limit(1);
+          if(old&&old[0]){pr={bio:old[0].bio,card_title:old[0].card_title};await supabaseClient.from('profiles').upsert({user_id:session.user.id,bio:pr.bio,card_title:pr.card_title})}
+        }
         let inherited=false;
         if(pr&&pr.bio){try{const p=JSON.parse(pr.bio);if(p&&typeof p==='object'){state={...DEFAULT_STATE,...p};inherited=true}}catch(_e){}}
         setOwnerUI();justClaimed=true;window._inherited=inherited;
@@ -941,7 +946,7 @@ async function handleNfcCardBinding(){
     try{const{data,error:te}=await supabaseClient.rpc('increment_tap',{p_uid:uid});if(te)console.warn('LYNQ tap counter:',te.message);else if(typeof data==='number')tapCount=data;else tapCount+=1}catch(e){console.warn('LYNQ tap counter:',e)}
   }
   render();
-  if(justClaimed){successScreen();if(window._inherited)$('editYourCard').onclick=()=>{flowClose();editing=true;render()}}
+  if(justClaimed)successScreen(window._inherited);
 }
 
 async function init(){
