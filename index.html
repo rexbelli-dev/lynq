@@ -900,7 +900,8 @@ function setOwnerUI(){
 }
 async function handleNfcCardBinding(){
   let uid=new URLSearchParams(location.search).get('card');
-  const{data:{session}}=await supabaseClient.auth.getSession();
+  let{data:{session}}=await supabaseClient.auth.getSession();
+  if(session){const{error:ue2}=await supabaseClient.auth.getUser();if(ue2){await supabaseClient.auth.signOut({scope:'local'});session=null}}
   if(!uid)uid=sessionStorage.getItem('pending_lynq_card');
   if(!uid){infoScreen('Please tap your LYNQ card','Or enter the exact URL of your portfolio to view or manage your card.');return}
   currentCardUid=uid;
@@ -908,7 +909,7 @@ async function handleNfcCardBinding(){
   if(error||!rec){infoScreen('Card not found','Please check your LYNQ card link and try again.');return}
   if(!rec.user_id&&!session){claimScreen(uid);if(!termsOk())openLegal('terms',true);return}
 
-  if(rec.bio){
+  if(rec.bio&&rec.user_id){
     try{const p=JSON.parse(rec.bio);if(p&&typeof p==='object')state={...DEFAULT_STATE,...p}}
     catch(_e){state.bio=rec.bio;if(rec.card_title)state.name=rec.card_title}
   }
@@ -916,7 +917,7 @@ async function handleNfcCardBinding(){
     if(rec.user_id===session.user.id)setOwnerUI();
     else if(!rec.user_id){
       const{data:mine}=await supabaseClient.from('nfc_cards').select('*').eq('user_id',session.user.id).order('created_at',{ascending:false});
-      let bio=rec.bio,title=rec.card_title,inherited=false;
+      let bio=null,title=null,inherited=false;
       const ex=mine&&mine.find(c=>c.bio);
       if(ex){bio=ex.bio;title=ex.card_title||state.name;inherited=true;
         try{const p=JSON.parse(ex.bio);if(p&&typeof p==='object')state={...DEFAULT_STATE,...p}}catch(_e){state.bio=ex.bio}}
