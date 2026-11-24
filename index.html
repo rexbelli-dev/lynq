@@ -289,8 +289,35 @@ body.editing .floating-actions{display:none}
 .lgbtn+.rm{margin-left:10px!important}
 .gbtn.sm{padding:10px;font-size:13px;border-radius:12px}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+.cover-tools.rt{left:auto;right:12px}
+.pop{position:fixed;top:calc(58px + env(safe-area-inset-top,0px));right:12px;z-index:60;width:min(300px,calc(100vw - 24px));background:var(--card-bg);backdrop-filter:blur(26px);-webkit-backdrop-filter:blur(26px);border:1px solid var(--border);border-radius:18px;padding:10px;box-shadow:0 18px 40px rgba(0,0,0,.25);color:var(--text)}
+.mi{display:flex;align-items:center;gap:10px;width:100%;padding:11px 10px;border:0;background:none;color:var(--text);font-size:14px;font-weight:600;border-radius:12px;text-align:left;cursor:pointer}
+.mi:active{background:rgba(127,127,127,.18)}
+.mi.danger{color:#e5484d}
+.mi svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.msep{height:1px;background:rgba(127,127,127,.22);margin:6px 4px}
+.scf h4{margin:2px 2px 8px;font-size:12.5px;line-height:1.35}
+.scrow{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.scrow svg{width:18px;height:18px;flex:none}
+.scrow input{flex:1;min-width:0;padding:8px 10px;border-radius:10px;border:1px solid rgba(127,127,127,.3);background:rgba(127,127,127,.1);color:var(--text);font-size:14px}
+.scf .btn{width:100%;padding:9px;font-size:13px}
+#scStatus{font-size:11.5px;color:var(--sub);margin-top:6px;min-height:14px}
+.tabs{display:flex;gap:6px;margin-bottom:12px}
+.tabs button{flex:1;padding:9px 6px;border-radius:12px;border:1px solid rgba(127,127,127,.25);background:none;color:var(--sub);font-weight:700;font-size:12.5px;cursor:pointer}
+.tabs button.on{background:var(--accent);color:#fff;border-color:transparent}
+.tile{position:relative}
+.tile .tx{display:none;position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,.62);color:#fff;font-size:16px;line-height:24px;text-align:center;font-weight:700}
+.tile.has .tx{display:block}
 </style>
 <script>
+/* LYNQ team theme helpers: cover + badge are drawn in code (no image files needed) */
+const STAFF=['rbrbatenga@gmail.com'];            /* add team Gmail addresses here, lowercase */
+const svgURI=s=>'data:image/svg+xml,'+encodeURIComponent(s);
+const CH='<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>';
+const LYNQ_COVER=svgURI(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 300"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C11C84"/><stop offset="1" stop-color="#4a0e36"/></linearGradient></defs><rect width="900" height="300" fill="url(#g)"/><g transform="translate(250 58) scale(5.2)" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${CH}</g><text x="398" y="152" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="88" letter-spacing="4" fill="#fff">LYNQ</text></svg>`);
+const LYNQ_BADGE=svgURI(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 105 32"><g transform="translate(1 4)" fill="none" stroke="#C11C84" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">${CH}</g><text x="30" y="24" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="22" fill="#C11C84">LYNQ</text></svg>`);
+const LYNQ_PAT=`url("${svgURI(`<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140"><g transform="translate(16 18) scale(2.4)" fill="none" stroke="#C11C84" stroke-opacity=".12" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${CH}</g><g transform="translate(84 84) scale(1.6)" fill="none" stroke="#C11C84" stroke-opacity=".09" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${CH}</g></svg>`)}")`;
 const THEMES={
  'clean-light':{bg:'#f4f5f7',card:'rgba(255,255,255,0.78)',text:'#1a1a1a',sub:'#555555',accent:'#4472C4',cover:'linear-gradient(135deg,#4472C4,#2E5395)',border:'rgba(255,255,255,0.6)',wave:['#4472C4','#6ea8fe','#22d3ee']},
  'black-gray':{bg:'#121212',card:'rgba(30,30,30,0.8)',text:'#f1f1f1',sub:'#a0a0a0',accent:'#888888',cover:'linear-gradient(135deg,#242424,#0d0d0d)',border:'rgba(255,255,255,0.12)',wave:['#6b7280','#e5e7eb','#9ca3af']},
@@ -309,7 +336,10 @@ const THEMES={
   brand:{logo:'assets/davao-logo.webp',cover:'assets/davao-logo.webp',coverBg:'#fff',deco:'assets/davao-eagle.webp'}},
  'zap-it':{bg:'#f2f7ff',card:'rgba(255,255,255,0.82)',text:'#0f1b33',sub:'#4a5b78',accent:'#1d6fe8',cover:'linear-gradient(135deg,#1d6fe8,#38bdf8)',border:'rgba(255,255,255,0.7)',wave:['#1d6fe8','#38bdf8','#93c5fd'],
   pat:`url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='110' height='110'%3E%3Cpath d='M30 10L18 38h11l-4 24 20-31H32z' fill='%231d6fe8' fill-opacity='.09'/%3E%3Cpath d='M80 66L72 84h7l-3 16 13-20h-8z' fill='%2338bdf8' fill-opacity='.11'/%3E%3C/svg%3E")`,
-  brand:{/* when the Zap it logo arrives: logo:'assets/zapit-logo.webp',cover:'assets/zapit-logo.webp',coverBg:'#fff' */}}
+  brand:{/* when the Zap it logo arrives: logo:'assets/zapit-logo.webp',cover:'assets/zapit-logo.webp',coverBg:'#fff' */}},
+ /* ---- LYNQ personnel theme (#C11C84) ---- */
+ 'lynq-team':{bg:'#120a15',card:'rgba(36,18,40,0.82)',text:'#fdf2f8',sub:'#e0b3d2',accent:'#C11C84',cover:'linear-gradient(135deg,#C11C84,#4a0e36)',border:'rgba(255,255,255,0.12)',wave:['#C11C84','#ff6fb5','#a855f7'],
+  pat:LYNQ_PAT,brand:{logo:LYNQ_BADGE,cover:LYNQ_COVER,full:true}}
 };
 function customTheme(c){const a=c.accent||'#4472C4',d=c.mode==='dark';
  return{bg:d?'#0d0f14':'#f4f5f7',card:d?'rgba(28,30,38,0.82)':'rgba(255,255,255,0.78)',text:d?'#f1f1f1':'#1a1a1a',sub:d?'#a0a0a0':'#555555',accent:a,
@@ -340,7 +370,21 @@ const getTheme=()=>state.themeKey==='custom'?customTheme(state.custom||{}):(THEM
     <button id="shareBtn" aria-label="Share profile"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></button>
     <button id="infoBtn" aria-label="Help guide"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></button>
   </div>
+  <div class="cover-tools rt">
+    <button id="menuBtn" class="hidden" aria-label="Menu"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+    <button id="scBtn" class="hidden" aria-label="Share your contact"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="17" y1="11" x2="23" y2="11"/></svg></button>
+  </div>
 </div>
+<div id="menuPanel" class="pop hidden">
+ <button class="mi" id="mContacts"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>LYNQ contacts</button>
+ <button class="mi hidden" id="mSaveThis"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>Save this profile to LYNQ contacts</button>
+ <button class="mi hidden" id="mSignIn"><svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>Sign in</button>
+ <div id="mOwner" class="hidden"><div class="msep"></div>
+  <button class="mi danger" id="mDelProfile"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>Delete my profile</button>
+  <button class="mi danger" id="mDelAccount"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>Delete my account</button>
+ </div>
+</div>
+<div id="scPanel" class="pop scf hidden"></div>
 <img id="brandBadge" class="hidden" alt="">
 <img id="decoEl" class="hidden" alt="">
 <div class="wrap">
@@ -377,8 +421,8 @@ const getTheme=()=>state.themeKey==='custom'?customTheme(state.custom||{}):(THEM
   <div class="ed hidden" id="editPanel">
 <div class="ed-head"><h2>Edit profile</h2><p>Tap a section to open it.</p></div>
 <details class="sec" open><summary><span class="ic" style="background:#ff9500"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></span>Photos<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary><div class="sec-body"><div class="grp">
-<div class="li"><span class="thumb" id="edAvPrev"></span><label>Profile photo</label><label class="pb">Change<input type="file" id="avatarFile" accept="image/*" hidden></label></div>
-<div class="li"><span class="thumb wide" id="edCvPrev"></span><label>Cover photo</label><label class="pb">Change<input type="file" id="coverFile" accept="image/*" hidden></label></div>
+<div class="li"><span class="thumb" id="edAvPrev"></span><label>Profile photo</label><label class="pb">Change<input type="file" id="avatarFile" accept="image/*" hidden></label><button type="button" class="pb" id="avRm" hidden style="margin-left:6px;color:#d33">Remove</button></div>
+<div class="li"><span class="thumb wide" id="edCvPrev"></span><label>Cover photo</label><label class="pb">Change<input type="file" id="coverFile" accept="image/*" hidden></label><button type="button" class="pb" id="cvRm" hidden style="margin-left:6px;color:#d33">Remove</button></div>
 <div class="li"><label>Cover dim</label><input type="range" id="opRange" min="0" max="90" value="55"></div></div>
 <div class="sub-t">Gallery photos (up to 3)</div>
 <div class="tiles"><label class="tile" id="tile1"><input type="file" id="photoFile1" accept="image/*" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></label><label class="tile" id="tile2"><input type="file" id="photoFile2" accept="image/*" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></label><label class="tile" id="tile3"><input type="file" id="photoFile3" accept="image/*" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></label></div></div></details>
@@ -389,6 +433,7 @@ const getTheme=()=>state.themeKey==='custom'?customTheme(state.custom||{}):(THEM
 <div class="sw" data-k="davao" onclick="applyThemePreset('davao')"><i style="background:linear-gradient(135deg,#fff,#1b7f3b 60%,#d81b8a)"></i>Davao</div>
 <div class="sw" data-k="zap-it" onclick="applyThemePreset('zap-it')"><i style="background:linear-gradient(135deg,#fff,#1d6fe8)"></i>Zap it</div>
 <div class="sw" data-k="custom" onclick="setCustom({})"><i style="background:conic-gradient(red,orange,yellow,lime,cyan,blue,magenta,red)"></i>Custom</div>
+<div class="sw hidden" id="swTeam" data-k="lynq-team" onclick="applyThemePreset('lynq-team')"><i style="background:linear-gradient(135deg,#C11C84,#2a0f24)"></i>LYNQ Team</div>
 </div>
 <div id="customBox" class="hidden">
 <div class="sub-t">Pick a color</div><div id="clrDots"></div>
@@ -413,12 +458,20 @@ const getTheme=()=>state.themeKey==='custom'?customTheme(state.custom||{}):(THEM
 </div>
 
 <div class="panel hidden" id="inboxPanel">
-    <h3><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Visitor Notes Inbox</h3>
+    <h3><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Inbox</h3>
+    <div class="tabs"><button id="tabNotes" class="on">Visitor notes</button><button id="tabContacts">Shared contacts</button></div>
     <div id="notesListContainer" style="font-size:13px;color:var(--sub)">No notes yet.</div>
+    <div id="contactsListContainer" class="hidden" style="font-size:13px;color:var(--sub)">No shared contacts yet.</div>
     <button class="btn secondary" id="closeInboxBtn" style="margin-top:12px">Close Inbox</button>
   </div>
   <a class="switch-account-link hidden" id="switchAccountBtn">Switch to different LYNQ account</a>
 </div>
+
+<div class="modal-overlay" id="contactsModal"><div class="modal-body" style="text-align:left">
+  <span class="modal-close" id="closeContactsBtn">&times;</span>
+  <h3 style="margin:0 0 12px;font-size:18px;color:var(--text)">LYNQ contacts</h3>
+  <div id="savedList" style="font-size:14px;color:var(--sub)"></div>
+</div></div>
 
 <div class="modal-overlay" id="galleryModal"><div class="modal-body gal">
   <span class="modal-close" id="closeGalleryBtn">&times;</span>
@@ -616,6 +669,7 @@ async function persist(){
 
 /* ---------- vCard ---------- */
 function downloadVCard(){
+  saveLynqContact(false);
   const name=state.name||'Contact',parts=name.trim().split(' '),last=parts.length>1?parts.pop():'',first=parts.join(' ');
   const wa=(state.links||[]).find(l=>l.platform==='whatsapp');
   const vcf=['BEGIN:VCARD','VERSION:3.0',`N:${last};${first};;;`,`FN:${name}`,
@@ -710,8 +764,8 @@ function render(){
   R.setProperty('--pat',t.pat||'none');
 
   const cv=$('coverEl'),B=t.brand,brandCover=!state.cover&&B&&B.cover;
-  cv.style.backgroundImage=state.cover?`url(${state.cover})`:(brandCover?`url(${B.cover})`:t.cover);
-  cv.style.backgroundSize=brandCover?'auto 100px':'cover';cv.style.backgroundRepeat='no-repeat';cv.style.backgroundPosition=brandCover?'center 30px':'center';cv.style.height=brandCover?'250px':'';
+  cv.style.backgroundImage=state.cover?`url(${state.cover})`:(brandCover?`url("${B.cover}")`:t.cover);
+  cv.style.backgroundSize=brandCover&&!B.full?'auto 100px':'cover';cv.style.backgroundRepeat='no-repeat';cv.style.backgroundPosition=brandCover&&!B.full?'center 30px':'center';cv.style.height=brandCover?'250px':'';
   cv.style.backgroundColor=brandCover?(B.coverBg||'#fff'):'';cv.querySelector('.ov').style.display=brandCover?'none':'';
   const bb=$('brandBadge');bb.classList.toggle('hidden',!(B&&B.logo&&state.cover));if(B&&B.logo)bb.src=B.logo;
   const dc=$('decoEl');dc.classList.toggle('hidden',!(B&&B.deco));if(B&&B.deco)dc.src=B.deco;
@@ -774,7 +828,7 @@ function render(){
 
   $('nameEl').contentEditable=editing;$('bioEl').contentEditable=editing;
   $('editPanel').classList.toggle('hidden',!editing);document.body.classList.toggle('editing',editing);
-  $('edAvPrev').style.backgroundImage=state.avatar?`url(${state.avatar})`:'';
+  $('edAvPrev').style.backgroundImage=state.avatar?`url(${state.avatar})`:'';$('avRm').hidden=!state.avatar;$('cvRm').hidden=!state.cover;
   $('edCvPrev').style.backgroundImage=state.cover?`url(${state.cover})`:t.cover;
   [0,1,2].forEach(i=>{const el=$('tile'+(i+1)),ph=(state.photos||[])[i];el.style.backgroundImage=ph?`url(${ph})`:'';el.classList.toggle('has',!!ph)});
   document.querySelectorAll('.sw').forEach(e=>e.classList.toggle('on',e.dataset.k===(state.themeKey||'clean-light')));
@@ -788,12 +842,24 @@ function populatePlatforms(){$('platformSel').innerHTML=Object.entries(ICONS).ma
 
 /* ---------- notes ---------- */
 async function deleteNote(id){const{error}=await supabaseClient.from('card_notes').delete().eq('id',id);if(!error)fetchInboxNotes()}
+async function deleteShared(id){const{error}=await supabaseClient.from('shared_contacts').delete().eq('id',id);if(!error)fetchInboxNotes()}
+function inboxTab(t){
+  $('tabNotes').classList.toggle('on',t==='notes');$('tabContacts').classList.toggle('on',t==='contacts');
+  $('notesListContainer').classList.toggle('hidden',t!=='notes');$('contactsListContainer').classList.toggle('hidden',t!=='contacts');
+}
 async function fetchInboxNotes(){
   if(!currentCardUid)return;
-  const{data,error}=await supabaseClient.from('card_notes').select('*').eq('card_uid',currentCardUid).order('created_at',{ascending:false});
-  if(error||!data)return;
-  $('inboxCount').textContent=data.length;
-  $('notesListContainer').innerHTML=data.length?data.map(n=>`<div class="note-item"><b>${esc(n.visitor_email||'Anonymous')}</b><span class="del-note" onclick="deleteNote('${esc(n.id)}')">Delete</span><div style="font-size:14px;color:var(--text);margin-top:2px">${esc(n.message)}</div><div style="font-size:11px;color:var(--sub);margin-top:2px">${new Date(n.created_at).toLocaleString()}</div></div>`).join(''):'No notes yet.';
+  const[n,c]=await Promise.all([
+    supabaseClient.from('card_notes').select('*').eq('card_uid',currentCardUid).order('created_at',{ascending:false}),
+    supabaseClient.from('shared_contacts').select('*').eq('card_uid',currentCardUid).order('created_at',{ascending:false})]);
+  const notes=n.data||[],cons=c.data||[];
+  $('inboxCount').textContent=notes.length+cons.length;
+  $('tabNotes').textContent=`Visitor notes (${notes.length})`;$('tabContacts').textContent=`Shared contacts (${cons.length})`;
+  $('notesListContainer').innerHTML=notes.length?notes.map(n=>`<div class="note-item"><b>${esc(n.visitor_email||'Anonymous')}</b><span class="del-note" onclick="deleteNote('${esc(n.id)}')">Delete</span><div style="font-size:14px;color:var(--text);margin-top:2px">${esc(n.message)}</div><div style="font-size:11px;color:var(--sub);margin-top:2px">${new Date(n.created_at).toLocaleString()}</div></div>`).join(''):'No notes yet.';
+  const row=(lab,txt,href)=>txt?`<div style="font-size:13px;margin-top:3px"><span style="color:var(--sub)">${lab}</span> ${href?`<a href="${esc(href)}" target="_blank" rel="noopener" style="color:var(--accent)">${esc(txt)}</a>`:esc(txt)}</div>`:'';
+  $('contactsListContainer').innerHTML=cons.length?cons.map(x=>{
+    const ig=(x.instagram||'').replace(/^@/,''),fb=x.facebook||'';
+    return `<div class="note-item"><b style="color:var(--text)">${esc(x.name)}</b><span class="del-note" onclick="deleteShared('${esc(x.id)}')">Delete</span>${row('Instagram',ig&&'@'+ig,ig&&'https://instagram.com/'+encodeURIComponent(ig))}${row('Facebook',fb,fb&&(/^https?:/i.test(fb)?fb:'https://facebook.com/'+encodeURIComponent(fb)))}${row('Phone',x.phone,x.phone&&'tel:'+x.phone)}${row('Link',x.link,x.link&&safeUrl(x.link))}<div style="font-size:11px;color:var(--sub);margin-top:3px">${new Date(x.created_at).toLocaleString()}</div></div>`}).join(''):'No shared contacts yet.';
 }
 
 /* ---------- Terms / Privacy sheet (with "agree first" mode) ---------- */
@@ -820,6 +886,87 @@ function askTerms(){return new Promise(r=>{
   c.onclick=()=>{old();c.onclick=old;r()};
 })}
 
+/* ---------- activation code (checked on the server) ---------- */
+async function checkCode(c){const{data}=await supabaseClient.rpc('check_activation',{p_code:c});return data===true}
+function askCode(){return new Promise(res=>{
+  flowShow(`${CARD_HTML}<h2>Activation code</h2><p>Enter the activation code that came with your LYNQ card.</p>
+  <input class="gfield" id="acCode" placeholder="Activation code" autocapitalize="characters" autocomplete="off" autocorrect="off">
+  <p class="hint" id="acErr" style="color:#ff8aa8;min-height:16px"></p>
+  <button class="gbtn primary" id="acGo">Activate</button>`);
+  const go=async()=>{const c=$('acCode').value.trim();
+    if(!c){$('acErr').textContent='Please enter the code.';return}
+    $('acGo').disabled=true;
+    if(await checkCode(c)){sessionStorage.setItem('lynq_code',c);res(c)}
+    else{$('acErr').textContent='That code is not correct.';$('acGo').disabled=false}};
+  $('acGo').onclick=go;$('acCode').addEventListener('keydown',e=>{if(e.key==='Enter')go()});
+})}
+
+/* ---------- saved LYNQ contacts ---------- */
+let curSession=null;
+async function saveLynqContact(manual){
+  if(isOwner||!currentCardUid)return;
+  if(!curSession){if(manual)alert('Sign in to keep LYNQ contacts.');return}
+  const{error}=await supabaseClient.from('saved_contacts').upsert({user_id:curSession.user.id,card_uid:currentCardUid,name:state.name});
+  if(manual)alert(error?'Could not save: '+error.message:'Saved to your LYNQ contacts.');
+}
+async function openContacts(){
+  if(!curSession){alert('Sign in to see your LYNQ contacts.');return}
+  const{data,error}=await supabaseClient.from('saved_contacts').select('*').order('created_at',{ascending:false});
+  $('savedList').innerHTML=error?'Could not load contacts.':(data&&data.length?data.map(c=>`<div class="note-item"><a href="${location.pathname}?card=${encodeURIComponent(c.card_uid)}" style="color:var(--text);font-weight:700;text-decoration:none">${esc(c.name||'LYNQ profile')}</a><span class="del-note" onclick="removeSaved('${esc(c.card_uid)}')">Remove</span><div style="font-size:11px;color:var(--sub);margin-top:2px">Saved ${new Date(c.created_at).toLocaleDateString()}</div></div>`).join(''):'No saved contacts yet. Open someone\'s LYNQ profile and use the menu to save it.');
+  $('contactsModal').classList.add('open');
+}
+async function removeSaved(uid){await supabaseClient.from('saved_contacts').delete().eq('card_uid',uid);openContacts()}
+
+/* ---------- delete profile / account ---------- */
+async function deleteMyProfile(){
+  if(!curSession)return;
+  if(!confirm('Delete your profile? Your photos, links and details will be erased. Your cards stay linked to your Google account.'))return;
+  if(prompt('Type DELETE to confirm')!=='DELETE')return;
+  const{error}=await supabaseClient.from('profiles').delete().eq('user_id',curSession.user.id);
+  if(error){alert('Could not delete: '+error.message);return}
+  alert('Your profile was deleted.');location.reload();
+}
+async function deleteMyAccount(){
+  if(!curSession)return;
+  if(!confirm('Delete your account? This permanently removes your Google sign-in from LYNQ, your profile, your saved contacts and unlinks all your cards. This cannot be undone.'))return;
+  if(prompt('Type DELETE to confirm')!=='DELETE')return;
+  const{error}=await supabaseClient.rpc('delete_my_account');
+  if(error){alert('Could not delete: '+error.message);return}
+  await supabaseClient.auth.signOut({scope:'local'});sessionStorage.clear();
+  alert('Your account was deleted.');
+  location.href=location.pathname+(currentCardUid?'?card='+encodeURIComponent(currentCardUid):'');
+}
+
+/* ---------- menu + visitor "share your contact" ---------- */
+function buildMenu(){
+  const signed=!!curSession;
+  $('mSignIn').classList.toggle('hidden',signed||!$('signInLink'));
+  $('mSaveThis').classList.toggle('hidden',isOwner||!currentCardUid);
+  $('mOwner').classList.toggle('hidden',!signed);
+}
+const ico=k=>`<svg viewBox="0 0 24 24">${ICONS[k].svg.replace(/currentColor/g,ICONS[k].color)}</svg>`;
+function buildSharePanel(){
+  const ph='<svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>';
+  $('scPanel').innerHTML=`<h4>Share your contact with the profile owner</h4>
+  <div class="scrow"><span style="font-size:12px;font-weight:600;width:18px">Aa</span><input id="scName" type="text" placeholder="Name" maxlength="80" autocomplete="name"></div>
+  <div class="scrow">${ico('instagram')}<input id="scIg" type="text" placeholder="@instagram" maxlength="80" autocapitalize="off"></div>
+  <div class="scrow">${ico('facebook')}<input id="scFb" type="text" placeholder="Facebook name or link" maxlength="200" autocapitalize="off"></div>
+  <div class="scrow">${ph}<input id="scPh" type="tel" placeholder="Phone number" maxlength="30"></div>
+  <div class="scrow">${ico('website')}<input id="scLk" type="text" placeholder="Link" maxlength="300" autocapitalize="off"></div>
+  <button class="btn" id="scSend">Send</button><div id="scStatus"></div>`;
+  $('scSend').onclick=async()=>{
+    const v=id=>$(id).value.trim(),st=$('scStatus');
+    if(!v('scName')){st.textContent='Please enter your name.';return}
+    const k='sc_'+currentCardUid;
+    if(Date.now()-(+localStorage.getItem(k)||0)<60000){st.textContent='Already sent. Try again in a minute.';return}
+    st.textContent='Sending...';
+    const{data,error}=await supabaseClient.rpc('share_contact',{p_card_uid:currentCardUid,p_name:v('scName'),p_instagram:v('scIg'),p_facebook:v('scFb'),p_phone:v('scPh'),p_link:v('scLk')});
+    if(error||data!==true){st.textContent='Could not send. Please try again.';return}
+    localStorage.setItem(k,Date.now());st.textContent='Sent! The owner will see it.';
+    ['scName','scIg','scFb','scPh','scLk'].forEach(id=>$(id).value='');
+  };
+}
+
 /* ---------- dark flow: coded card, claim, success, setup ---------- */
 const CHAIN='<svg viewBox="0 0 24 24" fill="none" stroke="url(#chainG)" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>';
 const CARD_HTML=`<div class="lcard" id="lcard"><i class="lf f1 on"></i><i class="lf f2"></i><i class="lf f3"></i><i class="lf f4"></i>
@@ -842,8 +989,9 @@ function claimScreen(uid){
   <div class="gstep"><b>2</b><div><strong>Build your profile</strong><span>Add your photo, links and contact details.</span></div></div></div>
   <button class="gbtn white" id="claimGoogleBtn"><svg viewBox="0 0 24 24" style="width:18px;height:18px"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.2v3.15C3.17 21.32 7.28 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.2C.44 8.12 0 9.87 0 11.7s.44 3.58 1.2 5.12l4.08-2.55z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.28 0 3.17 2.68 1.2 6.58l4.08 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg>Continue with Google</button>
   <p class="fine">By signing in, you agree to our <a href="#" data-legal="terms">Terms</a> and <a href="#" data-legal="privacy">Privacy Policy</a>. We only use your Google account to secure your card.</p>`);
-  $('claimGoogleBtn').onclick=()=>{
+  $('claimGoogleBtn').onclick=async()=>{
     if(!termsOk())return openLegal('terms',true);
+    if(!sessionStorage.getItem('lynq_code'))await askCode();
     sessionStorage.setItem('pending_lynq_card',uid);
     supabaseClient.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname+'?card='+uid}});
   };
@@ -916,7 +1064,8 @@ async function handleNfcCardBinding(){
   if(session){const{error:ue2}=await supabaseClient.auth.getUser();if(ue2){await supabaseClient.auth.signOut({scope:'local'});session=null}}
   if(!uid)uid=sessionStorage.getItem('pending_lynq_card');
   if(!uid){infoScreen('Please tap your LYNQ card','Or enter the exact URL of your portfolio to view or manage your card.');return}
-  currentCardUid=uid;
+  currentCardUid=uid;curSession=session;
+  if(session&&STAFF.includes((session.user.email||'').toLowerCase()))$('swTeam').classList.remove('hidden');
   const{data:rec,error}=await supabaseClient.rpc('get_card',{p_uid:uid});
   if(error||!rec){infoScreen('Card not found','Please check your LYNQ card link and try again.');return}
   if(!rec.user_id&&!session){claimScreen(uid);if(!termsOk())openLegal('terms',true);return}
@@ -929,8 +1078,13 @@ async function handleNfcCardBinding(){
     if(rec.user_id===session.user.id)setOwnerUI();
     else if(!rec.user_id){
       hideLoader();await askTerms();
-      const{data:ok}=await supabaseClient.rpc('claim_card',{p_uid:uid});
-      if(ok){
+      let res='';
+      for(let k=0;k<3;k++){
+        const code=sessionStorage.getItem('lynq_code')||await askCode();
+        const r=await supabaseClient.rpc('claim_card',{p_uid:uid,p_code:code});res=r.data;
+        if(res==='bad_code'){sessionStorage.removeItem('lynq_code');continue}break;
+      }
+      if(res==='ok'){sessionStorage.removeItem('lynq_code');
         let{data:pr}=await supabaseClient.from('profiles').select('*').eq('user_id',session.user.id).maybeSingle();
         if(!(pr&&pr.bio)){
           const{data:old}=await supabaseClient.from('nfc_cards').select('bio,card_title').eq('user_id',session.user.id).not('bio','is',null).limit(1);
@@ -956,6 +1110,7 @@ async function handleNfcCardBinding(){
     try{const{data,error:te}=await supabaseClient.rpc('increment_tap',{p_uid:uid});if(te)console.warn('LYNQ tap counter:',te.message);else if(typeof data==='number')tapCount=data;else tapCount+=1}catch(e){console.warn('LYNQ tap counter:',e)}
   }
   render();
+  $('menuBtn').classList.remove('hidden');if(!isOwner)$('scBtn').classList.remove('hidden');buildMenu();
   if(justClaimed)successScreen(window._inherited);
 }
 
@@ -965,6 +1120,20 @@ async function init(){
   $('clrDots').onclick=e=>{const c=e.target.dataset.c;if(c)setCustom({accent:c})};
   $('customClr').addEventListener('input',e=>setCustom({accent:e.target.value}));
   $('customModeSel').addEventListener('change',e=>setCustom({mode:e.target.value}));
+  buildSharePanel();
+  document.querySelectorAll('.tile').forEach((t,i)=>{const x=document.createElement('span');x.className='tx';x.dataset.i=i;x.textContent='×';t.appendChild(x)});
+  document.querySelector('.tiles').addEventListener('click',e=>{const x=e.target.closest('.tx');if(!x)return;e.preventDefault();e.stopPropagation();state.photos[+x.dataset.i]='';render()},true);
+  $('avRm').onclick=()=>{state.avatar='';render()};$('cvRm').onclick=()=>{state.cover='';render()};
+  const pops=()=>{$('menuPanel').classList.add('hidden');$('scPanel').classList.add('hidden')};
+  $('menuBtn').onclick=e=>{e.stopPropagation();const o=$('menuPanel').classList.contains('hidden');pops();if(o){buildMenu();$('menuPanel').classList.remove('hidden')}};
+  $('scBtn').onclick=e=>{e.stopPropagation();const o=$('scPanel').classList.contains('hidden');pops();if(o)$('scPanel').classList.remove('hidden')};
+  document.addEventListener('click',e=>{if(!e.target.closest('.pop'))pops()});
+  $('mContacts').onclick=()=>{pops();openContacts()};
+  $('mSaveThis').onclick=()=>{pops();saveLynqContact(true)};
+  $('mSignIn').onclick=()=>{pops();const a=$('signInLink');if(a)a.click()};
+  $('mDelProfile').onclick=()=>{pops();deleteMyProfile()};
+  $('mDelAccount').onclick=()=>{pops();deleteMyAccount()};
+  $('tabNotes').onclick=()=>inboxTab('notes');$('tabContacts').onclick=()=>inboxTab('contacts');
   await handleNfcCardBinding().catch(()=>infoScreen('Please tap your LYNQ card','Or paste your LYNQ portfolio exact URL.'));
 
   $('eduRoadmapToggle').addEventListener('click',()=>$('eduRoadmapBox').classList.toggle('open'));
@@ -977,7 +1146,7 @@ async function init(){
     $(closeId).addEventListener('click',()=>$(modalId).classList.remove('open'));
     $(modalId).addEventListener('click',e=>{if(e.target.id===modalId)$(modalId).classList.remove('open')});
   };
-  modal('infoBtn','infoModal','closeInfoBtn');modal(null,'qrModal','closeQrBtn');modal(null,'galleryModal','closeGalleryBtn');
+  modal('infoBtn','infoModal','closeInfoBtn');modal(null,'qrModal','closeQrBtn');modal(null,'galleryModal','closeGalleryBtn');modal(null,'contactsModal','closeContactsBtn');
   $('openGalleryBtn').addEventListener('click',()=>{galShow(0,false);$('galleryModal').classList.add('open')});
   $('galPrev').addEventListener('click',()=>galShow(gi-1,true));
   $('galNext').addEventListener('click',()=>galShow(gi+1,true));
