@@ -605,7 +605,9 @@ function hideLoader(){const l=$('loadingScreen');if(l){l.style.opacity='0';setTi
 /* ---------- persistence ---------- */
 async function persist(){
   if(!isOwner)return false;
-  const{error}=await supabaseClient.from('nfc_cards').update({bio:JSON.stringify(state),card_title:state.name}).eq('nfc_uid',currentCardUid);
+  const{data:{session}}=await supabaseClient.auth.getSession();
+  if(!session)return false;
+  const{error}=await supabaseClient.from('profiles').upsert({user_id:session.user.id,bio:JSON.stringify(state),card_title:state.name,updated_at:new Date().toISOString()});
   return !error;
 }
 
@@ -905,7 +907,7 @@ async function handleNfcCardBinding(){
   if(!uid)uid=sessionStorage.getItem('pending_lynq_card');
   if(!uid){infoScreen('Please tap your LYNQ card','Or enter the exact URL of your portfolio to view or manage your card.');return}
   currentCardUid=uid;
-  const{data:rec,error}=await supabaseClient.from('nfc_cards').select('*').eq('nfc_uid',uid).single();
+  const{data:rec,error}=await supabaseClient.rpc('get_card',{p_uid:uid});
   if(error||!rec){infoScreen('Card not found','Please check your LYNQ card link and try again.');return}
   if(!rec.user_id&&!session){claimScreen(uid);if(!termsOk())openLegal('terms',true);return}
 
@@ -916,13 +918,13 @@ async function handleNfcCardBinding(){
   if(session){
     if(rec.user_id===session.user.id)setOwnerUI();
     else if(!rec.user_id){
-      const{data:mine}=await supabaseClient.from('nfc_cards').select('*').eq('user_id',session.user.id).order('created_at',{ascending:false});
-      let bio=null,title=null,inherited=false;
-      const ex=mine&&mine.find(c=>c.bio);
-      if(ex){bio=ex.bio;title=ex.card_title||state.name;inherited=true;
-        try{const p=JSON.parse(ex.bio);if(p&&typeof p==='object')state={...DEFAULT_STATE,...p}}catch(_e){state.bio=ex.bio}}
-      const{error:ue}=await supabaseClient.from('nfc_cards').update({user_id:session.user.id,bio,card_title:title}).eq('nfc_uid',uid);
-      if(!ue){setOwnerUI();justClaimed=true;window._inherited=inherited}
+      const{data:ok}=await supabaseClient.rpc('claim_card',{p_uid:uid});
+      if(ok){
+        const{data:pr}=await supabaseClient.from('profiles').select('*').eq('user_id',session.user.id).maybeSingle();
+        let inherited=false;
+        if(pr&&pr.bio){try{const p=JSON.parse(pr.bio);if(p&&typeof p==='object'){state={...DEFAULT_STATE,...p};inherited=true}}catch(_e){}}
+        setOwnerUI();justClaimed=true;window._inherited=inherited;
+      }
     }
   }else{
     $('authPromptBtn').classList.remove('hidden');
