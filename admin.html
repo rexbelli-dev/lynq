@@ -61,16 +61,17 @@ async function loadOv(){
 async function loadCards(){
   const{data,error}=await sb.rpc('admin_cards',{p_search:$('q').value.trim(),p_limit:50});
   if(error||!data){$('cards').innerHTML='<div class="card">Could not load.</div>';return}
-  $('cards').innerHTML=data.length?data.map(c=>`<div class="card"><div class="row sp"><code>${esc(c.nfc_uid)}</code><span>${c.claimed?'<span class="chip g">Claimed</span>':'<span class="chip">Unclaimed</span>'}${c.disabled?'<span class="chip r">Blocked</span>':''}</span></div>
-  <div class="muted" style="margin:4px 0 8px">${c.claimed?esc(c.owner_email||'')+(c.owner_name?' · '+esc(c.owner_name):''):'Not claimed yet'} · ${c.taps} taps</div>
+  $('cards').innerHTML=data.length?data.map(c=>`<div class="card"><div class="row sp"><code>${esc(c.nfc_uid)}</code><span>${c.claimed?'<span class="chip g">Claimed</span>':'<span class="chip">Unclaimed</span>'}${c.disabled?'<span class="chip r">Blocked</span>':''}${c.fails>=10?'<span class="chip y">Locked</span>':''}</span></div>
+  <div class="muted" style="margin:4px 0 8px">${c.claimed?esc(c.owner_email||'')+(c.owner_name?' · '+esc(c.owner_name):''):'Not claimed yet'}${!c.claimed&&c.code?' · Code <code>'+esc(c.code)+'</code>':''} · ${c.taps} taps</div>
   <div class="row"><a class="b" target="_blank" rel="noopener" href="${BASE}?card=${encodeURIComponent(c.nfc_uid)}&nt=1">Open</a>
   <button class="b" data-a="dis" data-u="${esc(c.nfc_uid)}" data-v="${!c.disabled}">${c.disabled?'Unblock':'Block'}</button>
-  ${c.claimed?`<button class="b d" data-a="reset" data-u="${esc(c.nfc_uid)}">Reset</button>`:''}</div></div>`).join(''):'<div class="card muted">No cards found.</div>';
+  ${c.claimed?`<button class="b d" data-a="reset" data-u="${esc(c.nfc_uid)}">Reset</button>`:(c.fails>=10?`<button class="b" data-a="unlock" data-u="${esc(c.nfc_uid)}">Unlock</button>`:'')}</div></div>`).join(''):'<div class="card muted">No cards found.</div>';
 }
 $('qGo').onclick=loadCards;$('q').addEventListener('keydown',e=>{if(e.key==='Enter')loadCards()});
 $('cards').addEventListener('click',async e=>{
   const b=e.target.closest('button[data-a]');if(!b)return;const u=b.dataset.u;
   if(b.dataset.a==='dis'){await sb.rpc('set_card_disabled',{p_uid:u,p_disabled:b.dataset.v==='true'})}
+  if(b.dataset.a==='unlock'){await sb.rpc('admin_reset_card',{p_uid:u})}
   if(b.dataset.a==='reset'){if(!confirm('Reset '+u+'? The owner loses this card and its taps, notes and shared contacts. Their profile stays on their account.'))return;await sb.rpc('admin_reset_card',{p_uid:u})}
   loadCards();loadOv();
 });
