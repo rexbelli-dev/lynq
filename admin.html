@@ -31,7 +31,7 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:13px}
   <div class="top"><div><h1>LYNQ Admin</h1><div class="muted" id="who"></div></div><div class="row"><a class="b" href="./">Back to LYNQ</a><button class="b" id="out">Sign out</button></div></div>
   <div class="tabs"><button data-t="ov" class="on">Overview</button><button data-t="cards">Cards</button><button data-t="users">Users</button><button data-t="gen">Generate</button></div>
   <div id="t-ov"></div>
-  <div id="t-cards" class="hide"><div class="row" style="margin-bottom:10px"><input id="q" placeholder="Search serial or owner email" style="flex:1"><button class="b p" id="qGo">Search</button><button class="b" id="expCodes">Unclaimed codes CSV</button></div><div id="cards"></div></div>
+  <div id="t-cards" class="hide"><div class="row" style="margin-bottom:10px"><input id="q" placeholder="Search serial or owner email" style="flex:1"><button class="b p" id="qGo">Search</button></div><div id="cards"></div></div>
   <div id="t-users" class="hide"><input id="uq" placeholder="Filter by name, email or username" style="width:100%;margin-bottom:10px"><div id="users"></div></div>
   <div id="t-gen" class="hide"><div class="card"><div class="muted" style="margin-bottom:8px">Creates new unclaimed cards with random serials.</div><div class="row"><input id="n" type="number" min="1" max="1000" value="100" style="width:120px"><button class="b p" id="genGo">Generate</button></div></div><div id="genOut"></div></div>
 </div></div>
@@ -61,22 +61,16 @@ async function loadOv(){
 async function loadCards(){
   const{data,error}=await sb.rpc('admin_cards',{p_search:$('q').value.trim(),p_limit:50});
   if(error||!data){$('cards').innerHTML='<div class="card">Could not load.</div>';return}
-  $('cards').innerHTML=data.length?data.map(c=>`<div class="card"><div class="row sp"><code>${esc(c.nfc_uid)}</code><span>${c.claimed?'<span class="chip g">Claimed</span>':'<span class="chip">Unclaimed</span>'}${c.disabled?'<span class="chip r">Blocked</span>':''}${c.fails>=10?'<span class="chip y">Locked</span>':''}</span></div>
-  <div class="muted" style="margin:4px 0 8px">${c.claimed?esc(c.owner_email||'')+(c.owner_name?' · '+esc(c.owner_name):''):'Not claimed yet'}${!c.claimed&&c.code?' · Code <code>'+esc(c.code)+'</code>':''} · ${c.taps} taps</div>
+  $('cards').innerHTML=data.length?data.map(c=>`<div class="card"><div class="row sp"><code>${esc(c.nfc_uid)}</code><span>${c.claimed?'<span class="chip g">Claimed</span>':'<span class="chip">Unclaimed</span>'}${c.disabled?'<span class="chip r">Blocked</span>':''}</span></div>
+  <div class="muted" style="margin:4px 0 8px">${c.claimed?esc(c.owner_email||'')+(c.owner_name?' · '+esc(c.owner_name):''):'Not claimed yet'} · ${c.taps} taps</div>
   <div class="row"><a class="b" target="_blank" rel="noopener" href="${BASE}?card=${encodeURIComponent(c.nfc_uid)}&nt=1">Open</a>
   <button class="b" data-a="dis" data-u="${esc(c.nfc_uid)}" data-v="${!c.disabled}">${c.disabled?'Unblock':'Block'}</button>
-  ${c.claimed?`<button class="b d" data-a="reset" data-u="${esc(c.nfc_uid)}">Reset</button>`:(c.fails>=10?`<button class="b" data-a="unlock" data-u="${esc(c.nfc_uid)}">Unlock</button>`:'')}</div></div>`).join(''):'<div class="card muted">No cards found.</div>';
+  ${c.claimed?`<button class="b d" data-a="reset" data-u="${esc(c.nfc_uid)}">Reset</button>`:''}</div></div>`).join(''):'<div class="card muted">No cards found.</div>';
 }
 $('qGo').onclick=loadCards;$('q').addEventListener('keydown',e=>{if(e.key==='Enter')loadCards()});
-$('expCodes').onclick=async()=>{
-  const{data,error}=await sb.rpc('admin_unclaimed_codes');if(error||!data){alert('Could not export.');return}
-  const rows=['serial,code,url'].concat(data.map(x=>x.serial+','+x.code+','+BASE+'?card='+x.serial)).join('\n');
-  const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([rows],{type:'text/csv'}));l.download='lynq-unclaimed-codes.csv';l.click();
-};
 $('cards').addEventListener('click',async e=>{
   const b=e.target.closest('button[data-a]');if(!b)return;const u=b.dataset.u;
   if(b.dataset.a==='dis'){await sb.rpc('set_card_disabled',{p_uid:u,p_disabled:b.dataset.v==='true'})}
-  if(b.dataset.a==='unlock'){await sb.rpc('admin_reset_card',{p_uid:u})}
   if(b.dataset.a==='reset'){if(!confirm('Reset '+u+'? The owner loses this card and its taps, notes and shared contacts. Their profile stays on their account.'))return;await sb.rpc('admin_reset_card',{p_uid:u})}
   loadCards();loadOv();
 });
@@ -96,9 +90,9 @@ $('genGo').onclick=async()=>{
   const n=Math.max(1,Math.min(1000,+$('n').value||1));$('genGo').disabled=true;
   const{data,error}=await sb.rpc('admin_generate_cards',{n});$('genGo').disabled=false;
   if(error||!data){$('genOut').innerHTML='<div class="card">Could not generate: '+esc(error&&error.message)+'</div>';return}
-  const rows=['serial,code,url'].concat(data.map(x=>x.serial+','+x.code+','+BASE+'?card='+x.serial)).join('\n');
+  const rows=['serial,url'].concat(data.map(s=>s+','+BASE+'?card='+s)).join('\n');
   const url=URL.createObjectURL(new Blob([rows],{type:'text/csv'}));
-  $('genOut').innerHTML=`<div class="card"><b>${data.length} cards created.</b> <a class="b p" download="lynq-cards-${Date.now()}.csv" href="${url}">Download CSV</a><div class="muted" style="margin-top:8px">Each row has the serial, its own activation code (print it on the insert, not on the card) and the exact URL to write on that chip.</div></div>`;
+  $('genOut').innerHTML=`<div class="card"><b>${data.length} cards created.</b> <a class="b p" download="lynq-cards-${Date.now()}.csv" href="${url}">Download CSV</a><div class="muted" style="margin-top:8px">The CSV has the exact URL to write on each NFC chip.</div></div>`;
   loadOv();
 };
 boot();
