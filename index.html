@@ -357,6 +357,17 @@ body.editing #brandBadge{display:none}
 h1[data-v]:not([data-v=""])::after{content:"✓";display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;margin-left:8px;border-radius:50%;background:#1d9bf0;color:#fff;font-size:11px;vertical-align:middle;transform:translateY(-1px)}
 h1[data-v=staff]::after{background:#C11C84}h1[data-v=student]::after{background:#10b981}
 #offBar{position:fixed;left:50%;transform:translateX(-50%);top:calc(8px + env(safe-area-inset-top,0px));z-index:70;background:rgba(20,20,25,.88);color:#fff;font-size:12px;padding:6px 12px;border-radius:99px;backdrop-filter:blur(10px);white-space:nowrap}
+
+#scPanel{position:absolute;top:calc(6px + env(safe-area-inset-top,0px));left:50%;right:auto;width:340px;transform-origin:top center;transform:translateX(-50%) scale(var(--scs,.7));z-index:25;background:var(--card-bg);backdrop-filter:blur(26px);-webkit-backdrop-filter:blur(26px);border:1px solid var(--border);border-radius:16px;padding:7px 10px 9px;box-shadow:0 12px 28px rgba(0,0,0,.28);color:var(--text)}
+.sch{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:5px}
+.sch h4,#scStatus{margin:0;font-size:12px;line-height:1.2;color:var(--text);min-height:0}
+#scMin{width:22px;height:22px}#scMin svg{width:12px;height:12px}
+.scg{display:grid;grid-template-columns:1fr 1fr;gap:3px 6px}
+.scf1{position:relative;display:block}
+.scf1 svg,.scf1 .sci{position:absolute;left:8px;top:50%;transform:translateY(-50%);width:16px;height:16px;pointer-events:none}
+.scf1 .sci{font-size:11px;font-weight:700;width:auto}
+.scf1 input{display:block;width:100%;height:30px;padding:0 8px 0 29px;border-radius:9px;border:1px solid rgba(127,127,127,.3);background:rgba(127,127,127,.1);color:var(--text);font-size:16px;min-width:0}
+#scSend{width:100%;height:30px;padding:0;border-radius:9px;font-size:14px}
 </style>
 <script>
 /* LYNQ team theme helpers: cover + badge are drawn in code (no image files needed) */
@@ -1125,10 +1136,11 @@ function buildMenu(){
   $('mInstall').classList.toggle('hidden',!!standalone());
   $('mAdmin').classList.toggle('hidden',!isStaff);
 }
-let scVisitor=false;
-function fitSc(){$('scPanel').style.setProperty('--scs',Math.max(.5,Math.min(.66,(innerWidth-192)/290)))}
+let scVisitor=false;const SC_T='Share your contact with the profile owner';
+function fitSc(){$('scPanel').style.setProperty('--scs',Math.max(.5,Math.min(.7,(innerWidth-112)/340)))}
 function setSc(open){
   if(open)sessionStorage.removeItem('sc_min');else sessionStorage.setItem('sc_min','1');
+  if(open)$('scStatus').textContent=SC_T;
   $('scPanel').classList.toggle('hidden',!(scVisitor&&open));
   $('scBtn').classList.toggle('hidden',!scVisitor||open);
   fitSc();
@@ -1136,13 +1148,15 @@ function setSc(open){
 const ico=k=>`<svg viewBox="0 0 24 24">${ICONS[k].svg.replace(/currentColor/g,ICONS[k].color)}</svg>`;
 function buildSharePanel(){
   const ph='<svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>';
-  $('scPanel').innerHTML=`<div class="sch"><h4>Share your contact with the profile owner</h4><button id="scMin" type="button" aria-label="Minimize"><svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/></svg></button></div>
-  <div class="scrow"><span style="font-size:12px;font-weight:600;width:18px">Aa</span><input id="scName" type="text" placeholder="Name" maxlength="80" autocomplete="name"></div>
-  <div class="scrow">${ico('instagram')}<input id="scIg" type="text" placeholder="@instagram" maxlength="80" autocapitalize="off"></div>
-  <div class="scrow">${ico('facebook')}<input id="scFb" type="text" placeholder="Facebook name or link" maxlength="200" autocapitalize="off"></div>
-  <div class="scrow">${ph}<input id="scPh" type="tel" placeholder="Phone number" maxlength="30"></div>
-  <div class="scrow">${ico('website')}<input id="scLk" type="text" placeholder="Link" maxlength="300" autocapitalize="off"></div>
-  <button class="btn" id="scSend">Send</button><div id="scStatus"></div>`;
+  $('scPanel').innerHTML=`<div class="sch"><h4 id="scStatus">${SC_T}</h4><button id="scMin" type="button" aria-label="Minimize"><svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/></svg></button></div>
+  <div class="scg">
+  <label class="scf1"><span class="sci">Aa</span><input id="scName" type="text" placeholder="Name" maxlength="80" autocomplete="name"></label>
+  <label class="scf1">${ico('instagram')}<input id="scIg" type="text" placeholder="@instagram" maxlength="80" autocapitalize="off"></label>
+  <label class="scf1">${ico('facebook')}<input id="scFb" type="text" placeholder="Facebook" maxlength="200" autocapitalize="off"></label>
+  <label class="scf1">${ph}<input id="scPh" type="tel" placeholder="Phone" maxlength="30"></label>
+  <label class="scf1">${ico('website')}<input id="scLk" type="text" placeholder="Link" maxlength="300" autocapitalize="off"></label>
+  <button class="btn" id="scSend" type="button">Send</button>
+  </div>`;
   $('scMin').onclick=()=>setSc(false);
   $('scSend').onclick=async()=>{
     const v=id=>$(id).value.trim(),st=$('scStatus');
