@@ -987,33 +987,29 @@ function askTerms(){return new Promise(r=>{
   c.onclick=()=>{old();c.onclick=old;r()};
 })}
 
-/* ---------- activation code (checked on the server) ---------- */
-async function checkCode(c){const{data}=await supabaseClient.rpc('check_activation',{p_uid:currentCardUid,p_code:c});return data===true}
-function askCode(){return new Promise(res=>{
-  flowShow(`${CARD_HTML}<h2>Activation code</h2><p>Enter the activation code that came with your LYNQ card.</p>
-  <input class="gfield" id="acCode" placeholder="Activation code" autocapitalize="characters" autocomplete="off" autocorrect="off">
-  <p class="hint" id="acErr" style="color:#ff8aa8;min-height:16px"></p>
-  <button class="gbtn primary" id="acGo">Activate</button>`);
-  const go=async()=>{const c=$('acCode').value.trim();
-    if(!c){$('acErr').textContent='Please enter the code.';return}
-    $('acGo').disabled=true;
-    if(await checkCode(c)){sessionStorage.setItem('lynq_code',c);res(c)}
-    else{$('acErr').textContent='That code is not correct.';$('acGo').disabled=false}};
-  $('acGo').onclick=go;$('acCode').addEventListener('keydown',e=>{if(e.key==='Enter')go()});
-})}
-
 /* ---------- does this signed-in Google account have a LYNQ account? ---------- */
-let curSession=null,myUid=null,hasAccount=false,isStaff=false,curVerified='',curHandle='',offline=false;
+let curSession=null,myUid=null,myCount=0,hasAccount=false,isStaff=false,curVerified='',curHandle='',offline=false;
 async function checkAccount(){
   const uid=curSession.user.id;
   const[c,pr]=await Promise.all([
-    supabaseClient.from('nfc_cards').select('nfc_uid').eq('user_id',uid).order('created_at').limit(1),
+    supabaseClient.from('nfc_cards').select('nfc_uid').eq('user_id',uid).order('created_at'),
     supabaseClient.from('profiles').select('user_id').eq('user_id',uid).maybeSingle()]);
   if(c.error||pr.error)return false;            // unknown (e.g. weak signal): never treat as "no account"
-  myUid=c.data&&c.data[0]?c.data[0].nfc_uid:null;
+  myUid=c.data&&c.data[0]?c.data[0].nfc_uid:null;myCount=c.data?c.data.length:0;
   hasAccount=!!(myUid||pr.data);
   return true;
 }
+
+/* ---------- "Claim this card?" confirmation ---------- */
+function confirmClaim(uid){return new Promise(res=>{
+  const n=myCount;
+  flowShow(`${CARD_HTML}<h2>Claim this card?</h2>
+  <p>${n>0?`Your account already has ${n} LYNQ card${n>1?'s':''}. Are you sure you also want to claim this card?`:'You are about to become the owner of this LYNQ card.'}</p>
+  <p class="fine">Card ${esc(uid)}</p>
+  <button class="gbtn primary" id="ccYes">Claim this card</button>
+  <button class="ghost" id="ccNo">${n>0?'No, take me to my profile':'Not now'}</button>`);
+  $('ccYes').onclick=()=>res(true);$('ccNo').onclick=()=>res(false);
+})}
 
 /* ---------- saved LYNQ contacts ---------- */
 async function saveLynqContact(manual){
@@ -1196,7 +1192,6 @@ function claimScreen(uid){
   <p class="fine">By signing in, you agree to our <a href="#" data-legal="terms">Terms</a> and <a href="#" data-legal="privacy">Privacy Policy</a>. We only use your Google account to secure your card.</p>`);
   $('claimGoogleBtn').onclick=async()=>{
     if(!termsOk())return openLegal('terms',true);
-    if(!sessionStorage.getItem('lynq_code'))await askCode();
     sessionStorage.setItem('pending_lynq_card',uid);
     supabaseClient.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname+'?card='+uid}});
   };
@@ -1316,14 +1311,15 @@ async function handleNfcCardBinding(){
     if(rec.user_id===session.user.id)setOwnerUI();
     else if(!rec.user_id){
       hideLoader();await askTerms();
-      let res='';
-      for(let k=0;k<3;k++){
-        const code=sessionStorage.getItem('lynq_code')||await askCode();
-        const r=await supabaseClient.rpc('claim_card',{p_uid:uid,p_code:code});res=r.data;
-        if(res==='bad_code'){sessionStorage.removeItem('lynq_code');continue}break;
+      await checkAccount();
+      const intended=sessionStorage.getItem('pending_lynq_card')===uid;   // they just pressed "Continue with Google" for this card
+      if(myCount>0||!intended){
+        if(!await confirmClaim(uid)){location.href=location.pathname+(myUid?'?card='+encodeURIComponent(myUid):'');return}
       }
-      if(res==='locked')await lynqAlert('Too many wrong codes were entered for this card. Please contact LYNQ support.','Card locked');
-      if(res==='ok'){sessionStorage.removeItem('lynq_code');
+      sessionStorage.removeItem('pending_lynq_card');
+      const res=(await supabaseClient.rpc('claim_card',{p_uid:uid})).data;
+      if(res==='taken'){await lynqAlert('This card was just claimed by someone else.','Card already claimed');location.reload();return}
+      if(res==='ok'){
         let{data:pr}=await supabaseClient.from('profiles').select('*').eq('user_id',session.user.id).maybeSingle();
         if(!(pr&&pr.bio)){
           const{data:old}=await supabaseClient.from('nfc_cards').select('bio,card_title').eq('user_id',session.user.id).not('bio','is',null).limit(1);
