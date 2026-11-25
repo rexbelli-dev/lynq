@@ -1090,13 +1090,20 @@ async function saveHandle(){
 async function openMyCards(){
   if(!curSession)return;
   const{data,error}=await supabaseClient.from('nfc_cards').select('nfc_uid,tap_count,disabled').eq('user_id',curSession.user.id).order('created_at');
-  $('cardsList').innerHTML=error?'Could not load your cards.':(data&&data.length?data.map(c=>`<div class="note-item"><b style="color:var(--text);font-family:ui-monospace,monospace;font-size:13px">${esc(c.nfc_uid)}</b><div style="font-size:12px;margin:3px 0 8px">${c.tap_count} taps · ${c.disabled?'<span style="color:#e5484d">Disabled</span>':'Active'}</div><button class="btn secondary" style="padding:7px 12px;font-size:12px" onclick="toggleCard('${esc(c.nfc_uid)}',${!c.disabled})">${c.disabled?'Enable card':'Disable card'}</button></div>`).join(''):'No cards yet.');
+  $('cardsList').innerHTML=error?'Could not load your cards.':(data&&data.length?data.map(c=>`<div class="note-item"><b style="color:var(--text);font-family:ui-monospace,monospace;font-size:13px">${esc(c.nfc_uid)}</b><div style="font-size:12px;margin:3px 0 8px">${c.tap_count} taps · ${c.disabled?'<span style="color:#e5484d">Disabled</span>':'Active'}</div><button class="btn secondary" style="padding:7px 12px;font-size:12px" onclick="toggleCard('${esc(c.nfc_uid)}',${!c.disabled})">${c.disabled?'Enable card':'Disable card'}</button> <button class="btn secondary" style="padding:7px 12px;font-size:12px;color:#e5484d" onclick="releaseCard('${esc(c.nfc_uid)}')">Remove from my account</button></div>`).join(''):'No cards yet.');
   $('cardsModal').classList.add('open');
 }
 async function toggleCard(uid,dis){
   if(dis&&!await lynqConfirm({danger:true,title:'Disable this card?',text:'Anyone who taps it will see that it is disabled until you enable it again. Use this if the card is lost.',ok:'Disable card'}))return;
   const{data}=await supabaseClient.rpc('set_card_disabled',{p_uid:uid,p_disabled:dis});
   if(!data)await lynqAlert('Could not update the card.','Something went wrong');
+  openMyCards();
+}
+async function releaseCard(uid){
+  if(!await lynqConfirm({danger:true,title:'Remove this card?',text:'This card will be unlinked from your account. Its visitor notes, shared contacts and tap stats are erased, and anyone who taps it can claim it. Your profile stays on your account.',ok:'Remove card'}))return;
+  const{data}=await supabaseClient.rpc('release_card',{p_uid:uid});
+  if(!data){await lynqAlert('Could not remove the card.','Something went wrong');return}
+  if(uid===currentCardUid){location.reload();return}
   openMyCards();
 }
 async function openStats(){
