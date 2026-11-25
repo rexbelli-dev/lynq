@@ -988,7 +988,7 @@ function askTerms(){return new Promise(r=>{
 })}
 
 /* ---------- activation code (checked on the server) ---------- */
-async function checkCode(c){const{data}=await supabaseClient.rpc('check_activation',{p_code:c});return data===true}
+async function checkCode(c){const{data}=await supabaseClient.rpc('check_activation',{p_uid:currentCardUid,p_code:c});return data===true}
 function askCode(){return new Promise(res=>{
   flowShow(`${CARD_HTML}<h2>Activation code</h2><p>Enter the activation code that came with your LYNQ card.</p>
   <input class="gfield" id="acCode" placeholder="Activation code" autocapitalize="characters" autocomplete="off" autocorrect="off">
@@ -1322,6 +1322,7 @@ async function handleNfcCardBinding(){
         const r=await supabaseClient.rpc('claim_card',{p_uid:uid,p_code:code});res=r.data;
         if(res==='bad_code'){sessionStorage.removeItem('lynq_code');continue}break;
       }
+      if(res==='locked')await lynqAlert('Too many wrong codes were entered for this card. Please contact LYNQ support.','Card locked');
       if(res==='ok'){sessionStorage.removeItem('lynq_code');
         let{data:pr}=await supabaseClient.from('profiles').select('*').eq('user_id',session.user.id).maybeSingle();
         if(!(pr&&pr.bio)){
