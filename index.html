@@ -1024,7 +1024,7 @@ async function saveLynqContact(manual){
 }
 async function openContacts(){
   if(!curSession){lynqAlert('Sign in to see your LYNQ contacts.');return}
-  const{data,error}=await supabaseClient.from('saved_contacts').select('*').order('created_at',{ascending:false});
+  const{data,error}=await supabaseClient.from('saved_contacts').select('*').eq('user_id',curSession.user.id).order('created_at',{ascending:false});
   $('savedList').innerHTML=error?'Could not load contacts.':(data&&data.length?data.map(c=>`<div class="note-item"><a href="${location.pathname}?card=${encodeURIComponent(c.card_uid)}" style="color:var(--text);font-weight:700;text-decoration:none">${esc(c.name||'LYNQ profile')}</a><span class="del-note" onclick="removeSaved('${esc(c.card_uid)}')">Remove</span><div style="font-size:11px;color:var(--sub);margin-top:2px">Saved ${new Date(c.created_at).toLocaleDateString()}</div></div>`).join(''):'No saved contacts yet. Open someone\'s LYNQ profile and use the menu to save it.');
   $('contactsModal').classList.add('open');
 }
@@ -1092,7 +1092,8 @@ async function saveHandle(){
 
 /* ---------- my cards / analytics / install ---------- */
 async function openMyCards(){
-  const{data,error}=await supabaseClient.from('nfc_cards').select('nfc_uid,tap_count,disabled').order('created_at');
+  if(!curSession)return;
+  const{data,error}=await supabaseClient.from('nfc_cards').select('nfc_uid,tap_count,disabled').eq('user_id',curSession.user.id).order('created_at');
   $('cardsList').innerHTML=error?'Could not load your cards.':(data&&data.length?data.map(c=>`<div class="note-item"><b style="color:var(--text);font-family:ui-monospace,monospace;font-size:13px">${esc(c.nfc_uid)}</b><div style="font-size:12px;margin:3px 0 8px">${c.tap_count} taps · ${c.disabled?'<span style="color:#e5484d">Disabled</span>':'Active'}</div><button class="btn secondary" style="padding:7px 12px;font-size:12px" onclick="toggleCard('${esc(c.nfc_uid)}',${!c.disabled})">${c.disabled?'Enable card':'Disable card'}</button></div>`).join(''):'No cards yet.');
   $('cardsModal').classList.add('open');
 }
