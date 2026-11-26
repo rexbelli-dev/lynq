@@ -29,11 +29,12 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:13px}
 </div>
 <div id="app" class="hide">
   <div class="top"><div><h1>LYNQ Admin</h1><div class="muted" id="who"></div></div><div class="row"><a class="b" href="./">Back to LYNQ</a><button class="b" id="out">Sign out</button></div></div>
-  <div class="tabs"><button data-t="ov" class="on">Overview</button><button data-t="cards">Cards</button><button data-t="users">Users</button><button data-t="gen">Generate</button></div>
+  <div class="tabs"><button data-t="ov" class="on">Overview</button><button data-t="cards">Cards</button><button data-t="users">Users</button><button data-t="gen">Generate</button><button data-t="log">Log</button></div>
   <div id="t-ov"></div>
   <div id="t-cards" class="hide"><div class="row" style="margin-bottom:10px"><input id="q" placeholder="Search serial or owner email" style="flex:1"><button class="b p" id="qGo">Search</button></div><div id="cards"></div></div>
   <div id="t-users" class="hide"><input id="uq" placeholder="Filter by name, email or username" style="width:100%;margin-bottom:10px"><div id="users"></div></div>
   <div id="t-gen" class="hide"><div class="card"><div class="muted" style="margin-bottom:8px">Creates new unclaimed cards with random serials.</div><div class="row"><input id="n" type="number" min="1" max="1000" value="100" style="width:120px"><button class="b p" id="genGo">Generate</button></div></div><div id="genOut"></div></div>
+  <div id="t-log" class="hide"></div>
 </div></div>
 <script>
 const sb=window.supabase.createClient('https://cmiuramqfgwyumniedfv.supabase.co','sb_publishable_yegka1PYoQm-U1dpEJJJHA_qbb1ujc6');
@@ -45,13 +46,13 @@ async function boot(){
   if(!session){$('signin').classList.remove('hide');return}
   const ok=(await sb.rpc('is_staff')).data===true;
   if(!ok){document.body.innerHTML='<div class="wrap"><div class="card" style="margin-top:60px;text-align:center"><h1>Not authorized</h1><p class="muted">This Google account is not on the LYNQ staff list.</p><button class="b" id="o2">Sign out</button></div></div>';$('o2').onclick=async()=>{await sb.auth.signOut();location.reload()};return}
-  $('who').textContent=session.user.email;$('app').classList.remove('hide');loadOv();loadCards();loadUsers();
+  $('who').textContent=session.user.email;$('app').classList.remove('hide');loadOv();loadCards();loadUsers();loadLog();
 }
 $('goSign').onclick=()=>sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname,queryParams:{prompt:'select_account'}}});
 $('out').onclick=async()=>{await sb.auth.signOut();location.reload()};
 document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));
-  ['ov','cards','users','gen'].forEach(t=>$('t-'+t).classList.toggle('hide',t!==b.dataset.t));
+  ['ov','cards','users','gen','log'].forEach(t=>$('t-'+t).classList.toggle('hide',t!==b.dataset.t));
 });
 async function loadOv(){
   const{data}=await sb.rpc('admin_stats');if(!data){$('t-ov').innerHTML='<div class="card">Could not load.</div>';return}
@@ -72,8 +73,12 @@ $('cards').addEventListener('click',async e=>{
   const b=e.target.closest('button[data-a]');if(!b)return;const u=b.dataset.u;
   if(b.dataset.a==='dis'){await sb.rpc('set_card_disabled',{p_uid:u,p_disabled:b.dataset.v==='true'})}
   if(b.dataset.a==='reset'){if(!confirm('Reset '+u+'? The owner loses this card and its taps, notes and shared contacts. Their profile stays on their account.'))return;await sb.rpc('admin_reset_card',{p_uid:u})}
-  loadCards();loadOv();
+  loadCards();loadOv();loadLog();
 });
+async function loadLog(){
+  const{data}=await sb.rpc('admin_log',{p_limit:150});
+  $('t-log').innerHTML=data&&data.length?data.map(r=>`<div class="card"><div class="row sp"><b>${esc(r.action)}</b><span class="muted">${new Date(r.at).toLocaleString()}</span></div><div class="muted">${esc(r.staff_email||'')} · ${esc(r.target||'')}${r.detail?' · '+esc(r.detail):''}</div></div>`).join(''):'<div class="card muted">No staff actions yet.</div>';
+}
 async function loadUsers(){
   const{data,error}=await sb.rpc('admin_users');if(error||!data){$('users').innerHTML='<div class="card">Could not load.</div>';return}
   USERS=data;drawUsers();
@@ -85,7 +90,7 @@ function drawUsers(){
   <select data-u="${esc(u.user_id)}"><option value="">No badge</option>${['staff','student','company'].map(k=>`<option value="${k}"${u.verified===k?' selected':''}>${k[0].toUpperCase()+k.slice(1)} ✓</option>`).join('')}</select></div></div>`).join(''):'<div class="card muted">No users.</div>';
 }
 $('uq').addEventListener('input',drawUsers);
-$('users').addEventListener('change',async e=>{const s=e.target.closest('select[data-u]');if(!s)return;await sb.rpc('admin_set_verified',{p_user:s.dataset.u,p_kind:s.value});loadUsers()});
+$('users').addEventListener('change',async e=>{const s=e.target.closest('select[data-u]');if(!s)return;await sb.rpc('admin_set_verified',{p_user:s.dataset.u,p_kind:s.value});loadUsers();loadLog()});
 $('genGo').onclick=async()=>{
   const n=Math.max(1,Math.min(1000,+$('n').value||1));$('genGo').disabled=true;
   const{data,error}=await sb.rpc('admin_generate_cards',{n});$('genGo').disabled=false;
@@ -93,7 +98,7 @@ $('genGo').onclick=async()=>{
   const rows=['serial,url'].concat(data.map(s=>s+','+BASE+'?card='+s)).join('\n');
   const url=URL.createObjectURL(new Blob([rows],{type:'text/csv'}));
   $('genOut').innerHTML=`<div class="card"><b>${data.length} cards created.</b> <a class="b p" download="lynq-cards-${Date.now()}.csv" href="${url}">Download CSV</a><div class="muted" style="margin-top:8px">The CSV has the exact URL to write on each NFC chip.</div></div>`;
-  loadOv();
+  loadOv();loadLog();
 };
 boot();
 </script></body></html>
