@@ -389,6 +389,10 @@ body{background:transparent;background-image:none}
 #tourCard p{margin:0 0 12px;font-size:13.5px;line-height:1.5;color:rgba(255,255,255,.72)}
 .tc-row{display:flex;align-items:center;gap:8px}
 .tc-row .gbtn{width:auto;padding:10px 16px;font-size:14px;border-radius:12px}
+.biz-ph.n1{grid-template-columns:minmax(0,60%);justify-content:center}
+.biz-ph.n2{grid-template-columns:1fr 1fr}.biz-ph.n2 img{aspect-ratio:4/3}
+.cover-tools button{position:relative}
+#bellDot{position:absolute;top:-3px;right:-3px;min-width:17px;height:17px;padding:0 4px;border-radius:99px;background:#ef4444;color:#fff;font:700 10px/17px -apple-system,Arial,sans-serif;text-align:center;font-style:normal}
 </style>
 <script>
 /* LYNQ team theme helpers: cover + badge are drawn in code (no image files needed) */
@@ -446,6 +450,7 @@ const getTheme=()=>state.themeKey==='custom'?customTheme(state.custom||{}):(THEM
   <div class="cover-tools">
     <button id="shareBtn" aria-label="Share profile"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></button>
     <button id="infoBtn" aria-label="Help guide"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></button>
+    <button id="bellBtn" class="hidden" aria-label="Notifications"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><i id="bellDot" class="hidden">0</i></button>
   </div>
   <div class="cover-tools rt">
     <button id="menuBtn" class="hidden" aria-label="Menu"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
@@ -458,6 +463,7 @@ const getTheme=()=>state.themeKey==='custom'?customTheme(state.custom||{}):(THEM
  <button class="mi hidden" id="mSaveThis"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>Save this profile to LYNQ contacts</button>
  <button class="mi hidden" id="mSignIn"><svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>Sign in</button>
  <button class="mi hidden" id="mTour"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.5-3 4.5"/><line x1="12" y1="17.5" x2="12.01" y2="17.5"/></svg>Tutorial</button>
+ <button class="mi hidden" id="mReport"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Report a problem</button>
  <button class="mi hidden" id="mCards"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="3"/><line x1="2" y1="10" x2="22" y2="10"/></svg>My cards</button>
  <button class="mi hidden" id="mStats"><svg viewBox="0 0 24 24"><line x1="6" y1="20" x2="6" y2="12"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="18" y1="20" x2="18" y2="9"/></svg>Analytics</button>
  <button class="mi" id="mInstall"><svg viewBox="0 0 24 24"><path d="M12 3v12"/><polyline points="7 10 12 15 17 10"/><path d="M5 21h14"/></svg>Add to Home Screen</button>
@@ -586,6 +592,23 @@ const getTheme=()=>state.themeKey==='custom'?customTheme(state.custom||{}):(THEM
   <div id="savedList" style="font-size:14px;color:var(--sub)"></div>
 </div></div>
 
+<div class="modal-overlay" id="notifModal"><div class="modal-body" style="text-align:left">
+  <span class="modal-close" id="closeNotifBtn">&times;</span>
+  <h3 style="margin:0 0 12px;font-size:18px;color:var(--text)">Notifications</h3>
+  <div id="notifList" style="font-size:14px;color:var(--sub)"></div>
+  <button class="btn" id="notifReport" style="width:100%;margin-top:12px">Report a problem</button>
+</div></div>
+<div class="modal-overlay" id="reportModal"><div class="modal-body" style="text-align:left">
+  <span class="modal-close" id="closeReportBtn">&times;</span>
+  <h3 style="margin:0 0 6px;font-size:18px;color:var(--text)">Report a problem</h3>
+  <div class="note" style="margin:0 0 10px">Tell us what went wrong. Our team will reply in your notifications (the bell icon).</div>
+  <div class="row"><label>Topic</label><select id="rpCat"><option>My card</option><option>My profile</option><option>Sign in</option><option>Something else</option></select></div>
+  <div class="row"><label>Card</label><select id="rpCard"></select></div>
+  <textarea id="rpMsg" maxlength="1000" placeholder="Describe the problem..."></textarea>
+  <div class="row" style="margin:8px 0"><label class="btn secondary" style="display:inline-block;margin:0"><span id="rpImgTxt">Attach image</span><input type="file" id="rpImg" accept="image/*" hidden></label></div>
+  <button class="btn" id="rpSend" style="width:100%">Send report</button>
+  <div id="rpStatus" class="note"></div>
+</div></div>
 <div class="modal-overlay" id="cardsModal"><div class="modal-body" style="text-align:left">
   <span class="modal-close" id="closeCardsBtn">&times;</span>
   <h3 style="margin:0 0 12px;font-size:18px;color:var(--text)">My cards</h3>
@@ -709,6 +732,7 @@ const getTheme=()=>state.themeKey==='custom'?customTheme(state.custom||{}):(THEM
 <p><b>9.9 Statistics.</b> LYNQ counts taps and link clicks for each Card per day so Profile Owners can see simple statistics. Taps and clicks by the Profile Owner and by LYNQ staff are not counted. Counts are not linked to the identity of the visitor.</p>
 <p><b>9.10 Spam limits.</b> To protect inboxes, LYNQ limits how many notes and shared contacts a single Card can receive per hour and per day. Submissions above the limit are rejected.</p>
 <p><b>9.11 Retention and deletion.</b> A Profile Owner can delete their Profile or their whole account from the menu at any time. Deleting a Profile erases its text and uploaded photos. Deleting an account also removes the Google sign-in record from LYNQ and the user's saved LYNQ contacts, and unlinks all of the user's Cards. When a Card is unlinked, reset or removed from an account, its notes, shared contacts and tap statistics are erased. Staff action logs may be kept for security and accountability. Data already viewed, copied or shared by others may remain outside LYNQ's control.</p>
+<p><b>9.12 Support reports.</b> If you send a report through the website, LYNQ stores your message, any image you attach, the Card code you select, your name and email address, and the status and replies, so that staff can help you. Staff can see this information in the admin page and may open or change the affected Card (for example reset or block it). Reports, images and notifications are deleted when you delete your account.</p>
 <h4>10. Moderation and Termination</h4>
 <p><b>10.1 Platform action.</b> LYNQ may investigate reports and remove content, suspend editing, de-link a Card, revoke or redirect a URL, invalidate sessions, rate-limit traffic, preserve evidence, or block an account, device, network, or IP address.</p>
 <p><b>10.2 Immediate action.</b> LYNQ may act without prior notice for an active security incident, malicious code, fraud, unlawful access, credible threat, personal-data risk, legal order, or serious Terms violation.</p>
@@ -751,6 +775,7 @@ const getTheme=()=>state.themeKey==='custom'?customTheme(state.custom||{}):(THEM
 <p><b>9.9 Statistics.</b> LYNQ counts taps and link clicks for each Card per day so Profile Owners can see simple statistics. Taps and clicks by the Profile Owner and by LYNQ staff are not counted. Counts are not linked to the identity of the visitor.</p>
 <p><b>9.10 Spam limits.</b> To protect inboxes, LYNQ limits how many notes and shared contacts a single Card can receive per hour and per day. Submissions above the limit are rejected.</p>
 <p><b>9.11 Retention and deletion.</b> A Profile Owner can delete their Profile or their whole account from the menu at any time. Deleting a Profile erases its text and uploaded photos. Deleting an account also removes the Google sign-in record from LYNQ and the user's saved LYNQ contacts, and unlinks all of the user's Cards. When a Card is unlinked, reset or removed from an account, its notes, shared contacts and tap statistics are erased. Staff action logs may be kept for security and accountability. Data already viewed, copied or shared by others may remain outside LYNQ's control.</p>
+<p><b>9.12 Support reports.</b> If you send a report through the website, LYNQ stores your message, any image you attach, the Card code you select, your name and email address, and the status and replies, so that staff can help you. Staff can see this information in the admin page and may open or change the affected Card (for example reset or block it). Reports, images and notifications are deleted when you delete your account.</p>
 <h4>Contact LYNQ</h4>
 <p><b>Email:</b> rbrbatenga@gmail.com</p>
 <p>Use these contact details for support, complaints, lost Cards, privacy requests, correction, or deletion.</p>
@@ -816,11 +841,13 @@ async function uploadPending(){
   const b=BZ();b.items=await Promise.all(b.items.map(async it=>({...it,photo:await up(it.photo,'item')})));
 }
 async function purgeMyPhotos(){
-  try{
-    const bk=supabaseClient.storage.from('profile-photos'),uid=curSession.user.id;
-    const{data}=await bk.list(uid,{limit:1000});
-    if(data&&data.length)await bk.remove(data.map(f=>uid+'/'+f.name));
-  }catch(_e){}
+  const uid=curSession.user.id;
+  for(const b of ['profile-photos','support-files']){
+    try{
+      const bk=supabaseClient.storage.from(b),{data}=await bk.list(uid,{limit:1000});
+      if(data&&data.length)await bk.remove(data.map(f=>uid+'/'+f.name));
+    }catch(_e){}
+  }
 }
 
 /* ---------- persistence ---------- */
@@ -1152,7 +1179,7 @@ function bizHTML(){
   const ph=gPhotos().slice(0,3);
   if(!(b.items.length||ph.length||b.book||b.msg))return '';
   const items=b.items.map(it=>`<div class="biz-i">${it.photo?`<img src="${it.photo}" alt="">`:''}<div class="biz-x"><b>${esc(it.name)}</b>${it.desc?`<span>${esc(it.desc)}</span>`:''}</div>${it.price?`<div class="biz-p">${esc(it.price)}</div>`:''}</div>`).join('');
-  const photos=ph.length?`<div class="biz-ph">${ph.map((u,i)=>`<img src="${u}" alt="" data-gi="${i}">`).join('')}</div>`:'';
+  const photos=ph.length?`<div class="biz-ph n${ph.length}">${ph.map((u,i)=>`<img src="${u}" alt="" data-gi="${i}">`).join('')}</div>`:'';
   const btn=(u,l,k,c)=>u?`<a class="btn ${c}" href="${esc(safeUrl(u))}" target="_blank" rel="noopener" data-trk="${k}">${l}</a>`:'';
   return `<div class="biz">${items?`<div class="biz-t">Services &amp; products</div>${items}`:''}${photos}<div class="biz-b">${btn(b.book,esc(b.btn||'Book now'),'booking','')}${btn(b.msg,'Message us','message','secondary')}</div></div>`;
 }
@@ -1212,6 +1239,48 @@ async function installApp(){
   await lynqAlert(/iphone|ipad|ipod/i.test(navigator.userAgent)?'Tap the Share button in Safari, then choose "Add to Home Screen".':'Open your browser menu (the three dots) and choose "Install app" or "Add to Home screen".','Add to Home Screen');
 }
 
+/* ---------- notifications (bell) + reports to LYNQ ---------- */
+let notifs=[],notifLoaded=false,rpFile=null;
+async function loadNotifs(){
+  if(!curSession||!hasAccount)return;
+  const{data}=await supabaseClient.from('notifications').select('*').eq('user_id',curSession.user.id).order('created_at',{ascending:false}).limit(30);
+  notifs=data||[];const n=notifs.filter(x=>!x.read).length;
+  $('bellDot').textContent=n>9?'9+':n;$('bellDot').classList.toggle('hidden',!n);
+}
+async function openNotifs(){
+  await loadNotifs();
+  $('notifList').innerHTML=notifs.length?notifs.map(n=>`<div class="note-item" style="${n.read?'':'background:rgba(127,127,127,.1);border-radius:10px;padding:10px 8px'}"><b style="color:var(--text)">${esc(n.title)}</b><div style="font-size:13px;margin-top:2px">${esc(n.body||'')}</div><div style="font-size:11px;color:var(--sub);margin-top:3px">${new Date(n.created_at).toLocaleString()}</div></div>`).join(''):'No notifications yet.';
+  $('notifModal').classList.add('open');
+  if(notifs.some(n=>!n.read)){await supabaseClient.rpc('mark_notifications_read');$('bellDot').classList.add('hidden')}
+}
+async function openReport(){
+  if(!curSession)return;
+  const{data}=await supabaseClient.from('nfc_cards').select('nfc_uid').eq('user_id',curSession.user.id).order('created_at');
+  $('rpCard').innerHTML='<option value="">No specific card</option>'+(data||[]).map(c=>`<option value="${esc(c.nfc_uid)}"${c.nfc_uid===currentCardUid?' selected':''}>${esc(c.nfc_uid)}</option>`).join('');
+  $('rpMsg').value='';$('rpStatus').textContent='';$('rpImgTxt').textContent='Attach image';rpFile=null;
+  $('notifModal').classList.remove('open');$('reportModal').classList.add('open');
+}
+async function sendReport(){
+  const msg=$('rpMsg').value.trim(),st=$('rpStatus');
+  if(!msg){st.textContent='Please describe the problem.';return}
+  $('rpSend').disabled=true;st.textContent='Sending...';
+  let path=null;
+  if(rpFile){
+    try{
+      const blob=await (await fetch(rpFile)).blob();
+      path=`${curSession.user.id}/${Date.now()}.jpg`;
+      const{error}=await supabaseClient.storage.from('support-files').upload(path,blob,{contentType:'image/jpeg'});
+      if(error){console.warn('LYNQ report image:',error.message);path=null}
+    }catch(_e){path=null}
+  }
+  const{data,error}=await supabaseClient.rpc('create_ticket',{p_card_uid:$('rpCard').value||null,p_category:$('rpCat').value,p_message:msg,p_image_path:path});
+  $('rpSend').disabled=false;
+  if(error||!data){st.textContent="Could not send. You may have reached today's limit. Please wait for our reply.";return}
+  $('reportModal').classList.remove('open');
+  await lynqAlert('We received your report. You will see updates under the bell icon.','Report sent');
+  loadNotifs();
+}
+
 /* ---------- first-time walkthrough of the editor ---------- */
 const TOUR=[
  {t:'Welcome to your editor',x:'This quick tour shows where everything is. It takes about a minute.'},
@@ -1264,6 +1333,9 @@ function buildMenu(){
   const go=signed&&hasAccount&&!!myUid&&!isOwner;
   $('mGoMine').classList.toggle('hidden',!go);$('goMineBtn').classList.toggle('hidden',!go);
   $('mTour').classList.toggle('hidden',!isOwner);
+  $('mReport').classList.toggle('hidden',!(signed&&hasAccount));
+  $('bellBtn').classList.toggle('hidden',!(signed&&hasAccount));
+  if(signed&&hasAccount&&!notifLoaded){notifLoaded=true;loadNotifs()}
   $('mCards').classList.toggle('hidden',!(signed&&hasAccount));
   $('mStats').classList.toggle('hidden',!(signed&&hasAccount&&(isOwner||!!myUid)));
   $('mInstall').classList.toggle('hidden',!!standalone());
@@ -1551,7 +1623,7 @@ async function init(){
     $(closeId).addEventListener('click',()=>$(modalId).classList.remove('open'));
     $(modalId).addEventListener('click',e=>{if(e.target.id===modalId)$(modalId).classList.remove('open')});
   };
-  modal('infoBtn','infoModal','closeInfoBtn');modal(null,'qrModal','closeQrBtn');modal(null,'galleryModal','closeGalleryBtn');modal(null,'contactsModal','closeContactsBtn');modal(null,'cardsModal','closeCardsBtn');modal(null,'statsModal','closeStatsBtn');
+  modal('infoBtn','infoModal','closeInfoBtn');modal(null,'qrModal','closeQrBtn');modal(null,'galleryModal','closeGalleryBtn');modal(null,'contactsModal','closeContactsBtn');modal(null,'cardsModal','closeCardsBtn');modal(null,'notifModal','closeNotifBtn');modal(null,'reportModal','closeReportBtn');modal(null,'statsModal','closeStatsBtn');
   $('openGalleryBtn').addEventListener('click',()=>{galShow(0,false);$('galleryModal').classList.add('open')});
   $('galPrev').addEventListener('click',()=>galShow(gi-1,true));
   $('galNext').addEventListener('click',()=>galShow(gi+1,true));
@@ -1607,6 +1679,9 @@ async function init(){
   $('tcNext').onclick=()=>{if(tourI>=TOUR.length-1)endTour();else showTour(tourI+1)};
   $('tcBack').onclick=()=>{if(tourI>0)showTour(tourI-1)};
   $('tcSkip').onclick=endTour;
+  $('bellBtn').onclick=openNotifs;$('notifReport').onclick=openReport;$('mReport').onclick=()=>{pops();openReport()};$('rpSend').onclick=sendReport;
+  $('rpImg').addEventListener('change',e=>{const f=e.target.files[0];e.target.value='';if(f)compressImage(f,1000,.7,u=>{rpFile=u;$('rpImgTxt').textContent='Image attached'})});
+  setInterval(()=>{if(document.visibilityState==='visible')loadNotifs()},60000);
   $('mTour').onclick=()=>{pops();editing=true;$('inboxPanel').classList.add('hidden');render();setTimeout(startTour,300)};
   $('inboxFab').addEventListener('click',()=>{editing=false;render();$('inboxPanel').classList.toggle('hidden');fetchInboxNotes()});
   $('closeInboxBtn').addEventListener('click',()=>$('inboxPanel').classList.add('hidden'));
