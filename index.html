@@ -368,6 +368,8 @@ h1[data-v=staff]::after{background:#C11C84}h1[data-v=student]::after{background:
 .scf1 .sci{font-size:11px;font-weight:700;width:auto}
 .scf1 input{display:block;width:100%;height:30px;padding:0 8px 0 29px;border-radius:9px;border:1px solid rgba(127,127,127,.3);background:rgba(127,127,127,.1);color:var(--text);font-size:16px;min-width:0}
 #scSend{width:100%;height:30px;padding:0;border-radius:9px;font-size:14px}
+.biz-ph{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:4px 0 10px}
+.biz-ph img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:14px;cursor:pointer;border:1px solid rgba(127,127,127,.15)}
 </style>
 <script>
 /* LYNQ team theme helpers: cover + badge are drawn in code (no image files needed) */
@@ -488,7 +490,7 @@ const getTheme=()=>state.themeKey==='custom'?customTheme(state.custom||{}):(THEM
 <div class="li"><span class="thumb" id="edAvPrev"></span><label>Profile photo</label><label class="pb">Change<input type="file" id="avatarFile" accept="image/*" hidden></label><button type="button" class="pb" id="avRm" hidden style="margin-left:6px;color:#d33">Remove</button></div>
 <div class="li"><span class="thumb wide" id="edCvPrev"></span><label>Cover photo</label><label class="pb">Change<input type="file" id="coverFile" accept="image/*" hidden></label><button type="button" class="pb" id="cvRm" hidden style="margin-left:6px;color:#d33">Remove</button></div>
 <div class="li"><label>Cover dim</label><input type="range" id="opRange" min="0" max="90" value="55"></div></div>
-<div class="sub-t">Gallery photos (up to 3)</div>
+<div class="sub-t" id="galT">Business photos (up to 3)</div>
 <div class="tiles"><label class="tile" id="tile1"><input type="file" id="photoFile1" accept="image/*" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></label><label class="tile" id="tile2"><input type="file" id="photoFile2" accept="image/*" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></label><label class="tile" id="tile3"><input type="file" id="photoFile3" accept="image/*" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></label></div></div></details>
 <details class="sec"><summary><span class="ic" style="background:#5856d6"><svg viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg></span>Appearance<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary><div class="sec-body"><div class="sub-t">Theme</div><div class="themes"><div class="sw" data-k="clean-light" onclick="applyThemePreset('clean-light')"><i style="background:#4472C4"></i>Clean Light</div><div class="sw" data-k="black-gray" onclick="applyThemePreset('black-gray')"><i style="background:linear-gradient(135deg,#242424,#0d0d0d)"></i>Black & Gray</div><div class="sw" data-k="white-pink" onclick="applyThemePreset('white-pink')"><i style="background:linear-gradient(135deg,#ff80bf,#ffb3d9)"></i>White & Pink</div><div class="sw" data-k="white-black" onclick="applyThemePreset('white-black')"><i style="background:linear-gradient(135deg,#334155,#0f172a)"></i>White & Black</div><div class="sw" data-k="lgbt-pride" onclick="applyThemePreset('lgbt-pride')"><i style="background:linear-gradient(90deg,red,orange,yellow,green,blue,purple)"></i>Pride</div><div class="sw" data-k="midnight-blue" onclick="applyThemePreset('midnight-blue')"><i style="background:linear-gradient(135deg,#1e40af,#1e1b4b)"></i>Midnight</div><div class="sw" data-k="emerald-dark" onclick="applyThemePreset('emerald-dark')"><i style="background:linear-gradient(135deg,#047857,#064e3b)"></i>Emerald</div><div class="sw" data-k="sunset-amber" onclick="applyThemePreset('sunset-amber')"><i style="background:linear-gradient(135deg,#d97706,#b45309)"></i>Sunset</div></div>
 <div class="sub-t">Special themes</div>
@@ -524,7 +526,7 @@ const getTheme=()=>state.themeKey==='custom'?customTheme(state.custom||{}):(THEM
 <div class="li"><label>Message link</label><input type="url" id="bizMsg" placeholder="m.me/yourpage or wa.me/..." autocapitalize="off"></div></div>
 <div id="bizList"></div>
 <div class="grp"><div class="li"><label>Item</label><input type="text" id="bizName" placeholder="e.g. Haircut"></div><div class="li"><label>Price</label><input type="text" id="bizPrice" placeholder="₱150"></div><div class="li"><label>Details</label><input type="text" id="bizDesc" placeholder="Optional"></div><div class="li"><label>Photo</label><label class="pb"><span id="bizPhotoTxt">Add photo</span><input type="file" id="bizPhotoFile" accept="image/*" hidden></label></div></div>
-<button class="btn" id="addBizBtn">Add item</button><div class="note">Up to 12 items. Your payment QR (Contact &amp; payment) also shows on your profile.</div></div></details>
+<button class="btn" id="addBizBtn">Add item</button><div class="note">Up to 12 items and 3 business photos (in Photos above). Your payment QR (Contact &amp; payment) also shows on your profile.</div></div></details>
 <details class="sec"><summary><span class="ic" style="background:#0a84ff"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>Your share link<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary><div class="sec-body">
 <div class="note" style="margin:0">Your NFC card always opens with its serial number. This is the shorter link you share online.</div>
 <div class="grp"><div class="li"><label>Username</label><input type="text" id="handleInput" placeholder="yourname" maxlength="20" autocapitalize="off" autocorrect="off"></div></div>
@@ -604,7 +606,7 @@ const getTheme=()=>state.themeKey==='custom'?customTheme(state.custom||{}):(THEM
   <div class="sheet-foot"><button class="gbtn primary" id="legalClose">Close</button></div>
 </div></div>
 <script type="text/html" id="tplTerms">
-<p><i>Last updated: November 18, 2026</i></p>
+<p><i>Last updated: November 25, 2026</i></p>
 <p>Please read these Terms. They apply when you visit the LYNQ website, view or manage a digital Profile, claim a Card, submit a visitor note, or use another LYNQ online feature.</p>
 <h4>1. Who We Are and How You Agree</h4>
 <p><b>1.1 Operator.</b> LYNQ Systems is operated in Davao City by founder and developer Rex Belli R. Batenga, RCrim, and co-founder Jim Michael Z. Acman. “LYNQ,” “we,” and “our” refer to those operators.</p>
@@ -614,18 +616,18 @@ const getTheme=()=>state.themeKey==='custom'?customTheme(state.custom||{}):(THEM
 <p><b>1.5 Capacity.</b> You must have legal capacity to agree. A person without full capacity must act through a parent, guardian, or authorized representative. See Civil Code Articles 1159, 1305, 1318, 1327, and 1330.</p>
 <h4>2. The Card and Digital Profile</h4>
 <p><b>2.1 Card.</b> A LYNQ Card is a physical ISO/IEC 14443 NFC card. Its chip stores a link containing the Card ID; the Profile information is stored online.</p>
-<p><b>2.2 Profile.</b> A Profile may display social links, contact details, photos, biography, work and education information, location, interests, a payment QR, and a visitor-note inbox.</p>
+<p><b>2.2 Profile.</b> A Profile may display social links, contact details, photos, biography, work and education information, location, interests, a payment QR, business information (services, prices, photos, and booking or message links), a verified badge where granted, and an inbox of visitor notes and shared contacts.</p>
 <p><b>2.3 Access.</b> A Profile can open through an NFC tap or direct URL. Visitors generally need no app or LYNQ account, but they need internet access and a compatible browser.</p>
 <p><b>2.4 Price.</b> The Card costs ₱169, paid once. There is no subscription or renewal fee.</p>
 <p><b>2.5 Availability.</b> Card sales are presently limited to Davao City, with an initial run of approximately 800–900 Cards. Public Profiles may be viewed online from other locations.</p>
 <h4>3. Hosting and Service Availability</h4>
-<p><b>3.1 Free-tier infrastructure.</b> The Platform presently uses a Supabase cloud database with Google sign-in and a workers.dev address hosted through Cloudflare Workers.</p>
+<p><b>3.1 Free-tier infrastructure.</b> The Platform presently uses a Supabase cloud database and file storage with Google sign-in, and a web address hosted through Cloudflare Workers. These services may change as LYNQ grows, including the web address.</p>
 <p><b>3.2 Meaning of “lifetime hosting.”</b> It means hosting for the operational life of the Service on then-available free-tier infrastructure. It does not guarantee perpetual service, uninterrupted uptime, permanent URLs, or unchanged features.</p>
 <p><b>3.3 Third-party changes.</b> Google, Supabase, Cloudflare, and other providers may impose limits, change free plans, pause projects, suspend services, or discontinue features.</p>
 <p><b>3.4 Maintenance.</b> LYNQ may perform maintenance, security updates, migrations, or emergency repairs. Temporary downtime may occur without advance notice when urgent.</p>
 <h4>4. Accounts and Device Requirements</h4>
 <h5>Google account security</h5>
-<p><b>4.1 Claiming.</b> The first person who successfully claims an unclaimed Card through Google sign-in may become its Profile Owner. Claim your Card promptly.</p>
+<p><b>4.1 Claiming.</b> The first person who successfully claims an unclaimed Card through Google sign-in and confirms &ldquo;Claim this card&rdquo; may become its Profile Owner. Claim your Card promptly. If your account already has a Card, you will be asked to confirm before another Card is added.</p>
 <p><b>4.2 Owner access.</b> Only the claiming Google Account is intended to edit the Profile. LYNQ does not receive or store your Google password.</p>
 <p><b>4.3 Your responsibility.</b> Protect your Google Account, recovery methods, devices, and sessions. Report suspected unauthorized access promptly.</p>
 <p><b>4.4 Third-party authentication.</b> LYNQ is not responsible for Google outages, OAuth changes, lost credentials, account suspensions, or restrictive in-app browsers, except where the loss is caused by LYNQ’s legally actionable conduct.</p>
@@ -640,7 +642,10 @@ const getTheme=()=>state.themeKey==='custom'?customTheme(state.custom||{}):(THEM
 <p><b>5.3 Your promises.</b> You confirm that you own the content or have all permissions and lawful bases needed to publish it, and that it does not violate another person’s privacy, confidentiality, intellectual-property, contractual, or other rights.</p>
 <p><b>5.4 Public visibility.</b> Published Profile information is public. Anyone with the Card or URL may view, save, copy, screenshot, or share it. Publish only information you intend to make public.</p>
 <p><b>5.5 Visitor notes.</b> A visitor may leave a note. If signed in, the visitor’s email address may accompany it. Notes must not be used for spam, threats, fraud, harassment, malware, or unlawful marketing.</p>
-<p><b>5.6 No endorsement.</b> LYNQ does not verify or endorse a Profile Owner’s identity, qualifications, employment, links, goods, services, or representations.</p>
+<p><b>5.6 No endorsement.</b> LYNQ does not verify or endorse a Profile Owner’s identity, qualifications, employment, links, goods, services, or representations.</p><p><b>5.7 Contacts shared by visitors.</b> A visitor may share a name, social handles, a phone number and a link with a Profile Owner. This information is delivered to the Profile Owner's inbox. LYNQ does not verify it. Share only what you are comfortable giving to the Profile Owner. Profile Owners must use it lawfully and only for the purpose for which it was shared.</p>
+<p><b>5.8 Saved LYNQ contacts.</b> A signed-in user may save another Profile to their LYNQ contacts. LYNQ stores the Card ID, the Profile name at the time of saving, and the date. The list is visible only to that user.</p>
+<p><b>5.9 Business mode.</b> A Profile Owner may add services, prices, photos, and booking or message links. These are the Owner's own offers. LYNQ is not a party to any sale, booking or payment and does not guarantee any service, price or availability.</p>
+<p><b>5.10 Verified badges.</b> LYNQ may grant a verified check to staff, students or organizations. It means LYNQ confirmed that status when the badge was granted. It is not an endorsement. LYNQ may add or remove a badge at any time.</p>
 <h4>6. Acceptable Use</h4>
 <p>You must not use the Platform to:</p>
 <p><b>6.1</b> gain unauthorized access to an account, editor, visitor inbox, database, server, token, or nonpublic area;</p>
@@ -663,21 +668,25 @@ const getTheme=()=>state.themeKey==='custom'?customTheme(state.custom||{}):(THEM
 <p><b>8.2 De-linking.</b> After verification, LYNQ will use reasonable efforts to de-link the Card, restrict or remove the Profile, and delete associated personal data from the active database when legally permitted.</p>
 <p><b>8.3 Limits.</b> De-linking is not instantaneous. Data already viewed, copied, saved, indexed, cached, screenshotted, or shared may remain outside LYNQ’s control.</p>
 <p><b>8.4 Unauthorized taps.</b> To the fullest extent permitted by law, LYNQ has no liability for unauthorized taps, URL access, copying, contact, or disclosure caused by a Card or URL that the Owner lost, shared, exposed, or failed to report promptly. This waiver does not cover LYNQ’s fraud, bad faith, gross negligence, or other non-waivable liability.</p>
+<p><b>8.5 Owner controls.</b> A Profile Owner can disable a Card, enable it again, or remove it from their account at any time from the menu. A disabled Card shows a notice to visitors. A removed Card becomes unclaimed and can be claimed by whoever claims it next.</p>
 <h4>9. Privacy and Data Protection</h4>
 <p><b>9.1 Applicable law.</b> LYNQ processes personal data under Republic Act No. 10173, its Implementing Rules and Regulations, applicable National Privacy Commission issuances, and other applicable law.</p>
-<p><b>9.2 Data processed.</b> Data may include Google OAuth identifiers; Profile information and images; links and QR images; Card and Profile IDs; visitor notes and available email addresses; support and deletion requests; acceptance records; and security or technical data.</p>
-<p><b>9.3 Purposes.</b> Data is used to authenticate and claim Cards, host and publish Profiles, deliver notes, provide support, secure and troubleshoot the Platform, prevent misuse, prove acceptance, respond to rights requests, and comply with law.</p>
-<p><b>9.4 Public data.</b> Profile information selected for publication is visible to anyone who opens the URL or taps the Card.</p>
-<p><b>9.5 Administrative access.</b> LYNQ developers do not routinely review Profiles or inbox notes. Technical access must be limited to operating, supporting, securing, investigating, or complying with law.</p>
-<p><b>9.6 Cloud processing.</b> Data is presently processed through Supabase, Cloudflare, and Google services and may be handled outside the Philippines. LYNQ remains accountable for appropriate safeguards. See Republic Act No. 10173, Sections 11–14 and 20–21; IRR, Rules IV–VI.</p>
-<p><b>9.7 Your rights.</b> Subject to lawful conditions, you may be informed, object, access, correct, erase or block, obtain damages, request portability where applicable, and complain to the National Privacy Commission. See Republic Act No. 10173, Sections 16–18; IRR, Rules VIII–IX.</p>
-<p><b>9.8 Cookies and logs.</b> The source information confirms that Terms acceptance is remembered but does not identify the technology used. Necessary cookies or local storage may be used for acceptance, authentication, security, and requested functions. Any non-essential tracking must be separately disclosed. Exact technical logs and retention periods must reflect the deployed system.</p>
+<p><b>9.2 Data processed.</b> Data may include Google sign-in identifiers and email address; Profile information; photos and images you upload (profile, cover, gallery, business items and payment QR), which are kept in file storage; links; Card and Profile IDs; visitor notes; contact details that visitors choose to share with a Profile Owner (name, social handles, phone number and a link); LYNQ contacts that a signed-in user saves; daily counts of taps and link clicks for each Card; a verified badge, where granted; support and deletion requests; acceptance records; staff action logs; and security or technical data.</p>
+<p><b>9.3 Purposes.</b> Data is used to authenticate and claim Cards, host and publish Profiles, deliver notes and shared contacts to Profile Owners, show simple statistics to Profile Owners, provide support, secure and troubleshoot the Platform, limit spam and misuse, prove acceptance, respond to rights requests, and comply with law.</p>
+<p><b>9.4 Public data.</b> Profile information selected for publication, including business information such as services, prices and booking or message links, is visible to anyone who opens the URL or taps the Card.</p>
+<p><b>9.5 Administrative access.</b> LYNQ developers do not routinely review Profiles, inbox notes or shared contacts. Authorized LYNQ staff use a private admin page to see Card serial numbers and status, each Card owner's email address and Profile name, to open public Profiles, to generate, reset or block Cards, and to grant or remove verified badges. These staff actions are recorded in a log. Technical access must be limited to operating, supporting, securing, investigating, or complying with law.</p>
+<p><b>9.6 Cloud processing.</b> Data is presently processed through Supabase (database and file storage), Cloudflare, and Google services and may be handled outside the Philippines. LYNQ remains accountable for appropriate safeguards. See Republic Act No. 10173, Sections 11-14 and 20-21; IRR, Rules IV-VI.</p>
+<p><b>9.7 Your rights.</b> Subject to lawful conditions, you may be informed, object, access, correct, erase or block, obtain damages, request portability where applicable, and complain to the National Privacy Commission. See Republic Act No. 10173, Sections 16-18; IRR, Rules VIII-IX.</p>
+<p><b>9.8 Browser storage.</b> LYNQ uses your browser's local and session storage to keep you signed in, remember that you accepted these Terms, remember your theme, keep an offline copy of Profiles you opened on that device, and time anti-spam limits. Fonts are loaded from Google Fonts. LYNQ does not use advertising or cross-site tracking cookies. Any non-essential tracking must be separately disclosed.</p>
+<p><b>9.9 Statistics.</b> LYNQ counts taps and link clicks for each Card per day so Profile Owners can see simple statistics. Taps and clicks by the Profile Owner and by LYNQ staff are not counted. Counts are not linked to the identity of the visitor.</p>
+<p><b>9.10 Spam limits.</b> To protect inboxes, LYNQ limits how many notes and shared contacts a single Card can receive per hour and per day. Submissions above the limit are rejected.</p>
+<p><b>9.11 Retention and deletion.</b> A Profile Owner can delete their Profile or their whole account from the menu at any time. Deleting a Profile erases its text and uploaded photos. Deleting an account also removes the Google sign-in record from LYNQ and the user's saved LYNQ contacts, and unlinks all of the user's Cards. When a Card is unlinked, reset or removed from an account, its notes, shared contacts and tap statistics are erased. Staff action logs may be kept for security and accountability. Data already viewed, copied or shared by others may remain outside LYNQ's control.</p>
 <h4>10. Moderation and Termination</h4>
 <p><b>10.1 Platform action.</b> LYNQ may investigate reports and remove content, suspend editing, de-link a Card, revoke or redirect a URL, invalidate sessions, rate-limit traffic, preserve evidence, or block an account, device, network, or IP address.</p>
 <p><b>10.2 Immediate action.</b> LYNQ may act without prior notice for an active security incident, malicious code, fraud, unlawful access, credible threat, personal-data risk, legal order, or serious Terms violation.</p>
 <p><b>10.3 Other cases.</b> Where practicable, LYNQ should use proportionate measures and allow the User to respond.</p>
 <p><b>10.4 Hosting liability.</b> Republic Act No. 8792, Section 30, limits service-provider liability for merely providing access to User material only when its statutory conditions are met.</p>
-<p><b>10.5 User deletion.</b> A Profile Owner may request de-linking or deletion. Limited records may be retained where required for security, compliance, fraud prevention, or legal claims.</p>
+<p><b>10.5 User deletion.</b> A Profile Owner can delete their Profile or their account from the menu at any time, and can also ask LYNQ to do so. Limited records, such as staff action logs, may be kept where required for security, compliance, fraud prevention, or legal claims.</p>
 <h4>11. Warranties and Liability</h4>
 <p><b>11.1 Service basis.</b> The Platform, Profiles, links, compatibility checker, authentication, hosting, notes, and related functions are provided “AS IS” and “AS AVAILABLE,” except for warranties that cannot lawfully be excluded.</p>
 <p><b>11.2 No uptime guarantee.</b> LYNQ does not promise uninterrupted or error-free operation, universal device compatibility, permanent URLs, uninterrupted free-tier hosting, or continuous operation of Google OAuth or other third-party services.</p>
@@ -700,17 +709,20 @@ const getTheme=()=>state.themeKey==='custom'?customTheme(state.custom||{}):(THEM
 <p><b>13.2</b> Use these contact details for support, complaints, lost Cards, privacy requests, correction, or deletion.</p>
 </script>
 <script type="text/html" id="tplPrivacy">
-<p><i>Last updated: November 18, 2026</i></p>
+<p><i>Last updated: November 25, 2026</i></p>
 <p>This Privacy Policy is Section 9 of the LYNQ Terms of Use.</p>
 <h4>9. Privacy and Data Protection</h4>
 <p><b>9.1 Applicable law.</b> LYNQ processes personal data under Republic Act No. 10173, its Implementing Rules and Regulations, applicable National Privacy Commission issuances, and other applicable law.</p>
-<p><b>9.2 Data processed.</b> Data may include Google OAuth identifiers; Profile information and images; links and QR images; Card and Profile IDs; visitor notes and available email addresses; support and deletion requests; acceptance records; and security or technical data.</p>
-<p><b>9.3 Purposes.</b> Data is used to authenticate and claim Cards, host and publish Profiles, deliver notes, provide support, secure and troubleshoot the Platform, prevent misuse, prove acceptance, respond to rights requests, and comply with law.</p>
-<p><b>9.4 Public data.</b> Profile information selected for publication is visible to anyone who opens the URL or taps the Card.</p>
-<p><b>9.5 Administrative access.</b> LYNQ developers do not routinely review Profiles or inbox notes. Technical access must be limited to operating, supporting, securing, investigating, or complying with law.</p>
-<p><b>9.6 Cloud processing.</b> Data is presently processed through Supabase, Cloudflare, and Google services and may be handled outside the Philippines. LYNQ remains accountable for appropriate safeguards. See Republic Act No. 10173, Sections 11–14 and 20–21; IRR, Rules IV–VI.</p>
-<p><b>9.7 Your rights.</b> Subject to lawful conditions, you may be informed, object, access, correct, erase or block, obtain damages, request portability where applicable, and complain to the National Privacy Commission. See Republic Act No. 10173, Sections 16–18; IRR, Rules VIII–IX.</p>
-<p><b>9.8 Cookies and logs.</b> The source information confirms that Terms acceptance is remembered but does not identify the technology used. Necessary cookies or local storage may be used for acceptance, authentication, security, and requested functions. Any non-essential tracking must be separately disclosed. Exact technical logs and retention periods must reflect the deployed system.</p>
+<p><b>9.2 Data processed.</b> Data may include Google sign-in identifiers and email address; Profile information; photos and images you upload (profile, cover, gallery, business items and payment QR), which are kept in file storage; links; Card and Profile IDs; visitor notes; contact details that visitors choose to share with a Profile Owner (name, social handles, phone number and a link); LYNQ contacts that a signed-in user saves; daily counts of taps and link clicks for each Card; a verified badge, where granted; support and deletion requests; acceptance records; staff action logs; and security or technical data.</p>
+<p><b>9.3 Purposes.</b> Data is used to authenticate and claim Cards, host and publish Profiles, deliver notes and shared contacts to Profile Owners, show simple statistics to Profile Owners, provide support, secure and troubleshoot the Platform, limit spam and misuse, prove acceptance, respond to rights requests, and comply with law.</p>
+<p><b>9.4 Public data.</b> Profile information selected for publication, including business information such as services, prices and booking or message links, is visible to anyone who opens the URL or taps the Card.</p>
+<p><b>9.5 Administrative access.</b> LYNQ developers do not routinely review Profiles, inbox notes or shared contacts. Authorized LYNQ staff use a private admin page to see Card serial numbers and status, each Card owner's email address and Profile name, to open public Profiles, to generate, reset or block Cards, and to grant or remove verified badges. These staff actions are recorded in a log. Technical access must be limited to operating, supporting, securing, investigating, or complying with law.</p>
+<p><b>9.6 Cloud processing.</b> Data is presently processed through Supabase (database and file storage), Cloudflare, and Google services and may be handled outside the Philippines. LYNQ remains accountable for appropriate safeguards. See Republic Act No. 10173, Sections 11-14 and 20-21; IRR, Rules IV-VI.</p>
+<p><b>9.7 Your rights.</b> Subject to lawful conditions, you may be informed, object, access, correct, erase or block, obtain damages, request portability where applicable, and complain to the National Privacy Commission. See Republic Act No. 10173, Sections 16-18; IRR, Rules VIII-IX.</p>
+<p><b>9.8 Browser storage.</b> LYNQ uses your browser's local and session storage to keep you signed in, remember that you accepted these Terms, remember your theme, keep an offline copy of Profiles you opened on that device, and time anti-spam limits. Fonts are loaded from Google Fonts. LYNQ does not use advertising or cross-site tracking cookies. Any non-essential tracking must be separately disclosed.</p>
+<p><b>9.9 Statistics.</b> LYNQ counts taps and link clicks for each Card per day so Profile Owners can see simple statistics. Taps and clicks by the Profile Owner and by LYNQ staff are not counted. Counts are not linked to the identity of the visitor.</p>
+<p><b>9.10 Spam limits.</b> To protect inboxes, LYNQ limits how many notes and shared contacts a single Card can receive per hour and per day. Submissions above the limit are rejected.</p>
+<p><b>9.11 Retention and deletion.</b> A Profile Owner can delete their Profile or their whole account from the menu at any time. Deleting a Profile erases its text and uploaded photos. Deleting an account also removes the Google sign-in record from LYNQ and the user's saved LYNQ contacts, and unlinks all of the user's Cards. When a Card is unlinked, reset or removed from an account, its notes, shared contacts and tap statistics are erased. Staff action logs may be kept for security and accountability. Data already viewed, copied or shared by others may remain outside LYNQ's control.</p>
 <h4>Contact LYNQ</h4>
 <p><b>Email:</b> rbrbatenga@gmail.com</p>
 <p>Use these contact details for support, complaints, lost Cards, privacy requests, correction, or deletion.</p>
@@ -751,14 +763,52 @@ const EDU_RANKS={'Elementary':1,'Junior High':2,'Senior High':3,'College':4,'Mas
 const initials=()=>{const n=(state.name||'Your Name').trim().split(/\s+/);return ((n[0]||'?')[0]+(n.length>1?n[n.length-1][0]:'')).toUpperCase()};
 function hideLoader(){const l=$('loadingScreen');if(l){l.style.opacity='0';setTimeout(()=>l.remove(),400)}}
 
+/* ---------- photos live in Supabase Storage (bucket: profile-photos) ---------- */
+const PB=SUPABASE_URL+'/storage/v1/object/public/profile-photos/';
+let lastPaths=new Set();
+function pathsOf(st){
+  const out=new Set(),add=u=>{if(typeof u==='string'&&u.startsWith(PB))out.add(decodeURIComponent(u.slice(PB.length)))};
+  add(st.avatar);add(st.cover);add(st.qrImage);(st.photos||[]).forEach(add);((st.biz&&st.biz.items)||[]).forEach(it=>add(it.photo));
+  return out;
+}
+async function uploadImg(dataUrl,kind){
+  try{
+    const blob=await (await fetch(dataUrl)).blob();
+    const ext=blob.type==='image/webp'?'webp':blob.type==='image/png'?'png':'jpg';
+    const path=`${curSession.user.id}/${kind}-${Date.now()}-${Math.random().toString(36).slice(2,7)}.${ext}`;
+    const{error}=await supabaseClient.storage.from('profile-photos').upload(path,blob,{contentType:blob.type,cacheControl:'31536000'});
+    if(error){console.warn('LYNQ upload:',error.message);return dataUrl}      // keeps the photo inline if storage is unavailable
+    return supabaseClient.storage.from('profile-photos').getPublicUrl(path).data.publicUrl;
+  }catch(e){console.warn('LYNQ upload:',e);return dataUrl}
+}
+async function uploadPending(){
+  const up=async(v,k)=>(typeof v==='string'&&v.startsWith('data:'))?await uploadImg(v,k):v;
+  state.avatar=await up(state.avatar,'avatar');state.cover=await up(state.cover,'cover');state.qrImage=await up(state.qrImage,'qr');
+  state.photos=await Promise.all(Array.from(state.photos||[],v=>up(v,'gallery')));
+  const b=BZ();b.items=await Promise.all(b.items.map(async it=>({...it,photo:await up(it.photo,'item')})));
+}
+async function purgeMyPhotos(){
+  try{
+    const bk=supabaseClient.storage.from('profile-photos'),uid=curSession.user.id;
+    const{data}=await bk.list(uid,{limit:1000});
+    if(data&&data.length)await bk.remove(data.map(f=>uid+'/'+f.name));
+  }catch(_e){}
+}
+
 /* ---------- persistence ---------- */
-async function persist(){
+let _saving=Promise.resolve();
+const persist=()=>(_saving=_saving.then(_persist,_persist));      // one save at a time
+async function _persist(){
   if(!isOwner)return false;
   const{data:{session}}=await supabaseClient.auth.getSession();
   if(!session)return false;
+  await uploadPending();
   const{error}=await supabaseClient.from('profiles').upsert({user_id:session.user.id,bio:JSON.stringify(state),card_title:state.name,updated_at:new Date().toISOString()});
-  if(error)console.warn('LYNQ save:',error.message);
-  return !error;
+  if(error){console.warn('LYNQ save:',error.message);return false}
+  const now=pathsOf(state),gone=[...lastPaths].filter(x=>!now.has(x));
+  if(gone.length)supabaseClient.storage.from('profile-photos').remove(gone);   // old photos that are no longer used
+  lastPaths=now;
+  return true;
 }
 
 /* ---------- vCard ---------- */
@@ -864,7 +914,7 @@ function render(){
   if(brandCover){const im=new Image();im.onerror=()=>{cv.style.backgroundImage=t.cover;cv.style.backgroundSize='cover';cv.style.backgroundPosition='center';cv.style.backgroundColor='';cv.style.height='';cv.querySelector('.ov').style.display=''};im.src=B.cover}
   const bb=$('brandBadge');bb.onerror=()=>bb.classList.add('hidden');bb.classList.toggle('hidden',!(B&&B.logo));if(B&&B.logo)bb.src=B.logo;
   const dc=$('decoEl');dc.classList.toggle('hidden',!(B&&B.deco));if(B&&B.deco)dc.src=B.deco;
-  $('mainCardEl').classList.toggle('solo',!gPhotos().length);
+  $('mainCardEl').classList.add('solo');
   $('customBox').classList.toggle('hidden',state.themeKey!=='custom');
   $('customModeSel').value=(state.custom||{}).mode||'light';$('customClr').value=(state.custom||{}).accent||'#4472C4';
 
@@ -903,7 +953,8 @@ function render(){
 
   const wl=$('workLocationEl');
   if(state.workCityCountry){wl.textContent=state.workCityCountry;wl.classList.remove('hidden')}else{wl.classList.add('hidden');wl.textContent=''}
-  $('openGalleryBtn').classList.toggle('hidden',!gPhotos().length);
+  $('openGalleryBtn').classList.add('hidden');
+  $('galT').classList.toggle('hidden',!BZ().on);document.querySelector('.tiles').classList.toggle('hidden',!BZ().on);
 
   const work=state.work||[];
   $('workEl').innerHTML=work.map(w=>`<div class="workrow"><b>${esc(w.role)}</b>${w.company?' — '+esc(w.company):''}${w.duration?` <span class="dur">(${esc(w.duration)})</span>`:''}</div>`).join('');
@@ -1048,6 +1099,7 @@ const lynqConfirm=o=>lynqDialog({...o,cancel:true});
 async function deleteMyProfile(){
   if(!curSession)return;
   if(!await lynqConfirm({danger:true,title:'Delete your profile?',text:'Your photos, links and details will be erased. Your cards stay linked to your Google account.',word:'DELETE',ok:'Delete profile'}))return;
+  await purgeMyPhotos();
   const{error}=await supabaseClient.from('profiles').delete().eq('user_id',curSession.user.id);
   if(error){await lynqAlert('Could not delete: '+error.message,'Something went wrong');return}
   await lynqAlert('Your profile was deleted.','Done');location.reload();
@@ -1055,6 +1107,7 @@ async function deleteMyProfile(){
 async function deleteMyAccount(){
   if(!curSession)return;
   if(!await lynqConfirm({danger:true,title:'Delete your account?',text:'This permanently removes your Google sign-in from LYNQ, your profile and saved contacts, and unlinks all your cards. This cannot be undone.',word:'DELETE',ok:'Delete account'}))return;
+  await purgeMyPhotos();
   const{error}=await supabaseClient.rpc('delete_my_account');
   if(error){await lynqAlert('Could not delete: '+error.message,'Something went wrong');return}
   await supabaseClient.auth.signOut({scope:'local'});sessionStorage.clear();
@@ -1066,10 +1119,13 @@ async function deleteMyAccount(){
 const BZ=()=>state.biz=state.biz||{on:false,items:[],book:'',msg:''};
 let bizPhoto='';
 function bizHTML(){
-  const b=BZ();if(!b.on||!(b.items.length||b.book||b.msg))return '';
+  const b=BZ();if(!b.on)return '';
+  const ph=gPhotos().slice(0,3);
+  if(!(b.items.length||ph.length||b.book||b.msg))return '';
   const items=b.items.map(it=>`<div class="biz-i">${it.photo?`<img src="${it.photo}" alt="">`:''}<div class="biz-x"><b>${esc(it.name)}</b>${it.desc?`<span>${esc(it.desc)}</span>`:''}</div>${it.price?`<div class="biz-p">${esc(it.price)}</div>`:''}</div>`).join('');
+  const photos=ph.length?`<div class="biz-ph">${ph.map((u,i)=>`<img src="${u}" alt="" data-gi="${i}">`).join('')}</div>`:'';
   const btn=(u,l,k,c)=>u?`<a class="btn ${c}" href="${esc(safeUrl(u))}" target="_blank" rel="noopener" data-trk="${k}">${l}</a>`:'';
-  return `<div class="biz">${items?`<div class="biz-t">Services &amp; prices</div>${items}`:''}<div class="biz-b">${btn(b.book,'Book now','booking','')}${btn(b.msg,'Message us','message','secondary')}</div></div>`;
+  return `<div class="biz">${items?`<div class="biz-t">Services offered</div>${items}`:''}${photos}<div class="biz-b">${btn(b.book,'Book now','booking','')}${btn(b.msg,'Message us','message','secondary')}</div></div>`;
 }
 
 /* ---------- share link (username) ---------- */
@@ -1169,7 +1225,7 @@ function buildSharePanel(){
     if(Date.now()-(+localStorage.getItem(k)||0)<60000){st.textContent='Already sent. Try again in a minute.';return}
     st.textContent='Sending...';
     const{data,error}=await supabaseClient.rpc('share_contact',{p_card_uid:currentCardUid,p_name:v('scName'),p_instagram:v('scIg'),p_facebook:v('scFb'),p_phone:v('scPh'),p_link:v('scLk')});
-    if(error||data!==true){st.textContent='Could not send. Please try again.';return}
+    if(error||data!==true){st.textContent='Could not send. Try again later.';return}
     localStorage.setItem(k,Date.now());st.textContent='Sent! The owner will see it.';setTimeout(()=>setSc(false),1800);
     ['scName','scIg','scFb','scPh','scLk'].forEach(id=>$(id).value='');
   };
@@ -1363,6 +1419,7 @@ async function handleNfcCardBinding(){
     try{const{data,error:te}=await supabaseClient.rpc('increment_tap',{p_uid:uid});if(te)console.warn('LYNQ tap counter:',te.message);else if(typeof data==='number')tapCount=data;else tapCount+=1}catch(e){console.warn('LYNQ tap counter:',e)}
   }
   render();
+  if(isOwner)lastPaths=pathsOf(state);
   if(offline)$('offBar').classList.remove('hidden');
   $('menuBtn').classList.remove('hidden');scVisitor=!isOwner;setSc(!sessionStorage.getItem('sc_min'));buildMenu();
   if(justClaimed)successScreen(window._inherited);
@@ -1403,6 +1460,7 @@ async function init(){
     b.items.push({name:n,price:$('bizPrice').value.trim(),desc:$('bizDesc').value.trim(),photo:bizPhoto});
     bizPhoto='';['bizName','bizPrice','bizDesc'].forEach(id=>$(id).value='');$('bizPhotoTxt').textContent='Add photo';render();
   });
+  document.addEventListener('click',e=>{const im=e.target.closest('[data-gi]');if(im){galShow(+im.dataset.gi,false);$('galleryModal').classList.add('open')}});
   document.addEventListener('click',e=>{const a=e.target.closest('[data-trk]');if(a&&!isOwner&&!isStaff&&!offline&&currentCardUid)supabaseClient.rpc('track_click',{p_uid:currentCardUid,p_key:a.dataset.trk})});
   $('tabNotes').onclick=()=>inboxTab('notes');$('tabContacts').onclick=()=>inboxTab('contacts');
   await handleNfcCardBinding().catch(()=>infoScreen('Please tap your LYNQ card','Or paste your LYNQ portfolio exact URL.'));
@@ -1477,8 +1535,8 @@ async function init(){
     if(!msg){ns.textContent='Please write a message first.';return}
     ns.textContent='Sending note...';
     const{data:{session}}=await supabaseClient.auth.getSession();
-    const{error}=await supabaseClient.from('card_notes').insert({card_uid:currentCardUid,message:msg,visitor_email:session?.user?.email||'Anonymous Visitor'});
-    if(error)ns.textContent='Failed to send: '+error.message;else{ns.textContent='Note sent successfully!';$('visitorNoteText').value=''}
+    const{data:okNote,error}=await supabaseClient.rpc('leave_note',{p_card_uid:currentCardUid,p_message:msg});
+    if(error||okNote!==true)ns.textContent='Could not send right now. Please try again later.';else{ns.textContent='Note sent successfully!';$('visitorNoteText').value=''}
   });
 }
 /* ---------- Add to Home Screen + offline ---------- */
