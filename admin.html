@@ -10,7 +10,7 @@ h1{font-size:20px;margin:0}.muted{color:rgba(255,255,255,.55);font-size:12.5px}
 .top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}
 .tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
 .b,.tabs button{border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.07);color:#fff;padding:9px 14px;border-radius:12px;font-weight:600;font-size:13px;cursor:pointer;text-decoration:none;display:inline-block}
-.tabs button.on,.b.p{background:linear-gradient(135deg,#C11C84,#7c5cff);border-color:transparent}
+.tabs button.on,.b.p{background:linear-gradient(135deg,#D6248F,#7c5cff);border-color:transparent}
 .b.d{background:rgba(239,68,68,.18);border-color:rgba(239,68,68,.4);color:#ffb4bd}
 .card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:14px;margin-bottom:10px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}.stat b{font-size:26px;display:block}
@@ -29,11 +29,12 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:13px}
 </div>
 <div id="app" class="hide">
   <div class="top"><div><h1>LYNQ Admin</h1><div class="muted" id="who"></div></div><div class="row"><a class="b" href="./">Back to LYNQ</a><button class="b" id="out">Sign out</button></div></div>
-  <div class="tabs"><button data-t="ov" class="on">Overview</button><button data-t="cards">Cards</button><button data-t="users">Users</button><button data-t="gen">Generate</button><button data-t="log">Log</button></div>
+  <div class="tabs"><button data-t="ov" class="on">Overview</button><button data-t="cards">Cards</button><button data-t="users">Users</button><button data-t="gen">Generate</button><button data-t="rep">Reports</button><button data-t="log">Log</button></div>
   <div id="t-ov"></div>
   <div id="t-cards" class="hide"><div class="row" style="margin-bottom:10px"><input id="q" placeholder="Search serial or owner email" style="flex:1"><button class="b p" id="qGo">Search</button></div><div id="cards"></div></div>
   <div id="t-users" class="hide"><input id="uq" placeholder="Filter by name, email or username" style="width:100%;margin-bottom:10px"><div id="users"></div></div>
   <div id="t-gen" class="hide"><div class="card"><div class="muted" style="margin-bottom:8px">Creates new unclaimed cards with random serials.</div><div class="row"><input id="n" type="number" min="1" max="1000" value="100" style="width:120px"><button class="b p" id="genGo">Generate</button></div></div><div id="genOut"></div></div>
+  <div id="t-rep" class="hide"></div>
   <div id="t-log" class="hide"></div>
 </div></div>
 <script>
@@ -46,13 +47,13 @@ async function boot(){
   if(!session){$('signin').classList.remove('hide');return}
   const ok=(await sb.rpc('is_staff')).data===true;
   if(!ok){document.body.innerHTML='<div class="wrap"><div class="card" style="margin-top:60px;text-align:center"><h1>Not authorized</h1><p class="muted">This Google account is not on the LYNQ staff list.</p><button class="b" id="o2">Sign out</button></div></div>';$('o2').onclick=async()=>{await sb.auth.signOut();location.reload()};return}
-  $('who').textContent=session.user.email;$('app').classList.remove('hide');loadOv();loadCards();loadUsers();loadLog();
+  $('who').textContent=session.user.email;$('app').classList.remove('hide');loadOv();loadCards();loadUsers();loadLog();loadTickets();
 }
 $('goSign').onclick=()=>sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname,queryParams:{prompt:'select_account'}}});
 $('out').onclick=async()=>{await sb.auth.signOut();location.reload()};
 document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));
-  ['ov','cards','users','gen','log'].forEach(t=>$('t-'+t).classList.toggle('hide',t!==b.dataset.t));
+  ['ov','cards','users','gen','rep','log'].forEach(t=>$('t-'+t).classList.toggle('hide',t!==b.dataset.t));
 });
 async function loadOv(){
   const{data}=await sb.rpc('admin_stats');if(!data){$('t-ov').innerHTML='<div class="card">Could not load.</div>';return}
@@ -74,6 +75,29 @@ $('cards').addEventListener('click',async e=>{
   if(b.dataset.a==='dis'){await sb.rpc('set_card_disabled',{p_uid:u,p_disabled:b.dataset.v==='true'})}
   if(b.dataset.a==='reset'){if(!confirm('Reset '+u+'? The owner loses this card and its taps, notes and shared contacts. Their profile stays on their account.'))return;await sb.rpc('admin_reset_card',{p_uid:u})}
   loadCards();loadOv();loadLog();
+});
+async function loadTickets(){
+  const{data,error}=await sb.rpc('admin_tickets');
+  if(error||!data){$('t-rep').innerHTML='<div class="card">Could not load reports.</div>';return}
+  const openN=data.filter(t=>t.status!=='resolved').length;
+  document.querySelector('[data-t="rep"]').textContent='Reports'+(openN?' ('+openN+')':'');
+  const urls={};
+  await Promise.all(data.filter(t=>t.image_path).map(async t=>{const r=await sb.storage.from('support-files').createSignedUrl(t.image_path,3600);urls[t.id]=r.data&&r.data.signedUrl}));
+  $('t-rep').innerHTML=data.length?data.map(t=>`<div class="card"><div class="row sp"><b>${esc(t.category)}</b><span class="chip ${t.status==='resolved'?'g':t.status==='in_progress'?'y':'r'}">${esc(t.status.replace('_',' '))}</span></div>
+  <div class="muted" style="margin:4px 0">${esc(t.name||'(no name yet)')} · ${esc(t.email)} · Card <code>${esc(t.card_uid||'none')}</code> · ${new Date(t.created_at).toLocaleString()}</div>
+  <div style="white-space:pre-wrap;margin:6px 0">${esc(t.message)}</div>
+  ${urls[t.id]?`<a href="${urls[t.id]}" target="_blank" rel="noopener"><img src="${urls[t.id]}" style="max-width:100%;max-height:200px;border-radius:12px;margin:6px 0"></a>`:''}
+  ${t.staff_reply?`<div class="muted">Last reply: ${esc(t.staff_reply)}</div>`:''}
+  <textarea id="r-${esc(t.id)}" placeholder="Reply to the user (shown in their notifications)" style="width:100%;margin:8px 0;min-height:60px;background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:10px;font-size:16px"></textarea>
+  <div class="row"><button class="b" data-tk="reply" data-id="${esc(t.id)}" data-s="${esc(t.status)}">Send reply</button><button class="b" data-tk="in_progress" data-id="${esc(t.id)}">In progress</button><button class="b p" data-tk="resolved" data-id="${esc(t.id)}">Resolved</button></div>
+  ${t.card_uid?`<div class="row" style="margin-top:8px"><span class="muted">Manage card:</span><a class="b" target="_blank" rel="noopener" href="${BASE}?card=${encodeURIComponent(t.card_uid)}&nt=1">Open</a><button class="b" data-tk="block" data-u="${esc(t.card_uid)}" data-v="${!t.card_disabled}">${t.card_disabled?'Unblock':'Block'}</button>${t.card_claimed?`<button class="b d" data-tk="reset" data-u="${esc(t.card_uid)}">Reset</button>`:''}</div>`:''}</div>`).join(''):'<div class="card muted">No reports yet.</div>';
+}
+$('t-rep').addEventListener('click',async e=>{
+  const b=e.target.closest('button[data-tk]');if(!b)return;const k=b.dataset.tk;
+  if(k==='block'){await sb.rpc('set_card_disabled',{p_uid:b.dataset.u,p_disabled:b.dataset.v==='true'})}
+  else if(k==='reset'){if(!confirm('Reset '+b.dataset.u+'? The owner loses this card.'))return;await sb.rpc('admin_reset_card',{p_uid:b.dataset.u})}
+  else{const id=b.dataset.id,reply=($('r-'+id)||{}).value||'';await sb.rpc('admin_ticket_update',{p_id:id,p_status:k==='reply'?b.dataset.s:k,p_reply:reply})}
+  loadTickets();loadCards();loadOv();loadLog();
 });
 async function loadLog(){
   const{data}=await sb.rpc('admin_log',{p_limit:150});
