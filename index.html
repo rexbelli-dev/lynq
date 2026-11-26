@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>LYNQ</title>
-<meta name="theme-color" content="#C11C84">
+<meta name="theme-color" content="#D6248F">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="LYNQ">
 <link rel="apple-touch-icon" href="assets/icon-192.png">
@@ -355,7 +355,7 @@ body.editing #brandBadge{display:none}
 .biz-p{font-weight:800;font-size:14px;color:var(--accent);white-space:nowrap}
 .biz-b{display:flex;gap:8px;margin-top:6px}.biz-b .btn{flex:1;text-align:center;text-decoration:none;border-radius:14px;padding:12px}
 h1[data-v]:not([data-v=""])::after{content:"✓";display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;margin-left:8px;border-radius:50%;background:#1d9bf0;color:#fff;font-size:11px;vertical-align:middle;transform:translateY(-1px)}
-h1[data-v=staff]::after{background:#C11C84}h1[data-v=student]::after{background:#10b981}
+h1[data-v=staff]::after{background:#D6248F}h1[data-v=student]::after{background:#10b981}
 #offBar{position:fixed;left:50%;transform:translateX(-50%);top:calc(8px + env(safe-area-inset-top,0px));z-index:70;background:rgba(20,20,25,.88);color:#fff;font-size:12px;padding:6px 12px;border-radius:99px;backdrop-filter:blur(10px);white-space:nowrap}
 
 #scPanel{position:absolute;top:calc(6px + env(safe-area-inset-top,0px));left:50%;right:auto;width:340px;transform-origin:top center;transform:translateX(-50%) scale(var(--scs,.7));z-index:25;background:var(--card-bg);backdrop-filter:blur(26px);-webkit-backdrop-filter:blur(26px);border:1px solid var(--border);border-radius:16px;padding:7px 10px 9px;box-shadow:0 12px 28px rgba(0,0,0,.28);color:var(--text)}
@@ -370,12 +370,31 @@ h1[data-v=staff]::after{background:#C11C84}h1[data-v=student]::after{background:
 #scSend{width:100%;height:30px;padding:0;border-radius:9px;font-size:14px}
 .biz-ph{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:4px 0 10px}
 .biz-ph img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:14px;cursor:pointer;border:1px solid rgba(127,127,127,.15)}
+.opill{display:inline-flex;align-items:center;gap:6px;margin:2px 0 8px;padding:4px 12px;border-radius:99px;font-size:12px;font-weight:700;color:#1fa855;background:rgba(34,197,94,.14);border:1px solid rgba(34,197,94,.45)}
+.opill i{width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.25)}
+#openWrap{text-align:center}
+.avatar.open{border-color:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.25),0 8px 20px rgba(0,0,0,.12)}
+/* background pattern: painted on the page itself so it never ends, however far you scroll */
+html{background-image:var(--pat,none);background-attachment:fixed}
+body{background:transparent;background-image:none}
+#tour{position:fixed;inset:0;z-index:10003}
+#tourSpot{position:fixed;border-radius:14px;box-shadow:0 0 0 9999px rgba(5,5,10,.72),0 0 0 2px rgba(255,255,255,.55);transition:all .3s cubic-bezier(.16,1,.3,1);pointer-events:none}
+#tourSpot.none{left:50%;top:50%;width:0;height:0}
+#tourCard{position:fixed;left:12px;right:12px;max-width:420px;margin:0 auto;background:rgba(24,24,32,.96);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.14);border-radius:22px;padding:16px 16px 12px;color:#fff;box-shadow:0 20px 50px rgba(0,0,0,.5)}
+#tourCard.bottom{bottom:calc(14px + env(safe-area-inset-bottom,0px))}
+#tourCard.top{top:calc(14px + env(safe-area-inset-top,0px))}
+#tourCard.mid{top:50%;transform:translateY(-50%)}
+.tc-step{font-size:11px;color:rgba(255,255,255,.5);font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+#tourCard h3{margin:4px 0;font-size:17px}
+#tourCard p{margin:0 0 12px;font-size:13.5px;line-height:1.5;color:rgba(255,255,255,.72)}
+.tc-row{display:flex;align-items:center;gap:8px}
+.tc-row .gbtn{width:auto;padding:10px 16px;font-size:14px;border-radius:12px}
 </style>
 <script>
 /* LYNQ team theme helpers: cover + badge are drawn in code (no image files needed) */
 const svgURI=s=>'data:image/svg+xml,'+encodeURIComponent(s);
 const CH='<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>';
-const LYNQ_PAT=`url("${svgURI(`<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140"><g transform="translate(16 18) scale(2.4)" fill="none" stroke="#C11C84" stroke-opacity=".12" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${CH}</g><g transform="translate(84 84) scale(1.6)" fill="none" stroke="#C11C84" stroke-opacity=".09" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${CH}</g></svg>`)}")`;
+const LYNQ_PAT=`url("${svgURI(`<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140"><g transform="translate(16 18) scale(2.4)" fill="none" stroke="#D6248F" stroke-opacity=".12" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${CH}</g><g transform="translate(84 84) scale(1.6)" fill="none" stroke="#D6248F" stroke-opacity=".09" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${CH}</g></svg>`)}")`;
 const THEMES={
  'clean-light':{bg:'#f4f5f7',card:'rgba(255,255,255,0.78)',text:'#1a1a1a',sub:'#555555',accent:'#4472C4',cover:'linear-gradient(135deg,#4472C4,#2E5395)',border:'rgba(255,255,255,0.6)',wave:['#4472C4','#6ea8fe','#22d3ee']},
  'black-gray':{bg:'#121212',card:'rgba(30,30,30,0.8)',text:'#f1f1f1',sub:'#a0a0a0',accent:'#888888',cover:'linear-gradient(135deg,#242424,#0d0d0d)',border:'rgba(255,255,255,0.12)',wave:['#6b7280','#e5e7eb','#9ca3af']},
@@ -395,8 +414,8 @@ const THEMES={
  'zap-it':{bg:'#f2f7ff',card:'rgba(255,255,255,0.82)',text:'#0f1b33',sub:'#4a5b78',accent:'#1d6fe8',cover:'linear-gradient(135deg,#1d6fe8,#38bdf8)',border:'rgba(255,255,255,0.7)',wave:['#1d6fe8','#38bdf8','#93c5fd'],
   pat:`url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='110' height='110'%3E%3Cpath d='M30 10L18 38h11l-4 24 20-31H32z' fill='%231d6fe8' fill-opacity='.09'/%3E%3Cpath d='M80 66L72 84h7l-3 16 13-20h-8z' fill='%2338bdf8' fill-opacity='.11'/%3E%3C/svg%3E")`,
   brand:{logo:'assets/zapit-logo.webp',cover:'assets/zapit-logo.webp',coverBg:'#fff'}},
- /* ---- LYNQ personnel theme (#C11C84) ---- */
- 'lynq-team':{bg:'#120a15',card:'rgba(36,18,40,0.82)',text:'#fdf2f8',sub:'#e0b3d2',accent:'#C11C84',cover:'linear-gradient(135deg,#C11C84,#4a0e36)',border:'rgba(255,255,255,0.12)',wave:['#C11C84','#ff6fb5','#a855f7'],
+ /* ---- LYNQ personnel theme (#D6248F) ---- */
+ 'lynq-team':{bg:'#120a15',card:'rgba(36,18,40,0.82)',text:'#fdf2f8',sub:'#e0b3d2',accent:'#D6248F',cover:'linear-gradient(135deg,#D6248F,#4a0e36)',border:'rgba(255,255,255,0.12)',wave:['#D6248F','#ff6fb5','#a855f7'],
   pat:LYNQ_PAT,brand:{logo:'assets/lynq-logo.webp',cover:'assets/lynq-logo.webp',coverBg:'#fff'}}
 };
 function customTheme(c){const a=c.accent||'#4472C4',d=c.mode==='dark';
@@ -438,6 +457,7 @@ const getTheme=()=>state.themeKey==='custom'?customTheme(state.custom||{}):(THEM
  <button class="mi" id="mContacts"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>LYNQ contacts</button>
  <button class="mi hidden" id="mSaveThis"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>Save this profile to LYNQ contacts</button>
  <button class="mi hidden" id="mSignIn"><svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>Sign in</button>
+ <button class="mi hidden" id="mTour"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.5-3 4.5"/><line x1="12" y1="17.5" x2="12.01" y2="17.5"/></svg>Tutorial</button>
  <button class="mi hidden" id="mCards"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="3"/><line x1="2" y1="10" x2="22" y2="10"/></svg>My cards</button>
  <button class="mi hidden" id="mStats"><svg viewBox="0 0 24 24"><line x1="6" y1="20" x2="6" y2="12"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="18" y1="20" x2="18" y2="9"/></svg>Analytics</button>
  <button class="mi" id="mInstall"><svg viewBox="0 0 24 24"><path d="M12 3v12"/><polyline points="7 10 12 15 17 10"/><path d="M5 21h14"/></svg>Add to Home Screen</button>
@@ -460,6 +480,7 @@ const getTheme=()=>state.themeKey==='custom'?customTheme(state.custom||{}):(THEM
       </div>
     </div>
     <h1 id="nameEl"></h1>
+    <div id="openWrap"></div>
     <div class="work" id="workEl"></div>
     <div class="worklocation" id="workLocationEl"></div>
     <p class="bio" id="bioEl"></p>
@@ -499,7 +520,7 @@ const getTheme=()=>state.themeKey==='custom'?customTheme(state.custom||{}):(THEM
 <div class="sw" data-k="davao" onclick="applyThemePreset('davao')"><i style="background:linear-gradient(135deg,#fff,#1b7f3b 60%,#d81b8a)"></i>Davao</div>
 <div class="sw" data-k="zap-it" onclick="applyThemePreset('zap-it')"><i style="background:linear-gradient(135deg,#fff,#1d6fe8)"></i>Zap it</div>
 <div class="sw" data-k="custom" onclick="setCustom({})"><i style="background:conic-gradient(red,orange,yellow,lime,cyan,blue,magenta,red)"></i>Custom</div>
-<div class="sw hidden" id="swTeam" data-k="lynq-team" onclick="applyThemePreset('lynq-team')"><i style="background:linear-gradient(135deg,#C11C84,#2a0f24)"></i>LYNQ Team</div>
+<div class="sw hidden" id="swTeam" data-k="lynq-team" onclick="applyThemePreset('lynq-team')"><i style="background:linear-gradient(135deg,#D6248F,#2a0f24)"></i>LYNQ Team</div>
 </div>
 <div id="customBox" class="hidden">
 <div class="sub-t">Pick a color</div><div id="clrDots"></div>
@@ -521,11 +542,14 @@ const getTheme=()=>state.themeKey==='custom'?customTheme(state.custom||{}):(THEM
 <details class="sec"><summary><span class="ic" style="background:#ff6b35"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span>Work experience<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary><div class="sec-body"><div id="workList"></div><div class="grp"><div class="li"><label>Role</label><input type="text" id="workRole" placeholder="Role / position" ></div><div class="li"><label>Company</label><input type="text" id="workCompany" placeholder="Company" ></div><div class="li"><label>Duration</label><input type="text" id="workDuration" placeholder="Optional" ></div></div><button class="btn" id="addWorkBtn">Add experience</button></div></details>
 <details class="sec"><summary><span class="ic" style="background:#007aff"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>Add a link<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary><div class="sec-body"><div class="grp"><div class="li"><label>Platform</label><select id="platformSel" onchange="toggleCustomLabel()"></select></div><div class="li"><label>Link</label><input type="url" id="linkUrl" placeholder="https://..." autocapitalize="off"></div><div class="li"><label>Label</label><input type="text" id="customNameInput" placeholder="e.g. My Portfolio"></div><div class="li hidden" id="logoRow"><span class="thumb sq" id="logoPrev"></span><label>Logo</label><label class="pb" id="logoUp">Upload<input type="file" id="logoFile" accept="image/*" hidden></label><button type="button" class="pb" id="logoRm" hidden style="margin-left:6px;color:#d33">Remove</button></div></div><button class="btn" id="addLinkBtn">Add link</button><div class="note">Tap the × on a link above to remove it.</div></div></details>
 <details class="sec"><summary><span class="ic" style="background:#ff375f"><svg viewBox="0 0 24 24"><path d="M3 9l1-5h16l1 5"/><path d="M4 9v11h16V9"/><path d="M9 20v-6h6v6"/></svg></span>Business mode<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary><div class="sec-body">
-<div class="grp"><div class="li"><label for="bizOn" style="flex:1">Show services &amp; booking</label><label class="switch"><input type="checkbox" id="bizOn"><span class="slider"></span></label></div>
-<div class="li"><label>Booking link</label><input type="url" id="bizBook" placeholder="https://..." autocapitalize="off"></div>
+<div class="grp"><div class="li"><label for="bizOn" style="flex:1">Show services, products &amp; booking</label><label class="switch"><input type="checkbox" id="bizOn"><span class="slider"></span></label></div>
+<div class="li"><label for="bizOpen" style="flex:1">Show status badge</label><label class="switch"><input type="checkbox" id="bizOpen"><span class="slider"></span></label></div>
+<div class="li"><label>Status</label><select id="bizOpenLabel"><option>Open to work</option><option>Available for bookings</option><option>Open for orders</option><option>Accepting new clients</option><option>Now hiring</option></select></div>
+<div class="li"><label>Main link</label><input type="url" id="bizBook" placeholder="Booking or shop link" autocapitalize="off"></div>
+<div class="li"><label>Button text</label><select id="bizBtn"><option>Book now</option><option>Order now</option><option>Shop now</option><option>Learn more</option></select></div>
 <div class="li"><label>Message link</label><input type="url" id="bizMsg" placeholder="m.me/yourpage or wa.me/..." autocapitalize="off"></div></div>
 <div id="bizList"></div>
-<div class="grp"><div class="li"><label>Item</label><input type="text" id="bizName" placeholder="e.g. Haircut"></div><div class="li"><label>Price</label><input type="text" id="bizPrice" placeholder="₱150"></div><div class="li"><label>Details</label><input type="text" id="bizDesc" placeholder="Optional"></div><div class="li"><label>Photo</label><label class="pb"><span id="bizPhotoTxt">Add photo</span><input type="file" id="bizPhotoFile" accept="image/*" hidden></label></div></div>
+<div class="grp"><div class="li"><label>Item</label><input type="text" id="bizName" placeholder="e.g. Haircut or Wallet"></div><div class="li"><label>Price</label><input type="text" id="bizPrice" placeholder="₱150"></div><div class="li"><label>Details</label><input type="text" id="bizDesc" placeholder="Optional"></div><div class="li"><label>Photo</label><label class="pb"><span id="bizPhotoTxt">Add photo</span><input type="file" id="bizPhotoFile" accept="image/*" hidden></label></div></div>
 <button class="btn" id="addBizBtn">Add item</button><div class="note">Up to 12 items and 3 business photos (in Photos above). Your payment QR (Contact &amp; payment) also shows on your profile.</div></div></details>
 <details class="sec"><summary><span class="ic" style="background:#0a84ff"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>Your share link<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary><div class="sec-body">
 <div class="note" style="margin:0">Your NFC card always opens with its serial number. This is the shorter link you share online.</div>
@@ -544,6 +568,10 @@ const getTheme=()=>state.themeKey==='custom'?customTheme(state.custom||{}):(THEM
   </div>
   <a class="switch-account-link hidden" id="switchAccountBtn">Switch to different LYNQ account</a>
 </div>
+
+<div id="tour" class="hidden"><div id="tourSpot" class="none"></div>
+  <div id="tourCard" class="mid"><div class="tc-step" id="tcStep"></div><h3 id="tcTitle"></h3><p id="tcText"></p>
+    <div class="tc-row"><button class="ghost" id="tcSkip">Skip</button><span style="flex:1"></span><button class="gbtn" id="tcBack">Back</button><button class="gbtn primary" id="tcNext">Next</button></div></div></div>
 
 <div class="dlg" id="dlg"><div class="dlg-box">
   <div class="dlg-ic" id="dlgIc"></div>
@@ -616,7 +644,7 @@ const getTheme=()=>state.themeKey==='custom'?customTheme(state.custom||{}):(THEM
 <p><b>1.5 Capacity.</b> You must have legal capacity to agree. A person without full capacity must act through a parent, guardian, or authorized representative. See Civil Code Articles 1159, 1305, 1318, 1327, and 1330.</p>
 <h4>2. The Card and Digital Profile</h4>
 <p><b>2.1 Card.</b> A LYNQ Card is a physical ISO/IEC 14443 NFC card. Its chip stores a link containing the Card ID; the Profile information is stored online.</p>
-<p><b>2.2 Profile.</b> A Profile may display social links, contact details, photos, biography, work and education information, location, interests, a payment QR, business information (services, prices, photos, and booking or message links), a verified badge where granted, and an inbox of visitor notes and shared contacts.</p>
+<p><b>2.2 Profile.</b> A Profile may display social links, contact details, photos, biography, work and education information, location, interests, a payment QR, business information (services or products, prices, photos, and booking, shop or message links), a status badge such as "Open to work", a verified badge where granted, and an inbox of visitor notes and shared contacts.</p>
 <p><b>2.3 Access.</b> A Profile can open through an NFC tap or direct URL. Visitors generally need no app or LYNQ account, but they need internet access and a compatible browser.</p>
 <p><b>2.4 Price.</b> The Card costs ₱169, paid once. There is no subscription or renewal fee.</p>
 <p><b>2.5 Availability.</b> Card sales are presently limited to Davao City, with an initial run of approximately 800–900 Cards. Public Profiles may be viewed online from other locations.</p>
@@ -644,7 +672,7 @@ const getTheme=()=>state.themeKey==='custom'?customTheme(state.custom||{}):(THEM
 <p><b>5.5 Visitor notes.</b> A visitor may leave a note. If signed in, the visitor’s email address may accompany it. Notes must not be used for spam, threats, fraud, harassment, malware, or unlawful marketing.</p>
 <p><b>5.6 No endorsement.</b> LYNQ does not verify or endorse a Profile Owner’s identity, qualifications, employment, links, goods, services, or representations.</p><p><b>5.7 Contacts shared by visitors.</b> A visitor may share a name, social handles, a phone number and a link with a Profile Owner. This information is delivered to the Profile Owner's inbox. LYNQ does not verify it. Share only what you are comfortable giving to the Profile Owner. Profile Owners must use it lawfully and only for the purpose for which it was shared.</p>
 <p><b>5.8 Saved LYNQ contacts.</b> A signed-in user may save another Profile to their LYNQ contacts. LYNQ stores the Card ID, the Profile name at the time of saving, and the date. The list is visible only to that user.</p>
-<p><b>5.9 Business mode.</b> A Profile Owner may add services, prices, photos, and booking or message links. These are the Owner's own offers. LYNQ is not a party to any sale, booking or payment and does not guarantee any service, price or availability.</p>
+<p><b>5.9 Business mode.</b> A Profile Owner may add services or products, prices, photos, and booking, shop or message links. These are the Owner's own offers. LYNQ is not a party to any sale, order, booking or payment and does not guarantee any service, product, price or availability.</p>
 <p><b>5.10 Verified badges.</b> LYNQ may grant a verified check to staff, students or organizations. It means LYNQ confirmed that status when the badge was granted. It is not an endorsement. LYNQ may add or remove a badge at any time.</p>
 <h4>6. Acceptable Use</h4>
 <p>You must not use the Platform to:</p>
@@ -673,7 +701,7 @@ const getTheme=()=>state.themeKey==='custom'?customTheme(state.custom||{}):(THEM
 <p><b>9.1 Applicable law.</b> LYNQ processes personal data under Republic Act No. 10173, its Implementing Rules and Regulations, applicable National Privacy Commission issuances, and other applicable law.</p>
 <p><b>9.2 Data processed.</b> Data may include Google sign-in identifiers and email address; Profile information; photos and images you upload (profile, cover, gallery, business items and payment QR), which are kept in file storage; links; Card and Profile IDs; visitor notes; contact details that visitors choose to share with a Profile Owner (name, social handles, phone number and a link); LYNQ contacts that a signed-in user saves; daily counts of taps and link clicks for each Card; a verified badge, where granted; support and deletion requests; acceptance records; staff action logs; and security or technical data.</p>
 <p><b>9.3 Purposes.</b> Data is used to authenticate and claim Cards, host and publish Profiles, deliver notes and shared contacts to Profile Owners, show simple statistics to Profile Owners, provide support, secure and troubleshoot the Platform, limit spam and misuse, prove acceptance, respond to rights requests, and comply with law.</p>
-<p><b>9.4 Public data.</b> Profile information selected for publication, including business information such as services, prices and booking or message links, is visible to anyone who opens the URL or taps the Card.</p>
+<p><b>9.4 Public data.</b> Profile information selected for publication, including business information such as services or products, prices, status badges and booking, shop or message links, is visible to anyone who opens the URL or taps the Card.</p>
 <p><b>9.5 Administrative access.</b> LYNQ developers do not routinely review Profiles, inbox notes or shared contacts. Authorized LYNQ staff use a private admin page to see Card serial numbers and status, each Card owner's email address and Profile name, to open public Profiles, to generate, reset or block Cards, and to grant or remove verified badges. These staff actions are recorded in a log. Technical access must be limited to operating, supporting, securing, investigating, or complying with law.</p>
 <p><b>9.6 Cloud processing.</b> Data is presently processed through Supabase (database and file storage), Cloudflare, and Google services and may be handled outside the Philippines. LYNQ remains accountable for appropriate safeguards. See Republic Act No. 10173, Sections 11-14 and 20-21; IRR, Rules IV-VI.</p>
 <p><b>9.7 Your rights.</b> Subject to lawful conditions, you may be informed, object, access, correct, erase or block, obtain damages, request portability where applicable, and complain to the National Privacy Commission. See Republic Act No. 10173, Sections 16-18; IRR, Rules VIII-IX.</p>
@@ -715,7 +743,7 @@ const getTheme=()=>state.themeKey==='custom'?customTheme(state.custom||{}):(THEM
 <p><b>9.1 Applicable law.</b> LYNQ processes personal data under Republic Act No. 10173, its Implementing Rules and Regulations, applicable National Privacy Commission issuances, and other applicable law.</p>
 <p><b>9.2 Data processed.</b> Data may include Google sign-in identifiers and email address; Profile information; photos and images you upload (profile, cover, gallery, business items and payment QR), which are kept in file storage; links; Card and Profile IDs; visitor notes; contact details that visitors choose to share with a Profile Owner (name, social handles, phone number and a link); LYNQ contacts that a signed-in user saves; daily counts of taps and link clicks for each Card; a verified badge, where granted; support and deletion requests; acceptance records; staff action logs; and security or technical data.</p>
 <p><b>9.3 Purposes.</b> Data is used to authenticate and claim Cards, host and publish Profiles, deliver notes and shared contacts to Profile Owners, show simple statistics to Profile Owners, provide support, secure and troubleshoot the Platform, limit spam and misuse, prove acceptance, respond to rights requests, and comply with law.</p>
-<p><b>9.4 Public data.</b> Profile information selected for publication, including business information such as services, prices and booking or message links, is visible to anyone who opens the URL or taps the Card.</p>
+<p><b>9.4 Public data.</b> Profile information selected for publication, including business information such as services or products, prices, status badges and booking, shop or message links, is visible to anyone who opens the URL or taps the Card.</p>
 <p><b>9.5 Administrative access.</b> LYNQ developers do not routinely review Profiles, inbox notes or shared contacts. Authorized LYNQ staff use a private admin page to see Card serial numbers and status, each Card owner's email address and Profile name, to open public Profiles, to generate, reset or block Cards, and to grant or remove verified badges. These staff actions are recorded in a log. Technical access must be limited to operating, supporting, securing, investigating, or complying with law.</p>
 <p><b>9.6 Cloud processing.</b> Data is presently processed through Supabase (database and file storage), Cloudflare, and Google services and may be handled outside the Philippines. LYNQ remains accountable for appropriate safeguards. See Republic Act No. 10173, Sections 11-14 and 20-21; IRR, Rules IV-VI.</p>
 <p><b>9.7 Your rights.</b> Subject to lawful conditions, you may be informed, object, access, correct, erase or block, obtain damages, request portability where applicable, and complain to the National Privacy Commission. See Republic Act No. 10173, Sections 16-18; IRR, Rules VIII-IX.</p>
@@ -941,6 +969,7 @@ function render(){
   const ex=chips('Languages:',state.languages)+chips('Hobbies:',state.hobbies);
   $('extraTagsContainer').innerHTML=ex?`<div class="extra-section-container">${ex}</div>`:'';
   $('bizEl').innerHTML=bizHTML();
+  {const o=BZ(),on=!!(o.on&&o.open);$('openWrap').innerHTML=on?'<span class="opill"><i></i>'+esc(o.label||'Open to work')+'</span>':'';$('avatarContainer').classList.toggle('open',on)}
 
   let ch='';
   if(state.phone||state.email)ch+=`<button class="contact-btn" id="saveContactBtn" data-trk="save"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="17" y1="11" x2="23" y2="11"/></svg> Save</button>`;
@@ -983,7 +1012,7 @@ function render(){
   $('layoutStyleSel').value=state.layoutStyle||'list';$('iconStyleSel').value=state.iconStyle||'brand';
   document.querySelectorAll('.seg').forEach(g=>{const v=$(g.dataset.for).value;g.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v===v))});
   [['workCityCountry','workCityCountry'],['languagesInput','languages'],['hobbiesInput','hobbies'],['phoneInput','phone'],['emailInput','email'],['qrNameInput','qrName']].forEach(([id,k])=>{if(document.activeElement!==$(id))$(id).value=state[k]||''});
-  const bz2=BZ();$('bizOn').checked=!!bz2.on;
+  const bz2=BZ();$('bizOn').checked=!!bz2.on;$('bizOpen').checked=!!bz2.open;$('bizOpenLabel').value=bz2.label||'Open to work';$('bizBtn').value=bz2.btn||'Book now';
   if(document.activeElement!==$('bizBook'))$('bizBook').value=bz2.book||'';if(document.activeElement!==$('bizMsg'))$('bizMsg').value=bz2.msg||'';
   $('bizList').innerHTML=bz2.items.map((it,i)=>`<div class="worklistitem"><span>${esc(it.name)}${it.price?' — '+esc(it.price):''}</span><span class="rm" data-i="${i}">×</span></div>`).join('');
   $('bizList').querySelectorAll('.rm').forEach(el=>el.onclick=()=>{BZ().items.splice(+el.dataset.i,1);render()});
@@ -1125,7 +1154,7 @@ function bizHTML(){
   const items=b.items.map(it=>`<div class="biz-i">${it.photo?`<img src="${it.photo}" alt="">`:''}<div class="biz-x"><b>${esc(it.name)}</b>${it.desc?`<span>${esc(it.desc)}</span>`:''}</div>${it.price?`<div class="biz-p">${esc(it.price)}</div>`:''}</div>`).join('');
   const photos=ph.length?`<div class="biz-ph">${ph.map((u,i)=>`<img src="${u}" alt="" data-gi="${i}">`).join('')}</div>`:'';
   const btn=(u,l,k,c)=>u?`<a class="btn ${c}" href="${esc(safeUrl(u))}" target="_blank" rel="noopener" data-trk="${k}">${l}</a>`:'';
-  return `<div class="biz">${items?`<div class="biz-t">Services offered</div>${items}`:''}${photos}<div class="biz-b">${btn(b.book,'Book now','booking','')}${btn(b.msg,'Message us','message','secondary')}</div></div>`;
+  return `<div class="biz">${items?`<div class="biz-t">Services &amp; products</div>${items}`:''}${photos}<div class="biz-b">${btn(b.book,esc(b.btn||'Book now'),'booking','')}${btn(b.msg,'Message us','message','secondary')}</div></div>`;
 }
 
 /* ---------- share link (username) ---------- */
@@ -1183,6 +1212,49 @@ async function installApp(){
   await lynqAlert(/iphone|ipad|ipod/i.test(navigator.userAgent)?'Tap the Share button in Safari, then choose "Add to Home Screen".':'Open your browser menu (the three dots) and choose "Install app" or "Add to Home screen".','Add to Home Screen');
 }
 
+/* ---------- first-time walkthrough of the editor ---------- */
+const TOUR=[
+ {t:'Welcome to your editor',x:'This quick tour shows where everything is. It takes about a minute.'},
+ {s:0,t:'Photos',x:'Add your profile photo and cover here. Tap Remove if you change your mind.'},
+ {s:1,t:'Appearance',x:'Pick a theme, or choose your own color. You can switch any time.'},
+ {s:2,t:'About you',x:'Add your location, languages and hobbies. Tap your name or bio at the top of the page to edit them directly.'},
+ {s:3,t:'Contact & payment',x:'Add your phone, email and your GCash or Maya QR so people can reach and pay you.'},
+ {s:4,t:'Education & work',x:'Share where you studied and where you work. Education and Work experience sit right here.'},
+ {s:6,t:'Add a link',x:'Add Instagram, Facebook, WhatsApp, your website and more. Tap the × on a link to remove it.'},
+ {s:7,t:'Selling something?',x:'Turn on Business mode to list services or products with prices and photos, add a Book or Order button, and show a status badge.'},
+ {s:8,t:'Your share link',x:'Choose a short username to share online. Your card still opens with its own serial number.'},
+ {bar:1,t:'Save & publish',x:'Nothing goes live until you press this. Do it when you are finished.'},
+ {t:'You are all set!',x:'Open the menu (top right) any time for My cards, Analytics and more. You can replay this tour from the menu under Tutorial.'}
+];
+let tourI=-1,tourTimer=null;
+function tourTarget(st){
+  if(st.bar)return document.querySelector('.actionbar');
+  if(st.s==null)return null;
+  const sec=document.querySelectorAll('#editPanel > details.sec')[st.s];
+  return sec?sec.querySelector('summary'):null;
+}
+function showTour(i){
+  tourI=i;const st=TOUR[i],el=tourTarget(st),card=$('tourCard'),spot=$('tourSpot');
+  clearInterval(tourTimer);
+  $('tcStep').textContent=`Step ${i+1} of ${TOUR.length}`;$('tcTitle').textContent=st.t;$('tcText').textContent=st.x;
+  $('tcBack').classList.toggle('hidden',i===0);$('tcNext').textContent=i===TOUR.length-1?'Done':'Next';
+  if(!el){spot.className='none';spot.style.cssText='';card.className='mid';return}
+  spot.className='';card.className='bottom';
+  el.scrollIntoView({block:'center',behavior:'smooth'});
+  tourTimer=setInterval(()=>{
+    const r=el.getBoundingClientRect();
+    spot.style.left=(r.left-6)+'px';spot.style.top=(r.top-6)+'px';spot.style.width=(r.width+12)+'px';spot.style.height=(r.height+12)+'px';
+    card.className=(r.top+r.height/2>innerHeight*.5)?'top':'bottom';
+  },120);
+}
+function startTour(){if(!editing)return;$('tour').classList.remove('hidden');showTour(0)}
+function endTour(){
+  clearInterval(tourTimer);$('tour').classList.add('hidden');tourI=-1;
+  state.tourDone=true;try{localStorage.setItem('lynq_tour','1')}catch(_e){}
+  if(isOwner)persist();
+}
+const maybeTour=()=>{if(editing&&!state.tourDone&&!localStorage.getItem('lynq_tour'))setTimeout(startTour,450)};
+
 /* ---------- menu + visitor "share your contact" ---------- */
 function buildMenu(){
   const signed=!!curSession;
@@ -1191,6 +1263,7 @@ function buildMenu(){
   $('mOwner').classList.toggle('hidden',!(signed&&hasAccount));
   const go=signed&&hasAccount&&!!myUid&&!isOwner;
   $('mGoMine').classList.toggle('hidden',!go);$('goMineBtn').classList.toggle('hidden',!go);
+  $('mTour').classList.toggle('hidden',!isOwner);
   $('mCards').classList.toggle('hidden',!(signed&&hasAccount));
   $('mStats').classList.toggle('hidden',!(signed&&hasAccount&&(isOwner||!!myUid)));
   $('mInstall').classList.toggle('hidden',!!standalone());
@@ -1311,7 +1384,7 @@ function wiz(i){
     persist();wiz(i+1)};
   if(k==='theme'){
     const staff=isStaff;
-    const list=THEME_SW.concat(staff?[['lynq-team','LYNQ Team','linear-gradient(135deg,#C11C84,#2a0f24)']]:[]);
+    const list=THEME_SW.concat(staff?[['lynq-team','LYNQ Team','linear-gradient(135deg,#D6248F,#2a0f24)']]:[]);
     const mark=()=>{
       document.querySelectorAll('#wThemes .wsw').forEach(e=>e.classList.toggle('on',e.dataset.k===(state.themeKey||'clean-light')));
       $('wCustom').classList.toggle('hidden',state.themeKey!=='custom');
@@ -1451,6 +1524,9 @@ async function init(){
   $('saveHandleBtn').onclick=saveHandle;
   $('copyHandleBtn').onclick=async()=>{try{await navigator.clipboard.writeText(shareUrl());lynqAlert('Link copied.','Done')}catch(_e){}};
   $('bizOn').addEventListener('change',e=>{BZ().on=e.target.checked;render()});
+  $('bizOpen').addEventListener('change',e=>{BZ().open=e.target.checked;render()});
+  $('bizOpenLabel').addEventListener('change',e=>{BZ().label=e.target.value;render()});
+  $('bizBtn').addEventListener('change',e=>{BZ().btn=e.target.value;render()});
   $('bizBook').addEventListener('input',e=>{BZ().book=e.target.value;render()});
   $('bizMsg').addEventListener('input',e=>{BZ().msg=e.target.value;render()});
   $('bizPhotoFile').addEventListener('change',e=>{const f=e.target.files[0];e.target.value='';if(f)compressImage(f,360,.6,u=>{bizPhoto=u;$('bizPhotoTxt').textContent='Photo added'})});
@@ -1527,7 +1603,11 @@ async function init(){
     try{if(!(await persist()))throw new Error('Check database string size.');s.textContent='Saved successfully! Changes are now live.'}
     catch(err){s.textContent='Could not save: '+(err?.message||'Check database string size.')}
   });
-  $('editFab').addEventListener('click',()=>{editing=!editing;$('inboxPanel').classList.add('hidden');render()});
+  $('editFab').addEventListener('click',()=>{editing=!editing;$('inboxPanel').classList.add('hidden');render();maybeTour()});
+  $('tcNext').onclick=()=>{if(tourI>=TOUR.length-1)endTour();else showTour(tourI+1)};
+  $('tcBack').onclick=()=>{if(tourI>0)showTour(tourI-1)};
+  $('tcSkip').onclick=endTour;
+  $('mTour').onclick=()=>{pops();editing=true;$('inboxPanel').classList.add('hidden');render();setTimeout(startTour,300)};
   $('inboxFab').addEventListener('click',()=>{editing=false;render();$('inboxPanel').classList.toggle('hidden');fetchInboxNotes()});
   $('closeInboxBtn').addEventListener('click',()=>$('inboxPanel').classList.add('hidden'));
   $('sendNoteBtn').addEventListener('click',async()=>{
@@ -1544,7 +1624,7 @@ try{
   const q=new URLSearchParams(location.search),keep=new URLSearchParams();
   ['card','u'].forEach(k=>q.get(k)&&keep.set(k,q.get(k)));
   const start=location.origin+location.pathname+(keep.toString()?'?'+keep:''),ic=n=>new URL('assets/'+n,location.href).href;
-  const mf={name:'LYNQ',short_name:'LYNQ',start_url:start,scope:new URL('./',location.href).href,display:'standalone',background_color:'#07070c',theme_color:'#C11C84',icons:[{src:ic('icon-192.png'),sizes:'192x192',type:'image/png'},{src:ic('icon-512.png'),sizes:'512x512',type:'image/png'}]};
+  const mf={name:'LYNQ',short_name:'LYNQ',start_url:start,scope:new URL('./',location.href).href,display:'standalone',background_color:'#07070c',theme_color:'#D6248F',icons:[{src:ic('icon-192.png'),sizes:'192x192',type:'image/png'},{src:ic('icon-512.png'),sizes:'512x512',type:'image/png'}]};
   const l=document.createElement('link');l.rel='manifest';l.href=URL.createObjectURL(new Blob([JSON.stringify(mf)],{type:'application/manifest+json'}));document.head.appendChild(l);
   if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 }catch(_e){}
