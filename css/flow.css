@@ -6,7 +6,7 @@
 #loadingScreen{position:fixed;inset:0;background:var(--night);z-index:9999;display:flex;align-items:center;justify-content:center;transition:opacity .4s;padding:20px;text-align:center;color:#fff}
 .loader-content{display:flex;flex-direction:column;align-items:center;gap:12px;max-width:320px}
 .loader-logo{display:flex;align-items:center;gap:8px;font-size:22px;font-weight:800;letter-spacing:.05em}
-.loader-logo svg{width:28px;height:28px;stroke:url(#chainG);fill:none;stroke-width:2.2}
+.loader-logo .wm{height:34px}
 .loader-text{font-size:13.5px;color:rgba(255,255,255,.6)}
 .dots-loader span{display:inline-block;animation:wave 1.4s infinite ease-in-out}
 .dots-loader span:nth-child(2){animation-delay:.2s}.dots-loader span:nth-child(3){animation-delay:.4s}
@@ -61,8 +61,7 @@ textarea.gfield{min-height:110px;resize:none}
 @keyframes gloss{0%{background-position:130% 0}60%,100%{background-position:-60% 0}}
 .nfc{position:absolute;top:6.5em;right:5.5em;width:8em;height:11em;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;z-index:2}
 .lock{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:1.6em;z-index:2}
-.lock svg{width:8.6em;height:8.6em;filter:drop-shadow(0 1px 3px rgba(0,0,0,.25))}
-.lock span{font:800 7.4em/1 'Montserrat','Arial Black',-apple-system,sans-serif;letter-spacing:.02em}
+.lock .wm{width:64em;height:auto}
 .lcard.lt{color:#111}
 #crop{position:fixed;inset:0;z-index:10000;background:rgba(5,5,10,.82);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);display:none;align-items:center;justify-content:center;padding:20px;color:#fff}
 #crop.open{display:flex}
