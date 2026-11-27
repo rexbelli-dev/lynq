@@ -30,7 +30,7 @@ sql/               scripts you paste into Supabase
 | English / Tagalog / Bisaya wording | `js/legal-i18n.js` |
 | Terms and Privacy text | inside `portfolio.html` (search `tplTerms`, `tplPrivacy`) |
 | What happens on tap | `js/card-binding.js` |
-| Admin page | `admin.html`, `css/admin.css`, `js/admin.js` |
+| Admin app (dashboard, cards, reports, monitoring, team) | `admin.html`, `css/admin.css`, `js/admin-*.js` (one file per page; `admin-money.js` is Monitoring) |
 
 Tip: open `styleguide.html` after any CSS or icon change to see everything at once.
 
@@ -53,3 +53,9 @@ Tip: open `styleguide.html` after any CSS or icon change to see everything at on
 6. Have a Bisaya speaker read the Bisaya text, and a lawyer read the Terms and Privacy.
 7. Decide on lynq.ph before programming chips.
 8. Supabase free plan has no automatic backups: use the Download backup button in the admin page every week.
+
+## Admin app (new)
+- Open `admin.html` and sign in with a Google account that is on the team list. Install it from the "Install app" button (Chrome/Edge/Android) or Share > Add to Home Screen (iPhone).
+- Run `sql/4-admin-dashboard.sql` once in the Supabase SQL Editor before using it.
+- Founders see Monitoring (sales, expenses, loans, profit shares) and Team (add or remove admins by Google email).
+- Reports can be archived or deleted. Customers can delete their own notifications.
