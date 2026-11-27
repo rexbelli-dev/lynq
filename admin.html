@@ -58,8 +58,18 @@ document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{
 async function loadOv(){
   const{data}=await sb.rpc('admin_stats');if(!data){$('t-ov').innerHTML='<div class="card">Could not load.</div>';return}
   const S=[['Cards made',data.cards],['Claimed',data.claimed],['Unclaimed',data.unclaimed],['Blocked',data.disabled],['Users',data.users],['Total taps',data.taps]];
-  $('t-ov').innerHTML='<div class="grid">'+S.map(([k,v])=>`<div class="card stat"><b>${v}</b><span class="muted">${k}</span></div>`).join('')+'</div>';
+  const last=+localStorage.getItem('lynq_last_backup')||0,days=last?Math.floor((Date.now()-last)/864e5):null;
+  const warn=days===null||days>=7;
+  $('t-ov').innerHTML='<div class="grid">'+S.map(([k,v])=>`<div class="card stat"><b>${v}</b><span class="muted">${k}</span></div>`).join('')+`</div>
+  <div class="card"><b>Backup</b><div class="muted" style="margin:4px 0 8px;${warn?'color:#fde68a':''}">${days===null?'No backup downloaded from this browser yet.':'Last backup from this browser: '+(days===0?'today':days+' day'+(days>1?'s':'')+' ago')+'.'}${warn?' Download one now and keep it somewhere private.':''}</div><button class="b p" id="bkBtn">Download backup (JSON)</button><div class="muted" style="margin-top:8px">Photos stay in Supabase Storage and are not inside this file. Do this weekly and before big changes.</div></div>`;
 }
+$('t-ov').addEventListener('click',async e=>{
+  if(!e.target.closest('#bkBtn'))return;
+  const{data,error}=await sb.rpc('admin_export');if(error||!data){alert('Could not export.');return}
+  const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,1)],{type:'application/json'}));
+  l.download='lynq-backup-'+new Date().toISOString().slice(0,10)+'.json';l.click();
+  localStorage.setItem('lynq_last_backup',Date.now());loadOv();loadLog();
+});
 async function loadCards(){
   const{data,error}=await sb.rpc('admin_cards',{p_search:$('q').value.trim(),p_limit:50});
   if(error||!data){$('cards').innerHTML='<div class="card">Could not load.</div>';return}
@@ -109,8 +119,8 @@ async function loadUsers(){
 }
 function drawUsers(){
   const f=$('uq').value.trim().toLowerCase();
-  const L=USERS.filter(u=>!f||[u.email,u.name,u.handle].join(' ').toLowerCase().includes(f));
-  $('users').innerHTML=L.length?L.map(u=>`<div class="card"><div class="row sp"><div>${u.first_card?`<a href="${BASE}?card=${encodeURIComponent(u.first_card)}&nt=1" target="_blank" rel="noopener"><b>${esc(u.name||u.email)}</b></a>`:`<b>${esc(u.name||u.email)}</b>`}<div class="muted">${esc(u.email)}${u.handle?' · @'+esc(u.handle):''} · ${u.cards} card${u.cards==1?'':'s'}</div></div>
+  const L=USERS.filter(u=>!f||[u.email,u.name,u.handle,u.ref_code].join(' ').toLowerCase().includes(f));
+  $('users').innerHTML=L.length?L.map(u=>`<div class="card"><div class="row sp"><div>${u.first_card?`<a href="${BASE}?card=${encodeURIComponent(u.first_card)}&nt=1" target="_blank" rel="noopener"><b>${esc(u.name||u.email)}</b></a>`:`<b>${esc(u.name||u.email)}</b>`}<div class="muted">${esc(u.email)}${u.handle?' · @'+esc(u.handle):''}${u.ref_code?' · ref '+esc(u.ref_code):''} · ${u.cards} card${u.cards==1?'':'s'}</div></div>
   <select data-u="${esc(u.user_id)}"><option value="">No badge</option>${['staff','student','company'].map(k=>`<option value="${k}"${u.verified===k?' selected':''}>${k[0].toUpperCase()+k.slice(1)} ✓</option>`).join('')}</select></div></div>`).join(''):'<div class="card muted">No users.</div>';
 }
 $('uq').addEventListener('input',drawUsers);
