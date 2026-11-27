@@ -11,3 +11,6 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--text);transition
 body{font-family:-apple-system,SF Pro Display,Segoe UI,Roboto,Arial,sans-serif;min-height:100%;-webkit-font-smoothing:antialiased;background-image:var(--pat,none);background-attachment:fixed}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
 .hidden{display:none!important}
+
+/* official LYNQ wordmark, takes the text color */
+.wm{display:inline-block;aspect-ratio:364/72;background:currentColor;-webkit-mask:url(../assets/lynq-wordmark.webp) center/contain no-repeat;mask:url(../assets/lynq-wordmark.webp) center/contain no-repeat;vertical-align:middle;flex:none}
