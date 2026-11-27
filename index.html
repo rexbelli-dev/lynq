@@ -12,6 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
 <style>
 :root{--bg:#f4f5f7;--card-bg:rgba(255,255,255,.78);--text:#1a1a1a;--sub:#555;--accent:#4472C4;--overlay:0,0,0;--ovop:.55;--border:rgba(255,255,255,.4);--wave:linear-gradient(90deg,#4472C4,#6ea8fe,#22d3ee,#4472C4);color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -393,6 +394,12 @@ body{background:transparent;background-image:none}
 .biz-ph.n2{grid-template-columns:1fr 1fr}.biz-ph.n2 img{aspect-ratio:4/3}
 .cover-tools button{position:relative}
 #bellDot{position:absolute;top:-3px;right:-3px;min-width:17px;height:17px;padding:0 4px;border-radius:99px;background:#ef4444;color:#fff;font:700 10px/17px -apple-system,Arial,sans-serif;text-align:center;font-style:normal}
+.meter{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:12px 14px;margin-bottom:12px}
+.mt-top{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;color:var(--sub)}.mt-top b{color:var(--text)}
+.mt-bar{height:8px;border-radius:99px;background:rgba(127,127,127,.18);margin-top:8px;overflow:hidden}
+.mt-bar i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .4s}
+.tplrow{display:flex;flex-wrap:wrap;gap:8px}
+.tplrow button{border:1px solid rgba(127,127,127,.3);background:rgba(127,127,127,.12);color:var(--text);padding:8px 14px;border-radius:99px;font-size:13px;font-weight:600;cursor:pointer}
 </style>
 <script>
 /* LYNQ team theme helpers: cover + badge are drawn in code (no image files needed) */
@@ -463,6 +470,8 @@ const getTheme=()=>state.themeKey==='custom'?customTheme(state.custom||{}):(THEM
  <button class="mi hidden" id="mSaveThis"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>Save this profile to LYNQ contacts</button>
  <button class="mi hidden" id="mSignIn"><svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>Sign in</button>
  <button class="mi hidden" id="mTour"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.5-3 4.5"/><line x1="12" y1="17.5" x2="12.01" y2="17.5"/></svg>Tutorial</button>
+ <button class="mi" id="mQr"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM18 18h3v3h-3z"/></svg>QR code</button>
+ <button class="mi hidden" id="mRef"><svg viewBox="0 0 24 24"><path d="M20 12v8H4v-8"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>Referral code</button>
  <button class="mi hidden" id="mReport"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Report a problem</button>
  <button class="mi hidden" id="mCards"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="3"/><line x1="2" y1="10" x2="22" y2="10"/></svg>My cards</button>
  <button class="mi hidden" id="mStats"><svg viewBox="0 0 24 24"><line x1="6" y1="20" x2="6" y2="12"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="18" y1="20" x2="18" y2="9"/></svg>Analytics</button>
@@ -507,12 +516,14 @@ const getTheme=()=>state.themeKey==='custom'?customTheme(state.custom||{}):(THEM
         <div id="noteStatusEl" style="color:var(--sub)"></div>
       </div>
     </div>
+    <a class="btn hidden" id="getLynq" target="_blank" rel="noopener" style="display:block;text-align:center;text-decoration:none;margin-top:12px">Get your own LYNQ card</a>
     <div class="auth-prompt" id="authPromptBtn">Have a LYNQ card already? <a id="signInLink">Sign in</a></div>
     <div id="globalErrorEl"></div>
   </div>
 
   <div class="ed hidden" id="editPanel">
 <div class="ed-head"><h2>Edit profile</h2><p>Tap a section to open it.</p></div>
+<div class="meter" id="meter"></div>
 <details class="sec" open><summary><span class="ic" style="background:#ff9500"><svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></span>Photos<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary><div class="sec-body"><div class="grp">
 <div class="li"><span class="thumb" id="edAvPrev"></span><label>Profile photo</label><label class="pb">Change<input type="file" id="avatarFile" accept="image/*" hidden></label><button type="button" class="pb" id="avRm" hidden style="margin-left:6px;color:#d33">Remove</button></div>
 <div class="li"><span class="thumb wide" id="edCvPrev"></span><label>Cover photo</label><label class="pb">Change<input type="file" id="coverFile" accept="image/*" hidden></label><button type="button" class="pb" id="cvRm" hidden style="margin-left:6px;color:#d33">Remove</button></div>
@@ -554,6 +565,8 @@ const getTheme=()=>state.themeKey==='custom'?customTheme(state.custom||{}):(THEM
 <div class="li"><label>Main link</label><input type="url" id="bizBook" placeholder="Booking or shop link" autocapitalize="off"></div>
 <div class="li"><label>Button text</label><select id="bizBtn"><option>Book now</option><option>Order now</option><option>Shop now</option><option>Learn more</option></select></div>
 <div class="li"><label>Message link</label><input type="url" id="bizMsg" placeholder="m.me/yourpage or wa.me/..." autocapitalize="off"></div></div>
+<div class="sub-t">Quick start (adds example items you can edit)</div>
+<div class="tplrow" id="bizTpl"><button type="button" data-t="salon">Salon</button><button type="button" data-t="food">Restaurant / café</button><button type="button" data-t="free">Freelancer</button><button type="button" data-t="shop">Online shop</button></div>
 <div id="bizList"></div>
 <div class="grp"><div class="li"><label>Item</label><input type="text" id="bizName" placeholder="e.g. Haircut or Wallet"></div><div class="li"><label>Price</label><input type="text" id="bizPrice" placeholder="₱150"></div><div class="li"><label>Details</label><input type="text" id="bizDesc" placeholder="Optional"></div><div class="li"><label>Photo</label><label class="pb"><span id="bizPhotoTxt">Add photo</span><input type="file" id="bizPhotoFile" accept="image/*" hidden></label></div></div>
 <button class="btn" id="addBizBtn">Add item</button><div class="note">Up to 12 items and 3 business photos (in Photos above). Your payment QR (Contact &amp; payment) also shows on your profile.</div></div></details>
@@ -592,6 +605,13 @@ const getTheme=()=>state.themeKey==='custom'?customTheme(state.custom||{}):(THEM
   <div id="savedList" style="font-size:14px;color:var(--sub)"></div>
 </div></div>
 
+<div class="modal-overlay" id="qrpModal"><div class="modal-body">
+  <span class="modal-close" id="closeQrpBtn">&times;</span>
+  <h3 id="qrpName" style="margin:0 0 12px;font-size:18px;color:var(--text)">QR code</h3>
+  <img id="qrpImg" alt="QR code" style="width:100%;max-width:260px;border-radius:14px;border:1px solid rgba(127,127,127,.2);display:block;margin:0 auto">
+  <div class="note" id="qrpUrl" style="word-break:break-all"></div>
+  <a class="btn" id="qrpDl" download="lynq-qr.png" style="display:block;text-align:center;text-decoration:none;margin-top:10px">Download QR</a>
+</div></div>
 <div class="modal-overlay" id="notifModal"><div class="modal-body" style="text-align:left">
   <span class="modal-close" id="closeNotifBtn">&times;</span>
   <h3 style="margin:0 0 12px;font-size:18px;color:var(--text)">Notifications</h3>
@@ -732,7 +752,8 @@ const getTheme=()=>state.themeKey==='custom'?customTheme(state.custom||{}):(THEM
 <p><b>9.9 Statistics.</b> LYNQ counts taps and link clicks for each Card per day so Profile Owners can see simple statistics. Taps and clicks by the Profile Owner and by LYNQ staff are not counted. Counts are not linked to the identity of the visitor.</p>
 <p><b>9.10 Spam limits.</b> To protect inboxes, LYNQ limits how many notes and shared contacts a single Card can receive per hour and per day. Submissions above the limit are rejected.</p>
 <p><b>9.11 Retention and deletion.</b> A Profile Owner can delete their Profile or their whole account from the menu at any time. Deleting a Profile erases its text and uploaded photos. Deleting an account also removes the Google sign-in record from LYNQ and the user's saved LYNQ contacts, and unlinks all of the user's Cards. When a Card is unlinked, reset or removed from an account, its notes, shared contacts and tap statistics are erased. Staff action logs may be kept for security and accountability. Data already viewed, copied or shared by others may remain outside LYNQ's control.</p>
-<p><b>9.12 Support reports.</b> If you send a report through the website, LYNQ stores your message, any image you attach, the Card code you select, your name and email address, and the status and replies, so that staff can help you. Staff can see this information in the admin page and may open or change the affected Card (for example reset or block it). Reports, images and notifications are deleted when you delete your account.</p>
+<p><b>9.12 Support reports.</b> If you send a report through the website, LYNQ stores your message, any image you attach, the Card code you select, your name and email address, and the status and replies, so that staff can help you. Staff can see this information in the admin page and may open or change the affected Card (for example reset or block it). Staff may also receive an email notice that a report was sent. Reports, images and notifications are deleted when you delete your account.</p>
+<p><b>9.13 Referral codes and QR codes.</b> Each Profile has a referral code. It is added to the &ldquo;Get your own LYNQ card&rdquo; link shown on your public Profile so that LYNQ can tell which Profile led to a request. QR codes are created on your device from your Profile link and are not stored by LYNQ.</p>
 <h4>10. Moderation and Termination</h4>
 <p><b>10.1 Platform action.</b> LYNQ may investigate reports and remove content, suspend editing, de-link a Card, revoke or redirect a URL, invalidate sessions, rate-limit traffic, preserve evidence, or block an account, device, network, or IP address.</p>
 <p><b>10.2 Immediate action.</b> LYNQ may act without prior notice for an active security incident, malicious code, fraud, unlawful access, credible threat, personal-data risk, legal order, or serious Terms violation.</p>
@@ -775,7 +796,8 @@ const getTheme=()=>state.themeKey==='custom'?customTheme(state.custom||{}):(THEM
 <p><b>9.9 Statistics.</b> LYNQ counts taps and link clicks for each Card per day so Profile Owners can see simple statistics. Taps and clicks by the Profile Owner and by LYNQ staff are not counted. Counts are not linked to the identity of the visitor.</p>
 <p><b>9.10 Spam limits.</b> To protect inboxes, LYNQ limits how many notes and shared contacts a single Card can receive per hour and per day. Submissions above the limit are rejected.</p>
 <p><b>9.11 Retention and deletion.</b> A Profile Owner can delete their Profile or their whole account from the menu at any time. Deleting a Profile erases its text and uploaded photos. Deleting an account also removes the Google sign-in record from LYNQ and the user's saved LYNQ contacts, and unlinks all of the user's Cards. When a Card is unlinked, reset or removed from an account, its notes, shared contacts and tap statistics are erased. Staff action logs may be kept for security and accountability. Data already viewed, copied or shared by others may remain outside LYNQ's control.</p>
-<p><b>9.12 Support reports.</b> If you send a report through the website, LYNQ stores your message, any image you attach, the Card code you select, your name and email address, and the status and replies, so that staff can help you. Staff can see this information in the admin page and may open or change the affected Card (for example reset or block it). Reports, images and notifications are deleted when you delete your account.</p>
+<p><b>9.12 Support reports.</b> If you send a report through the website, LYNQ stores your message, any image you attach, the Card code you select, your name and email address, and the status and replies, so that staff can help you. Staff can see this information in the admin page and may open or change the affected Card (for example reset or block it). Staff may also receive an email notice that a report was sent. Reports, images and notifications are deleted when you delete your account.</p>
+<p><b>9.13 Referral codes and QR codes.</b> Each Profile has a referral code. It is added to the &ldquo;Get your own LYNQ card&rdquo; link shown on your public Profile so that LYNQ can tell which Profile led to a request. QR codes are created on your device from your Profile link and are not stored by LYNQ.</p>
 <h4>Contact LYNQ</h4>
 <p><b>Email:</b> rbrbatenga@gmail.com</p>
 <p>Use these contact details for support, complaints, lost Cards, privacy requests, correction, or deletion.</p>
@@ -790,6 +812,8 @@ const getTheme=()=>state.themeKey==='custom'?customTheme(state.custom||{}):(THEM
 const SUPABASE_URL='https://cmiuramqfgwyumniedfv.supabase.co';
 const SUPABASE_ANON_KEY='sb_publishable_yegka1PYoQm-U1dpEJJJHA_qbb1ujc6';
 const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+/* where "Get your own LYNQ card" sends people. A Messenger link works well: https://m.me/YOURPAGE (the ?ref= code shows up in your inbox) */
+const GET_LYNQ_URL='https://about.lynqmewithyou.workers.dev/';
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const safeUrl=u=>/^(https?:|mailto:|tel:)/i.test(u)?u:'https://'+u;
@@ -867,16 +891,20 @@ async function _persist(){
 }
 
 /* ---------- vCard ---------- */
-function downloadVCard(){
+async function downloadVCard(){
   saveLynqContact(false);
   const name=state.name||'Contact',parts=name.trim().split(' '),last=parts.length>1?parts.pop():'',first=parts.join(' ');
-  const wa=(state.links||[]).find(l=>l.platform==='whatsapp');
-  const vcf=['BEGIN:VCARD','VERSION:3.0',`N:${last};${first};;;`,`FN:${name}`,
+  const w=(state.work||[])[0],fold=l=>l.replace(/(.{74})(?=.)/g,'$1\r\n ');
+  let photo='';
+  if(state.avatar){try{const bl=await (await fetch(state.avatar)).blob();photo=await new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(String(fr.result).split(',')[1]||'');fr.readAsDataURL(bl)})}catch(_e){}}
+  const L=['BEGIN:VCARD','VERSION:3.0',`N:${last};${first};;;`,`FN:${name}`,
+    w&&w.company?`ORG:${w.company}`:'',w&&w.role?`TITLE:${w.role}`:'',
     state.workCityCountry?`ADR;TYPE=WORK:;;;${state.workCityCountry};;;`:'',
     state.phone?`TEL;TYPE=CELL:${state.phone}`:'',state.email?`EMAIL;TYPE=INTERNET:${state.email}`:'',
-    wa?`X-SOCIALPROFILE;type=whatsapp:${wa.url}`:'',state.bio?`NOTE:${state.bio.replace(/\n/g,'\\n')}`:'',
-    `URL:${shareUrl()}`,'END:VCARD'].filter(Boolean).join('\n');
-  const url=URL.createObjectURL(new Blob([vcf],{type:'text/vcard;charset=utf-8'}));
+    photo?`PHOTO;ENCODING=b;TYPE=JPEG:${photo}`:'',
+    ...(state.links||[]).map(l=>`URL;TYPE=${((ICONS[l.platform]||ICONS.website).label).replace(/[^A-Za-z]/g,'')}:${safeUrl(l.url)}`),
+    state.bio?`NOTE:${state.bio.replace(/\n/g,'\\n')}`:'',`URL;TYPE=LYNQ:${shareUrl()}`,'END:VCARD'].filter(Boolean).map(fold).join('\r\n');
+  const url=URL.createObjectURL(new Blob([L],{type:'text/vcard;charset=utf-8'}));
   const a=document.createElement('a');a.href=url;a.download=`${name.replace(/\s+/g,'_')}_contact.vcf`;
   document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
 }
@@ -996,6 +1024,9 @@ function render(){
   const ex=chips('Languages:',state.languages)+chips('Hobbies:',state.hobbies);
   $('extraTagsContainer').innerHTML=ex?`<div class="extra-section-container">${ex}</div>`:'';
   $('bizEl').innerHTML=bizHTML();
+  {const mt=[['a profile photo',!!state.avatar,20],['your name',!!state.name&&state.name!=='Your Name',15],['a short bio',!!state.bio&&state.bio!==DEFAULT_STATE.bio,15],['a phone or email',!!(state.phone||state.email),15],['at least one link',(state.links||[]).length>0,20],['a cover photo',!!state.cover,10],['your location',!!state.workCityCountry,5]];
+   const pct=mt.reduce((a,r)=>a+(r[1]?r[2]:0),0),nx=mt.find(r=>!r[1]);
+   $('meter').innerHTML=`<div class="mt-top"><b>Your profile is ${pct}% complete</b><span>${nx?'Next: add '+nx[0]:'Looking great!'}</span></div><div class="mt-bar"><i style="width:${pct}%"></i></div>`}
   {const o=BZ(),on=!!(o.on&&o.open);$('openWrap').innerHTML=on?'<span class="opill"><i></i>'+esc(o.label||'Open to work')+'</span>':'';$('avatarContainer').classList.toggle('open',on)}
 
   let ch='';
@@ -1095,7 +1126,7 @@ function askTerms(){return new Promise(r=>{
 })}
 
 /* ---------- does this signed-in Google account have a LYNQ account? ---------- */
-let curSession=null,myUid=null,myCount=0,hasAccount=false,isStaff=false,curVerified='',curHandle='',offline=false;
+let curSession=null,myUid=null,myCount=0,hasAccount=false,isStaff=false,curVerified='',curHandle='',curRef='',offline=false;
 async function checkAccount(){
   const uid=curSession.user.id;
   const[c,pr]=await Promise.all([
@@ -1107,14 +1138,58 @@ async function checkAccount(){
   return true;
 }
 
+/* ---------- languages: English, Tagalog, Bisaya (claim screen + walkthrough) ---------- */
+let LANG=localStorage.getItem('lynq_lang')||(/^(fil|tl)/i.test(navigator.language||'')?'tl':'en');
+const LG='<a href="#" data-legal="terms">Terms</a>',LP='<a href="#" data-legal="privacy">Privacy Policy</a>';
+const I18N={
+ en:{claimT:'Claim your LYNQ card',claimP:'Sign in once to activate your card.',s1t:'Sign in with Google',s1d:'Tap Continue with Google to claim ownership.',s2t:'Build your profile',s2d:'Add your photo, links and contact details.',google:'Continue with Google',
+  fine:`By signing in, you agree to our ${LG} and ${LP}. We only use your Google account to secure your card.`,
+  ccT:'Claim this card?',ccHas:n=>`Your account already has ${n} LYNQ card${n>1?'s':''}. Are you sure you also want to claim this card?`,ccNew:'You are about to become the owner of this LYNQ card.',ccYes:'Claim this card',ccNoHas:'No, take me to my profile',ccNoNew:'Not now',
+  next:'Next',back:'Back',skip:'Skip',done:'Done',step:'Step',of:'of'},
+ tl:{claimT:'I-claim ang iyong LYNQ card',claimP:'Mag-sign in nang isang beses para ma-activate ang card mo.',s1t:'Mag-sign in gamit ang Google',s1d:'I-tap ang Continue with Google para maging may-ari ng card.',s2t:'Buuin ang iyong profile',s2d:'Magdagdag ng litrato, mga link, at contact details.',google:'Magpatuloy gamit ang Google',
+  fine:`Sa pag-sign in, sumasang-ayon ka sa aming ${LG} at ${LP}. Ginagamit lang namin ang Google account mo para protektahan ang card mo.`,
+  ccT:'I-claim ang card na ito?',ccHas:n=>`May ${n} LYNQ card na ang account mo. Sigurado ka bang gusto mo ring i-claim ang card na ito?`,ccNew:'Ikaw ang magiging may-ari ng LYNQ card na ito.',ccYes:'I-claim ang card na ito',ccNoHas:'Hindi, dalhin ako sa profile ko',ccNoNew:'Hindi muna',
+  next:'Susunod',back:'Bumalik',skip:'Laktawan',done:'Tapos na',step:'Hakbang',of:'sa'},
+ ceb:{claimT:'I-claim ang imong LYNQ card',claimP:'Mag-sign in kausa aron ma-activate ang imong card.',s1t:'Mag-sign in gamit ang Google',s1d:'I-tap ang Continue with Google aron mahimong tag-iya sa card.',s2t:'Buhaton ang imong profile',s2d:'Pagdugang og litrato, links, ug contact details.',google:'Padayon gamit ang Google',
+  fine:`Sa pag-sign in, mouyon ka sa among ${LG} ug ${LP}. Gamiton ra namo ang imong Google account aron mapanalipdan ang imong card.`,
+  ccT:'I-claim kini nga card?',ccHas:n=>`Naa nay ${n} ka LYNQ card ang imong account. Sigurado ka ba nga gusto nimo i-claim usab kini nga card?`,ccNew:'Ikaw na ang mahimong tag-iya niining LYNQ card.',ccYes:'I-claim kini nga card',ccNoHas:'Dili, dad-a ko sa akong profile',ccNoNew:'Dili pa',
+  next:'Sunod',back:'Balik',skip:'Laktawi',done:'Human na',step:'Lakang',of:'sa'}
+};
+const T=k=>{const v=(I18N[LANG]&&I18N[LANG][k]);return v!==undefined?v:I18N.en[k]};
+const LANGROW='<a href="#" data-lang="en">English</a> · <a href="#" data-lang="tl">Tagalog</a> · <a href="#" data-lang="ceb">Bisaya</a>';
+const TOURX={
+ tl:[['Maligayang pagdating sa editor mo','Ipapakita ng mabilis na tour na ito kung nasaan ang lahat. Mga isang minuto lang.'],
+  ['Mga larawan','Dito mo ilalagay ang profile photo at cover mo. I-tap ang Remove kung magbabago ang isip mo.'],
+  ['Hitsura','Pumili ng theme o gumawa ng sarili mong kulay. Puwede mo itong palitan anumang oras.'],
+  ['Tungkol sa iyo','Ilagay ang lokasyon, mga wika, at hilig mo. I-tap ang pangalan o bio sa itaas ng page para direktang i-edit.'],
+  ['Contact at bayad','Ilagay ang phone, email, at GCash o Maya QR mo para ma-contact at mabayaran ka ng mga tao.'],
+  ['Edukasyon at trabaho','Ibahagi kung saan ka nag-aral at nagtatrabaho. Nandito lang ang Education at Work experience.'],
+  ['Magdagdag ng link','Idagdag ang Instagram, Facebook, WhatsApp, website mo, at iba pa. I-tap ang × sa link para alisin ito.'],
+  ['May ibinebenta ka ba?','I-on ang Business mode para maglista ng serbisyo o produkto na may presyo at larawan, magdagdag ng Book o Order button, at magpakita ng status badge.'],
+  ['Share link mo','Pumili ng maikling username para i-share online. Ang card mo ay bubukas pa rin gamit ang sarili nitong serial number.'],
+  ['I-save at i-publish','Walang mapa-publish hangga\'t hindi mo ito pinipindot. Gawin ito kapag tapos ka na.'],
+  ['Handa ka na!','Buksan ang menu (kanang itaas) anumang oras para sa My cards, Analytics, at iba pa. Puwede mong ulitin ang tour na ito sa menu sa ilalim ng Tutorial.']],
+ ceb:[['Maayong pag-abot sa imong editor','Ipakita sa kuwik nga tour kung asa ang tanan. Mga usa ka minuto ra.'],
+  ['Mga hulagway','Diri nimo ibutang ang imong profile photo ug cover. I-tap ang Remove kung mausab imong hunahuna.'],
+  ['Dagway','Pili og theme o paghimo og imong kaugalingong kolor. Mabalhin nimo kini bisan kanus-a.'],
+  ['Bahin kanimo','Ibutang ang imong lokasyon, mga pinulongan, ug mga hilig. I-tap ang imong ngalan o bio sa ibabaw sa page aron direktang ma-edit.'],
+  ['Contact ug bayad','Ibutang ang imong phone, email, ug GCash o Maya QR aron ma-contact ka ug mabayran sa mga tawo.'],
+  ['Edukasyon ug trabaho','Ipakigbahin kung asa ka nag-eskwela ug nagtrabaho. Naa ra diri ang Education ug Work experience.'],
+  ['Pagdugang og link','Idugang ang Instagram, Facebook, WhatsApp, imong website, ug uban pa. I-tap ang × sa link aron kini tangtangon.'],
+  ['Naay gibaligya?','I-on ang Business mode aron maglista og serbisyo o produkto nga naay presyo ug hulagway, magdugang og Book o Order button, ug magpakita og status badge.'],
+  ['Imong share link','Pili og mubo nga username aron i-share online. Ang imong card maabli gihapon gamit ang kaugalingon niyang serial number.'],
+  ['I-save ug i-publish','Walay mapa-publish hangtod dili nimo kini pinduton. Buhata kini kung human ka na.'],
+  ['Human na ka!','Ablihi ang menu (tuo sa ibabaw) bisan kanus-a para sa My cards, Analytics, ug uban pa. Mahimo nimo balikon kini nga tour sa menu ubos sa Tutorial.']]
+};
+
 /* ---------- "Claim this card?" confirmation ---------- */
 function confirmClaim(uid){return new Promise(res=>{
   const n=myCount;
-  flowShow(`${CARD_HTML}<h2>Claim this card?</h2>
-  <p>${n>0?`Your account already has ${n} LYNQ card${n>1?'s':''}. Are you sure you also want to claim this card?`:'You are about to become the owner of this LYNQ card.'}</p>
+  flowShow(`${CARD_HTML}<h2>${T('ccT')}</h2>
+  <p>${n>0?T('ccHas')(n):T('ccNew')}</p>
   <p class="fine">Card ${esc(uid)}</p>
-  <button class="gbtn primary" id="ccYes">Claim this card</button>
-  <button class="ghost" id="ccNo">${n>0?'No, take me to my profile':'Not now'}</button>`);
+  <button class="gbtn primary" id="ccYes">${T('ccYes')}</button>
+  <button class="ghost" id="ccNo">${n>0?T('ccNoHas'):T('ccNoNew')}</button>`);
   $('ccYes').onclick=()=>res(true);$('ccNo').onclick=()=>res(false);
 })}
 
@@ -1281,6 +1356,48 @@ async function sendReport(){
   loadNotifs();
 }
 
+/* ---------- QR code for a profile ---------- */
+function qrDataUrl(text){
+  const qr=qrcode(0,'M');qr.addData(text);qr.make();
+  const n=qr.getModuleCount(),m=8,q=4,sz=(n+2*q)*m,c=document.createElement('canvas');c.width=c.height=sz;
+  const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,sz,sz);x.fillStyle='#111';
+  for(let r=0;r<n;r++)for(let k=0;k<n;k++)if(qr.isDark(r,k))x.fillRect((k+q)*m,(r+q)*m,m,m);
+  return c.toDataURL('image/png');
+}
+async function openQr(){
+  if(typeof qrcode!=='function'){await lynqAlert('The QR code needs a connection the first time. Please try again online.','QR code');return}
+  const u=shareUrl(),d=qrDataUrl(u);
+  $('qrpName').textContent=state.name||'QR code';$('qrpImg').src=d;$('qrpUrl').textContent=u;
+  $('qrpDl').href=d;$('qrpDl').download=((state.name||'lynq').replace(/\s+/g,'_'))+'_qr.png';
+  $('qrpModal').classList.add('open');
+}
+
+/* ---------- referral code ---------- */
+async function showReferral(){
+  const{data}=await supabaseClient.from('profiles').select('ref_code').eq('user_id',curSession.user.id).maybeSingle();
+  const code=data&&data.ref_code;
+  if(!code){await lynqAlert('Save your profile first (Save & publish) and your referral code will appear here.','Referral code');return}
+  const link=GET_LYNQ_URL+(GET_LYNQ_URL.includes('?')?'&':'?')+'ref='+encodeURIComponent(code);
+  try{await navigator.clipboard.writeText(link)}catch(_e){}
+  await lynqAlert(`Your referral code is ${code}. Friends who use it when they order a LYNQ card are linked to you. This link was copied: ${link}`,'Your referral code');
+}
+
+/* ---------- business starter templates ---------- */
+const BTPL={
+ salon:{label:'Available for bookings',btn:'Book now',items:[['Haircut','₱150'],['Hair color','₱800'],['Manicure','₱250'],['Hair rebond','₱1,500']]},
+ food:{label:'Open for orders',btn:'Order now',items:[['House special meal','₱180'],['Iced coffee','₱90'],['Dessert of the day','₱120']]},
+ free:{label:'Open to work',btn:'Learn more',items:[['Logo design','₱1,500'],['Social media post','₱300'],['Basic website','₱5,000']]},
+ shop:{label:'Open for orders',btn:'Shop now',items:[['Product 1','₱299'],['Product 2','₱499'],['Bundle deal','₱699']]}
+};
+async function applyBizTpl(k){
+  const t=BTPL[k],b=BZ();
+  if(b.items.length&&!await lynqConfirm({title:'Replace your items?',text:'This replaces your current items with example ones that you can edit.',ok:'Replace'}))return;
+  b.on=true;b.label=t.label;b.btn=t.btn;
+  b.items=t.items.map(([n,pr])=>({name:n,price:pr,desc:'Example - edit me',photo:''}));
+  render();
+  await lynqAlert('Example items were added. Edit the names and prices to match what you offer.','Template applied');
+}
+
 /* ---------- first-time walkthrough of the editor ---------- */
 const TOUR=[
  {t:'Welcome to your editor',x:'This quick tour shows where everything is. It takes about a minute.'},
@@ -1305,8 +1422,9 @@ function tourTarget(st){
 function showTour(i){
   tourI=i;const st=TOUR[i],el=tourTarget(st),card=$('tourCard'),spot=$('tourSpot');
   clearInterval(tourTimer);
-  $('tcStep').textContent=`Step ${i+1} of ${TOUR.length}`;$('tcTitle').textContent=st.t;$('tcText').textContent=st.x;
-  $('tcBack').classList.toggle('hidden',i===0);$('tcNext').textContent=i===TOUR.length-1?'Done':'Next';
+  const tx=(TOURX[LANG]||[])[i];
+  $('tcStep').textContent=`${T('step')} ${i+1} ${T('of')} ${TOUR.length}`;$('tcTitle').textContent=tx?tx[0]:st.t;$('tcText').textContent=tx?tx[1]:st.x;$('tcSkip').textContent=T('skip');$('tcBack').textContent=T('back');
+  $('tcBack').classList.toggle('hidden',i===0);$('tcNext').textContent=i===TOUR.length-1?T('done'):T('next');
   if(!el){spot.className='none';spot.style.cssText='';card.className='mid';return}
   spot.className='';card.className='bottom';
   el.scrollIntoView({block:'center',behavior:'smooth'});
@@ -1333,6 +1451,10 @@ function buildMenu(){
   const go=signed&&hasAccount&&!!myUid&&!isOwner;
   $('mGoMine').classList.toggle('hidden',!go);$('goMineBtn').classList.toggle('hidden',!go);
   $('mTour').classList.toggle('hidden',!isOwner);
+  $('mRef').classList.toggle('hidden',!(signed&&hasAccount));
+  {const g=!isOwner&&!(signed&&hasAccount)&&!!GET_LYNQ_URL,gl=$('getLynq');
+   gl.classList.toggle('hidden',!g);
+   if(g)gl.href=GET_LYNQ_URL+(curRef?(GET_LYNQ_URL.includes('?')?'&':'?')+'ref='+encodeURIComponent(curRef):'')}
   $('mReport').classList.toggle('hidden',!(signed&&hasAccount));
   $('bellBtn').classList.toggle('hidden',!(signed&&hasAccount));
   if(signed&&hasAccount&&!notifLoaded){notifLoaded=true;loadNotifs()}
@@ -1393,11 +1515,13 @@ function flowShow(html){
 const flowClose=()=>$('flow').classList.remove('open');
 const infoScreen=(t,s)=>flowShow(`${CARD_HTML}<h2>${t}</h2><p>${s}</p>`);
 function claimScreen(uid){
-  flowShow(`${CARD_HTML}<h2>Claim your LYNQ card</h2><p>Sign in once to activate your card.</p>
-  <div class="gpanel"><div class="gstep"><b>1</b><div><strong>Sign in with Google</strong><span>Tap Continue with Google to claim ownership.</span></div></div>
-  <div class="gstep"><b>2</b><div><strong>Build your profile</strong><span>Add your photo, links and contact details.</span></div></div></div>
-  <button class="gbtn white" id="claimGoogleBtn"><svg viewBox="0 0 24 24" style="width:18px;height:18px"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.2v3.15C3.17 21.32 7.28 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.2C.44 8.12 0 9.87 0 11.7s.44 3.58 1.2 5.12l4.08-2.55z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.28 0 3.17 2.68 1.2 6.58l4.08 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg>Continue with Google</button>
-  <p class="fine">By signing in, you agree to our <a href="#" data-legal="terms">Terms</a> and <a href="#" data-legal="privacy">Privacy Policy</a>. We only use your Google account to secure your card.</p>`);
+  flowShow(`${CARD_HTML}<h2>${T('claimT')}</h2><p>${T('claimP')}</p>
+  <div class="gpanel"><div class="gstep"><b>1</b><div><strong>${T('s1t')}</strong><span>${T('s1d')}</span></div></div>
+  <div class="gstep"><b>2</b><div><strong>${T('s2t')}</strong><span>${T('s2d')}</span></div></div></div>
+  <button class="gbtn white" id="claimGoogleBtn"><svg viewBox="0 0 24 24" style="width:18px;height:18px"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.2v3.15C3.17 21.32 7.28 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.2C.44 8.12 0 9.87 0 11.7s.44 3.58 1.2 5.12l4.08-2.55z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.28 0 3.17 2.68 1.2 6.58l4.08 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg>${T('google')}</button>
+  <p class="fine">${T('fine')}</p>
+  <p class="fine">${LANGROW}</p>`);
+  document.querySelectorAll('[data-lang]').forEach(a=>a.onclick=e=>{e.preventDefault();LANG=a.dataset.lang;localStorage.setItem('lynq_lang',LANG);claimScreen(uid)});
   $('claimGoogleBtn').onclick=async()=>{
     if(!termsOk())return openLegal('terms',true);
     sessionStorage.setItem('pending_lynq_card',uid);
@@ -1507,7 +1631,7 @@ async function handleNfcCardBinding(){
   if(rec&&!error){try{localStorage.setItem('lynq_card_'+uid,JSON.stringify(rec))}catch(_e){}}
   else{const c=localStorage.getItem('lynq_card_'+uid);if(c&&(error||!navigator.onLine)){try{rec=JSON.parse(c);error=null;offline=true}catch(_e){}}}
   if(error||!rec){infoScreen('Card not found','Please check your LYNQ card link and try again.');return}
-  curVerified=rec.verified||'';curHandle=rec.handle||'';
+  curVerified=rec.verified||'';curHandle=rec.handle||'';curRef=rec.ref||'';
   if(rec.disabled&&!(session&&rec.user_id===session.user.id)&&!isStaff){infoScreen('Card disabled','The owner has turned off this LYNQ card.');return}
   if(!rec.user_id&&!session){claimScreen(uid);if(!termsOk())openLegal('terms',true);return}
 
@@ -1623,7 +1747,7 @@ async function init(){
     $(closeId).addEventListener('click',()=>$(modalId).classList.remove('open'));
     $(modalId).addEventListener('click',e=>{if(e.target.id===modalId)$(modalId).classList.remove('open')});
   };
-  modal('infoBtn','infoModal','closeInfoBtn');modal(null,'qrModal','closeQrBtn');modal(null,'galleryModal','closeGalleryBtn');modal(null,'contactsModal','closeContactsBtn');modal(null,'cardsModal','closeCardsBtn');modal(null,'notifModal','closeNotifBtn');modal(null,'reportModal','closeReportBtn');modal(null,'statsModal','closeStatsBtn');
+  modal('infoBtn','infoModal','closeInfoBtn');modal(null,'qrModal','closeQrBtn');modal(null,'galleryModal','closeGalleryBtn');modal(null,'contactsModal','closeContactsBtn');modal(null,'cardsModal','closeCardsBtn');modal(null,'notifModal','closeNotifBtn');modal(null,'qrpModal','closeQrpBtn');modal(null,'reportModal','closeReportBtn');modal(null,'statsModal','closeStatsBtn');
   $('openGalleryBtn').addEventListener('click',()=>{galShow(0,false);$('galleryModal').classList.add('open')});
   $('galPrev').addEventListener('click',()=>galShow(gi-1,true));
   $('galNext').addEventListener('click',()=>galShow(gi+1,true));
@@ -1679,6 +1803,8 @@ async function init(){
   $('tcNext').onclick=()=>{if(tourI>=TOUR.length-1)endTour();else showTour(tourI+1)};
   $('tcBack').onclick=()=>{if(tourI>0)showTour(tourI-1)};
   $('tcSkip').onclick=endTour;
+  $('mQr').onclick=()=>{pops();openQr()};$('mRef').onclick=()=>{pops();showReferral()};
+  $('bizTpl').addEventListener('click',e=>{const x=e.target.closest('button[data-t]');if(x)applyBizTpl(x.dataset.t)});
   $('bellBtn').onclick=openNotifs;$('notifReport').onclick=openReport;$('mReport').onclick=()=>{pops();openReport()};$('rpSend').onclick=sendReport;
   $('rpImg').addEventListener('change',e=>{const f=e.target.files[0];e.target.value='';if(f)compressImage(f,1000,.7,u=>{rpFile=u;$('rpImgTxt').textContent='Image attached'})});
   setInterval(()=>{if(document.visibilityState==='visible')loadNotifs()},60000);
