@@ -50,9 +50,22 @@ async function loadNotifs(){
   notifs=data||[];const n=notifs.filter(x=>!x.read).length;
   $('bellDot').textContent=n>9?'9+':n;$('bellDot').classList.toggle('hidden',!n);
 }
+function drawNotifs(){
+  $('notifList').innerHTML=notifs.length?`<div style="text-align:right;margin-bottom:4px"><span class="del-note" style="position:static" onclick="clearNotifs()">Clear all</span></div>`+notifs.map(n=>`<div class="note-item" style="${n.read?'':'background:rgba(127,127,127,.1);border-radius:10px;padding:10px 8px'}"><span class="del-note" onclick="delNotif('${esc(String(n.id))}')" role="button" aria-label="Delete notification">Delete</span><b style="color:var(--text);display:block;padding-right:56px">${esc(n.title)}</b><div style="font-size:13px;margin-top:2px">${esc(n.body||'')}</div><div style="font-size:11px;color:var(--sub);margin-top:3px">${new Date(n.created_at).toLocaleString()}</div></div>`).join(''):'No notifications yet.';
+}
+async function delNotif(id){
+  const{error}=await supabaseClient.rpc('delete_notification',{p_id:id});
+  if(error)return;notifs=notifs.filter(n=>String(n.id)!==id);drawNotifs();
+  const u=notifs.filter(x=>!x.read).length;$('bellDot').textContent=u;$('bellDot').classList.toggle('hidden',!u);
+}
+async function clearNotifs(){
+  if(!confirm('Delete all notifications?'))return;
+  const{error}=await supabaseClient.rpc('delete_all_notifications');
+  if(error)return;notifs=[];drawNotifs();$('bellDot').classList.add('hidden');
+}
 async function openNotifs(){
   await loadNotifs();
-  $('notifList').innerHTML=notifs.length?notifs.map(n=>`<div class="note-item" style="${n.read?'':'background:rgba(127,127,127,.1);border-radius:10px;padding:10px 8px'}"><b style="color:var(--text)">${esc(n.title)}</b><div style="font-size:13px;margin-top:2px">${esc(n.body||'')}</div><div style="font-size:11px;color:var(--sub);margin-top:3px">${new Date(n.created_at).toLocaleString()}</div></div>`).join(''):'No notifications yet.';
+  drawNotifs();
   $('notifModal').classList.add('open');
   if(notifs.some(n=>!n.read)){await supabaseClient.rpc('mark_notifications_read');$('bellDot').classList.add('hidden')}
 }
