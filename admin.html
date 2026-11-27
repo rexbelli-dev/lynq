@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#1B1220">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="LYNQ Admin"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>LYNQ Admin</title>
+<link rel="manifest" href="admin.webmanifest">
+<link rel="icon" href="assets/admin-icon-192.png"><link rel="apple-touch-icon" href="assets/admin-icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin">
+
+<div id="gate" class="gate hide"><div class="box">
+  <img src="assets/lynq-logo.webp" alt="LYNQ">
+  <h1>LYNQ Admin</h1>
+  <p id="gateMsg">For the LYNQ team only. Sign in with your team Google account.</p>
+  <button class="btn pri" id="goSign" style="width:100%">Continue with Google</button>
+  <button class="btn hide" id="gateOut" style="width:100%;margin-top:10px">Sign out</button>
+</div></div>
+
+<div id="app" class="shell hide">
+  <aside class="side" id="side" aria-label="Main menu"></aside>
+  <main class="main" id="main">
+    <section class="page" id="p-dash" aria-labelledby="t-dash"></section>
+    <section class="page hide" id="p-cards"></section>
+    <section class="page hide" id="p-users"></section>
+    <section class="page hide" id="p-rep"></section>
+    <section class="page hide" id="p-money"></section>
+    <section class="page hide" id="p-team"></section>
+    <section class="page hide" id="p-me"></section>
+    <section class="page hide" id="p-gen"></section>
+    <section class="page hide" id="p-log"></section>
+  </main>
+  <div class="bn-wrap"><nav class="bnav" id="bnav" aria-label="Main menu"></nav></div>
+</div>
+<div id="modalRoot"></div><div id="toastRoot" aria-live="polite"></div><div id="offline" class="hide">You are offline. Data will not refresh until you reconnect.</div>
+
+<script src="js/admin-core.js"></script>
+<script src="js/admin-dash.js"></script>
+<script src="js/admin-cards.js"></script>
+<script src="js/admin-reports.js"></script>
+<script src="js/admin-money.js"></script>
+<script src="js/admin-team.js"></script>
+<script src="js/admin-boot.js"></script>
+</body></html>
