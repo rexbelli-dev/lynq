@@ -31,7 +31,7 @@ input[type=range]{flex:1;accent-color:var(--accent)}
 .modal-overlay.open .modal-body{transform:scale(1)}
 .modal-close{position:absolute;top:14px;right:18px;font-size:22px;font-weight:700;color:var(--sub);cursor:pointer;z-index:3}
 .website-brand-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:10px 16px;margin-top:12px;border-radius:14px;background:var(--card-bg);border:1px solid rgba(127,127,127,.25);color:var(--text);font-weight:700;font-size:14px;text-decoration:none;box-shadow:0 4px 12px rgba(0,0,0,.04)}
-.website-brand-btn svg{width:20px;height:20px;stroke:var(--accent);fill:none;stroke-width:2;flex:none}
+.website-brand-btn .wm{height:15px;width:auto}
 .gal{padding:18px;max-width:380px}
 .gal h3{margin:0 0 12px;font-size:16px;color:var(--text)}
 .gal-stage{position:relative;aspect-ratio:4/5;border-radius:18px;overflow:hidden;background:rgba(127,127,127,.12);touch-action:pan-y}
