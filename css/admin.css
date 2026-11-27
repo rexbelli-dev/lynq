@@ -154,3 +154,5 @@ table.t{border-collapse:collapse;width:100%;min-width:760px;font-size:14px;font-
 @media (max-width:699px){.rr .act{grid-column:1/-1}}
 .kpi.hi.neg b{color:#FF9AA8}
 #side{overflow-y:auto}
+
+.wm{display:inline-block;aspect-ratio:364/72;background:currentColor;-webkit-mask:url(../assets/lynq-wordmark.webp) center/contain no-repeat;mask:url(../assets/lynq-wordmark.webp) center/contain no-repeat;vertical-align:middle;flex:none}
