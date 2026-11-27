@@ -1,0 +1,21 @@
+/* css/admin.css
+   Look of the staff-only admin page (admin.html). Uses the colors from css/tokens.css where possible. */
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:#0f0a0e;color:#fff;font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;padding:env(safe-area-inset-top) 0 40px}
+.wrap{max-width:760px;margin:0 auto;padding:16px}
+h1{font-size:20px;margin:0}.muted{color:rgba(255,255,255,.55);font-size:12.5px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}
+.tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.b,.tabs button{border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.07);color:#fff;padding:9px 14px;border-radius:12px;font-weight:600;font-size:13px;cursor:pointer;text-decoration:none;display:inline-block}
+.tabs button.on,.b.p{background:#D6248F;border-color:transparent}
+.b.d{background:rgba(239,68,68,.18);border-color:rgba(239,68,68,.4);color:#ffb4bd}
+.card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:14px;margin-bottom:10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}.stat b{font-size:26px;display:block}
+input,select{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:#fff;border-radius:12px;padding:10px 12px;font-size:16px;min-width:0}
+select option{color:#111}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.sp{justify-content:space-between}
+code{font-family:ui-monospace,Menlo,monospace;font-size:13px}
+.chip{font-size:11px;padding:2px 8px;border-radius:99px;background:rgba(255,255,255,.12);margin-left:4px}
+.chip.g{background:rgba(74,222,128,.2);color:#8df0b0}.chip.r{background:rgba(239,68,68,.22);color:#ffb4bd}.chip.y{background:rgba(250,204,21,.2);color:#fde68a}
+.hide{display:none!important}a{color:#ff9bd0}

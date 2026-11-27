@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LYNQ</title>
+<meta name="theme-color" content="#D6248F">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="LYNQ">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23D6248F' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'/><path d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;700;800&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js" defer></script>
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/profile.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/flow.css">
+<link rel="stylesheet" href="css/editor.css">
+<link rel="stylesheet" href="css/overlays.css">
+<link rel="stylesheet" href="css/features.css">
+<link rel="stylesheet" href="css/themes.css">
+<script src="js/theme-core.js"></script>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="chainG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff9ad0"/><stop offset="1" stop-color="#D6248F"/></linearGradient></defs></svg>
+
+<div id="loadingScreen"><div class="loader-content">
+  <div class="loader-logo"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" data-icon="chain"></svg>LYNQ</div>
+  <div class="loader-text">Opening your card<span class="dots-loader"><span>.</span><span>.</span><span>.</span></span></div>
+</div></div>
+
+<div id="flow"><div class="blob b1"></div><div class="blob b2"></div><div id="flowBody"></div></div>
+
+<div id="crop"><div class="cbox">
+  <h3 id="cropTitle">Adjust photo</h3><p class="chint">Drag to move. Pinch or use the slider to zoom.</p>
+  <div id="cropVp"><img id="cropImg" alt="" draggable="false"><div class="cmask" id="cropMask"></div></div>
+  <input type="range" id="cropZoom" min="100" max="500" value="100">
+  <div class="crow"><button class="gbtn" id="cropCancel">Cancel</button><button class="gbtn primary" id="cropOk">Done</button></div>
+</div></div>
+
+<div class="cover" id="coverEl"><div class="ov"></div>
+  <div class="cover-tools">
+    <button id="shareBtn" aria-label="Share profile"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-icon="share"></svg></button>
+    <button id="infoBtn" aria-label="Help guide"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-icon="info"></svg></button>
+    <button id="bellBtn" class="hidden" aria-label="Notifications"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-icon="bell"></svg><i id="bellDot" class="hidden">0</i></button>
+  </div>
+  <div class="cover-tools rt">
+    <button id="menuBtn" class="hidden" aria-label="Menu"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-icon="menu"></svg></button>
+    <button id="scBtn" class="hidden" aria-label="Share your contact"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-icon="user-plus"></svg></button>
+  </div>
+</div>
+<div id="menuPanel" class="pop hidden">
+ <button class="mi hidden" id="mGoMine"><svg viewBox="0 0 24 24" data-icon="user"></svg>Go to your profile</button>
+ <button class="mi" id="mContacts"><svg viewBox="0 0 24 24" data-icon="users"></svg>LYNQ contacts</button>
+ <button class="mi hidden" id="mSaveThis"><svg viewBox="0 0 24 24" data-icon="bookmark"></svg>Save this profile to LYNQ contacts</button>
+ <button class="mi hidden" id="mSignIn"><svg viewBox="0 0 24 24" data-icon="sign-in"></svg>Sign in</button>
+ <button class="mi hidden" id="mTour"><svg viewBox="0 0 24 24" data-icon="help"></svg>Tutorial</button>
+ <button class="mi" id="mQr"><svg viewBox="0 0 24 24" data-icon="grid"></svg>QR code</button>
+ <button class="mi hidden" id="mRef"><svg viewBox="0 0 24 24" data-icon="gift"></svg>Referral code</button>
+ <button class="mi hidden" id="mCommunity"><svg viewBox="0 0 24 24" data-icon="users"></svg>LYNQ Community</button>
+ <button class="mi hidden" id="mReport"><svg viewBox="0 0 24 24" data-icon="chat"></svg>Report a problem</button>
+ <button class="mi hidden" id="mCards"><svg viewBox="0 0 24 24" data-icon="card"></svg>My cards</button>
+ <button class="mi hidden" id="mStats"><svg viewBox="0 0 24 24" data-icon="chart"></svg>Analytics</button>
+ <button class="mi" id="mInstall"><svg viewBox="0 0 24 24" data-icon="download"></svg>Add to Home Screen</button>
+ <button class="mi hidden" id="mAdmin"><svg viewBox="0 0 24 24" data-icon="shield"></svg>Admin</button>
+ <div id="mOwner" class="hidden"><div class="msep"></div>
+  <button class="mi danger" id="mDelProfile"><svg viewBox="0 0 24 24" data-icon="trash"></svg>Delete my profile</button>
+  <button class="mi danger" id="mDelAccount"><svg viewBox="0 0 24 24" data-icon="x-circle"></svg>Delete my account</button>
+ </div>
+</div>
+<div id="scPanel" class="scf hidden"></div>
+<div id="offBar" class="hidden">Offline · showing your last saved copy</div>
+<img id="brandBadge" class="hidden" alt="">
+<img id="decoEl" class="hidden" alt="">
+<div class="wrap">
+  <div class="card" id="mainCardEl">
+    <div class="avatar-row">
+      <div class="avatar-left-group">
+        <div class="avatar" id="avatarContainer"><img id="avatarImg" src="" alt="" style="display:none"><span id="avatarInitials"></span></div>
+        <div class="mini-row"><div class="tap-pill" id="tapPill"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-icon="card-tap"></svg><span id="tapText">0 taps</span></div><button class="gallery-btn hidden" id="openGalleryBtn" title="Gallery" aria-label="Gallery"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-icon="image"></svg>Gallery</button></div>
+      </div>
+    </div>
+    <h1 id="nameEl"></h1>
+    <div id="openWrap"></div>
+    <div class="work" id="workEl"></div>
+    <div class="worklocation" id="workLocationEl"></div>
+    <p class="bio" id="bioEl"></p>
+    <div class="eduroadmap-box hidden" id="eduRoadmapBox">
+      <div class="eduroadmap-header" id="eduRoadmapToggle"><span id="eduRoadmapSummary">Education Roadmap</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-icon="chevron-down"></svg></div>
+      <div class="eduroadmap-content"><div class="timeline-list" id="timelineListEl"></div></div>
+    </div>
+    <div id="extraTagsContainer"></div>
+    <div class="contact-row" id="contactRow"></div>
+    <div id="bizEl"></div>
+    <div class="links list-layout" id="linksEl"></div>
+    <button class="btn hidden" id="goMineBtn" style="width:100%;margin-top:14px">Go to your profile</button>
+    <div class="note-section" id="visitorNoteSection">
+      <button class="btn secondary" id="toggleNoteBtn" style="width:100%">Leave a note</button>
+      <div class="note-drawer" id="noteDrawer">
+        <textarea id="visitorNoteText" placeholder="Write a quick message or note..."></textarea>
+        <button class="btn" id="sendNoteBtn" style="margin-top:8px;width:100%">Send Note</button>
+        <div id="noteStatusEl" style="color:var(--sub)"></div>
+      </div>
+    </div>
+    <a class="btn hidden" id="getLynq" target="_blank" rel="noopener" style="display:block;text-align:center;text-decoration:none;margin-top:12px">Get your own LYNQ card</a>
+    <div class="auth-prompt" id="authPromptBtn">Have a LYNQ card already? <a id="signInLink">Sign in</a></div>
+    <div id="globalErrorEl"></div>
+  </div>
+
+  <div class="ed hidden" id="editPanel">
+<div class="ed-head"><h2>Edit profile</h2><p>Tap a section to open it.</p></div>
+<div class="meter" id="meter"></div>
+<details class="sec" open><summary><span class="ic" style="background:#ff9500"><svg viewBox="0 0 24 24" data-icon="camera"></svg></span>Photos<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" data-icon="chevron-down"></svg></summary><div class="sec-body"><div class="grp">
+<div class="li"><span class="thumb" id="edAvPrev"></span><label>Profile photo</label><label class="pb">Change<input type="file" id="avatarFile" accept="image/*" hidden></label><button type="button" class="pb" id="avRm" hidden style="margin-left:6px;color:#d33">Remove</button></div>
+<div class="li"><span class="thumb wide" id="edCvPrev"></span><label>Cover photo</label><label class="pb">Change<input type="file" id="coverFile" accept="image/*" hidden></label><button type="button" class="pb" id="cvRm" hidden style="margin-left:6px;color:#d33">Remove</button></div>
+<div class="li"><label>Cover dim</label><input type="range" id="opRange" min="0" max="90" value="55"></div></div>
+<div class="sub-t" id="galT">Business photos (up to 3)</div>
+<div class="tiles"><label class="tile" id="tile1"><input type="file" id="photoFile1" accept="image/*" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" data-icon="plus"></svg></label><label class="tile" id="tile2"><input type="file" id="photoFile2" accept="image/*" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" data-icon="plus"></svg></label><label class="tile" id="tile3"><input type="file" id="photoFile3" accept="image/*" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" data-icon="plus"></svg></label></div></div></details>
+<details class="sec"><summary><span class="ic" style="background:#5856d6"><svg viewBox="0 0 24 24" data-icon="sliders"></svg></span>Appearance<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" data-icon="chevron-down"></svg></summary><div class="sec-body"><div class="sub-t">Theme</div><div class="themes"><div class="sw" data-k="clean-light" onclick="applyThemePreset('clean-light')"><i style="background:#D6248F"></i>Clean Light</div><div class="sw" data-k="black-gray" onclick="applyThemePreset('black-gray')"><i style="background:linear-gradient(135deg,#242424,#0d0d0d)"></i>Black & Gray</div><div class="sw" data-k="white-pink" onclick="applyThemePreset('white-pink')"><i style="background:linear-gradient(135deg,#ff80bf,#ffb3d9)"></i>White & Pink</div><div class="sw" data-k="white-black" onclick="applyThemePreset('white-black')"><i style="background:linear-gradient(135deg,#334155,#0f172a)"></i>White & Black</div><div class="sw" data-k="lgbt-pride" onclick="applyThemePreset('lgbt-pride')"><i style="background:linear-gradient(90deg,red,orange,yellow,green,blue,purple)"></i>Pride</div><div class="sw" data-k="midnight-blue" onclick="applyThemePreset('midnight-blue')"><i style="background:linear-gradient(135deg,#1e40af,#1e1b4b)"></i>Midnight</div><div class="sw" data-k="emerald-dark" onclick="applyThemePreset('emerald-dark')"><i style="background:linear-gradient(135deg,#047857,#064e3b)"></i>Emerald</div><div class="sw" data-k="sunset-amber" onclick="applyThemePreset('sunset-amber')"><i style="background:linear-gradient(135deg,#d97706,#b45309)"></i>Sunset</div></div>
+<div class="sub-t">Special themes</div>
+<div class="themes">
+<div class="sw" data-k="recon-tech" onclick="applyThemePreset('recon-tech')"><i style="background:linear-gradient(135deg,#fff,#1f6b34)"></i>ReconTech</div>
+<div class="sw" data-k="davao" onclick="applyThemePreset('davao')"><i style="background:linear-gradient(135deg,#fff,#1b7f3b 60%,#d81b8a)"></i>Davao</div>
+<div class="sw" data-k="zap-it" onclick="applyThemePreset('zap-it')"><i style="background:linear-gradient(135deg,#fff,#1d6fe8)"></i>Zap it</div>
+<div class="sw" data-k="custom" onclick="setCustom({})"><i style="background:conic-gradient(red,orange,yellow,lime,cyan,blue,magenta,red)"></i>Custom</div>
+<div class="sw hidden" id="swTeam" data-k="lynq-team" onclick="applyThemePreset('lynq-team')"><i style="background:linear-gradient(135deg,#F4ECE1 50%,#D6248F 50%)"></i>LYNQ Team</div>
+</div>
+<div id="customBox" class="hidden">
+<div class="sub-t">Pick a color</div><div id="clrDots"></div>
+<div class="grp"><div class="li"><label>Any color</label><input type="color" class="clr" id="customClr"></div></div>
+<div class="seg" data-for="customModeSel"><button data-v="light">Light</button><button data-v="dark">Dark</button></div>
+<select id="customModeSel" class="hidden"><option value="light">Light</option><option value="dark">Dark</option></select>
+</div>
+<div class="sub-t">Links layout</div>
+<div class="seg" data-for="layoutStyleSel"><button data-v="list">List</button><button data-v="grid">App grid</button></div>
+<select id="layoutStyleSel" class="hidden"><option value="list">List</option><option value="grid">Grid</option></select>
+<div class="sub-t">Icon colors</div>
+<div class="seg" data-for="iconStyleSel"><button data-v="brand">Brand colors</button><button data-v="match">Match theme</button></div>
+<select id="iconStyleSel" class="hidden"><option value="brand">Brand</option><option value="match">Match</option></select>
+<div class="grp"><div class="li"><label for="showTapsSw" style="flex:1">Show taps counter</label><label class="switch"><input type="checkbox" id="showTapsSw"><span class="slider"></span></label></div></div>
+<div class="note">When off, the taps pill is hidden and Gallery shows its full label. Taps are still counted.</div></div></details>
+<details class="sec"><summary><span class="ic" style="background:#34c759"><svg viewBox="0 0 24 24" data-icon="user"></svg></span>About you<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" data-icon="chevron-down"></svg></summary><div class="sec-body"><div class="note" style="margin:0">Tap your name or bio at the top of the page to edit them directly.</div><div class="grp"><div class="li"><label>Location</label><input type="text" id="workCityCountry" placeholder="City, Country" ></div><div class="li"><label>Languages</label><input type="text" id="languagesInput" placeholder="English, Tagalog" ></div><div class="li"><label>Hobbies</label><input type="text" id="hobbiesInput" placeholder="Gaming, Reading" ></div></div></div></details>
+<details class="sec"><summary><span class="ic" style="background:#30b0c7"><svg viewBox="0 0 24 24" data-icon="phone"></svg></span>Contact & payment<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" data-icon="chevron-down"></svg></summary><div class="sec-body"><div class="grp"><div class="li"><label>Phone</label><input type="text" id="phoneInput" placeholder="+639123456789" inputmode="tel"></div><div class="li"><label>Email</label><input type="text" id="emailInput" placeholder="name@example.com" inputmode="email"></div><div class="li"><label>QR name</label><input type="text" id="qrNameInput" placeholder="GCash / Maya" ></div><div class="li"><label>QR image</label><label class="pb">Upload<input type="file" id="qrFile" accept="image/*" hidden></label></div></div></div></details>
+<details class="sec"><summary><span class="ic" style="background:#af52de"><svg viewBox="0 0 24 24" data-icon="graduation"></svg></span>Education<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" data-icon="chevron-down"></svg></summary><div class="sec-body"><div id="educationList"></div><div class="grp"><div class="li"><label>Level</label><select id="eduLevelInput"><option>Elementary</option><option>Junior High</option><option>Senior High</option><option>College</option><option>Masteral</option><option>Doctoral</option></select></div><div class="li"><label>School</label><input type="text" id="eduSchoolInput" placeholder="School or university" ></div><div class="li"><label>Year</label><input type="text" id="eduYearInput" placeholder="2022 - 2026" ></div><div class="li"><label>Program</label><input type="text" id="eduProgramInput" placeholder="BS Criminology / STEM" ></div><div class="li"><label>Awards</label><input type="text" id="eduAchieveInput" placeholder="Comma separated" ></div></div><button class="btn" id="addEduBtn">Add education</button></div></details>
+<details class="sec"><summary><span class="ic" style="background:#ff6b35"><svg viewBox="0 0 24 24" data-icon="briefcase"></svg></span>Work experience<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" data-icon="chevron-down"></svg></summary><div class="sec-body"><div id="workList"></div><div class="grp"><div class="li"><label>Role</label><input type="text" id="workRole" placeholder="Role / position" ></div><div class="li"><label>Company</label><input type="text" id="workCompany" placeholder="Company" ></div><div class="li"><label>Duration</label><input type="text" id="workDuration" placeholder="Optional" ></div></div><button class="btn" id="addWorkBtn">Add experience</button></div></details>
+<details class="sec"><summary><span class="ic" style="background:#007aff"><svg viewBox="0 0 24 24" data-icon="chain"></svg></span>Add a link<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" data-icon="chevron-down"></svg></summary><div class="sec-body"><div class="grp"><div class="li"><label>Platform</label><select id="platformSel" onchange="toggleCustomLabel()"></select></div><div class="li"><label>Link</label><input type="url" id="linkUrl" placeholder="https://..." autocapitalize="off"></div><div class="li"><label>Label</label><input type="text" id="customNameInput" placeholder="e.g. My Portfolio"></div><div class="li hidden" id="logoRow"><span class="thumb sq" id="logoPrev"></span><label>Logo</label><label class="pb" id="logoUp">Upload<input type="file" id="logoFile" accept="image/*" hidden></label><button type="button" class="pb" id="logoRm" hidden style="margin-left:6px;color:#d33">Remove</button></div></div><button class="btn" id="addLinkBtn">Add link</button><div class="note">Tap the × on a link above to remove it.</div></div></details>
+<details class="sec"><summary><span class="ic" style="background:#ff375f"><svg viewBox="0 0 24 24" data-icon="home"></svg></span>Business mode<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" data-icon="chevron-down"></svg></summary><div class="sec-body">
+<div class="grp"><div class="li"><label for="bizOn" style="flex:1">Show services, products &amp; booking</label><label class="switch"><input type="checkbox" id="bizOn"><span class="slider"></span></label></div>
+<div class="li"><label for="bizOpen" style="flex:1">Show status badge</label><label class="switch"><input type="checkbox" id="bizOpen"><span class="slider"></span></label></div>
+<div class="li"><label>Status</label><select id="bizOpenLabel"><option>Open to work</option><option>Available for bookings</option><option>Open for orders</option><option>Accepting new clients</option><option>Now hiring</option></select></div>
+<div class="li"><label>Main link</label><input type="url" id="bizBook" placeholder="Booking or shop link" autocapitalize="off"></div>
+<div class="li"><label>Button text</label><select id="bizBtn"><option>Book now</option><option>Order now</option><option>Shop now</option><option>Learn more</option></select></div>
+<div class="li"><label>Message link</label><input type="url" id="bizMsg" placeholder="m.me/yourpage or wa.me/..." autocapitalize="off"></div></div>
+<div class="sub-t">Quick start (adds example items you can edit)</div>
+<div class="tplrow" id="bizTpl"><button type="button" data-t="salon">Salon</button><button type="button" data-t="food">Restaurant / café</button><button type="button" data-t="free">Freelancer</button><button type="button" data-t="shop">Online shop</button></div>
+<div id="bizList"></div>
+<div class="grp"><div class="li"><label>Item</label><input type="text" id="bizName" placeholder="e.g. Haircut or Wallet"></div><div class="li"><label>Price</label><input type="text" id="bizPrice" placeholder="₱150"></div><div class="li"><label>Details</label><input type="text" id="bizDesc" placeholder="Optional"></div><div class="li"><label>Photo</label><label class="pb"><span id="bizPhotoTxt">Add photo</span><input type="file" id="bizPhotoFile" accept="image/*" hidden></label></div></div>
+<button class="btn" id="addBizBtn">Add item</button><div class="note">Up to 12 items and 3 business photos (in Photos above). Your payment QR (Contact &amp; payment) also shows on your profile.</div></div></details>
+<details class="sec"><summary><span class="ic" style="background:#0a84ff"><svg viewBox="0 0 24 24" data-icon="chain"></svg></span>Your share link<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" data-icon="chevron-down"></svg></summary><div class="sec-body">
+<div class="note" style="margin:0">Your NFC card always opens with its serial number. This is the shorter link you share online.</div>
+<div class="grp"><div class="li"><label>Username</label><input type="text" id="handleInput" placeholder="yourname" maxlength="20" autocapitalize="off" autocorrect="off"></div></div>
+<button class="btn" id="saveHandleBtn">Save username</button>
+<div class="note" id="handleShow"></div><button class="btn secondary" id="copyHandleBtn" hidden>Copy link</button></div></details>
+<div class="actionbar"><div id="statusEl"></div><div class="arow"><button class="btn secondary" id="doneBtn">Done</button><button class="btn" id="saveBtn">Save &amp; publish</button></div></div>
+</div>
+
+<div class="panel hidden" id="inboxPanel">
+    <h3><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-icon="mail"></svg>Inbox</h3>
+    <div class="tabs"><button id="tabNotes" class="on">Visitor notes</button><button id="tabContacts">Shared contacts</button></div>
+    <div id="notesListContainer" style="font-size:13px;color:var(--sub)">No notes yet.</div>
+    <div id="contactsListContainer" class="hidden" style="font-size:13px;color:var(--sub)">No shared contacts yet.</div>
+    <button class="btn secondary" id="closeInboxBtn" style="margin-top:12px">Close Inbox</button>
+  </div>
+  <a class="switch-account-link hidden" id="switchAccountBtn">Switch to different LYNQ account</a>
+</div>
+
+<div id="tour" class="hidden"><div id="tourSpot" class="none"></div>
+  <div id="tourCard" class="mid"><div class="tc-step" id="tcStep"></div><h3 id="tcTitle"></h3><p id="tcText"></p>
+    <div class="tc-row"><button class="ghost" id="tcSkip">Skip</button><span style="flex:1"></span><button class="gbtn" id="tcBack">Back</button><button class="gbtn primary" id="tcNext">Next</button></div></div></div>
+
+<div class="dlg" id="dlg"><div class="dlg-box">
+  <div class="dlg-ic" id="dlgIc"></div>
+  <h3 id="dlgTitle"></h3><p id="dlgText"></p>
+  <input class="gfield" id="dlgInput" autocapitalize="characters" autocomplete="off" autocorrect="off" spellcheck="false" style="text-align:center;letter-spacing:.08em">
+  <div class="dlg-row"><button class="gbtn" id="dlgCancel">Cancel</button><button class="gbtn primary" id="dlgOk">OK</button></div>
+</div></div>
+
+<div class="modal-overlay" id="contactsModal"><div class="modal-body" style="text-align:left">
+  <span class="modal-close" id="closeContactsBtn">&times;</span>
+  <h3 style="margin:0 0 12px;font-size:18px;color:var(--text)">LYNQ contacts</h3>
+  <div id="savedList" style="font-size:14px;color:var(--sub)"></div>
+</div></div>
+
+<div class="modal-overlay" id="qrpModal"><div class="modal-body">
+  <span class="modal-close" id="closeQrpBtn">&times;</span>
+  <h3 id="qrpName" style="margin:0 0 12px;font-size:18px;color:var(--text)">QR code</h3>
+  <img id="qrpImg" alt="QR code" style="width:100%;max-width:260px;border-radius:14px;border:1px solid rgba(127,127,127,.2);display:block;margin:0 auto">
+  <div class="note" id="qrpUrl" style="word-break:break-all"></div>
+  <a class="btn" id="qrpDl" download="lynq-qr.png" style="display:block;text-align:center;text-decoration:none;margin-top:10px">Download QR</a>
+</div></div>
+<div class="modal-overlay" id="notifModal"><div class="modal-body" style="text-align:left">
+  <span class="modal-close" id="closeNotifBtn">&times;</span>
+  <h3 style="margin:0 0 12px;font-size:18px;color:var(--text)">Notifications</h3>
+  <div id="notifList" style="font-size:14px;color:var(--sub)"></div>
+  <button class="btn" id="notifReport" style="width:100%;margin-top:12px">Report a problem</button>
+</div></div>
+<div class="modal-overlay" id="reportModal"><div class="modal-body" style="text-align:left">
+  <span class="modal-close" id="closeReportBtn">&times;</span>
+  <h3 style="margin:0 0 6px;font-size:18px;color:var(--text)">Report a problem</h3>
+  <div class="note" style="margin:0 0 10px">Tell us what went wrong. Our team will reply in your notifications (the bell icon).</div>
+  <div class="row"><label>Topic</label><select id="rpCat"><option>My card</option><option>My profile</option><option>Sign in</option><option>Something else</option></select></div>
+  <div class="row"><label>Card</label><select id="rpCard"></select></div>
+  <textarea id="rpMsg" maxlength="1000" placeholder="Describe the problem..."></textarea>
+  <div class="row" style="margin:8px 0"><label class="btn secondary" style="display:inline-block;margin:0"><span id="rpImgTxt">Attach image</span><input type="file" id="rpImg" accept="image/*" hidden></label></div>
+  <button class="btn" id="rpSend" style="width:100%">Send report</button>
+  <div id="rpStatus" class="note"></div>
+</div></div>
+<div class="modal-overlay" id="cardsModal"><div class="modal-body" style="text-align:left">
+  <span class="modal-close" id="closeCardsBtn">&times;</span>
+  <h3 style="margin:0 0 12px;font-size:18px;color:var(--text)">My cards</h3>
+  <div id="cardsList" style="font-size:14px;color:var(--sub)"></div>
+</div></div>
+<div class="modal-overlay" id="statsModal"><div class="modal-body" style="text-align:left">
+  <span class="modal-close" id="closeStatsBtn">&times;</span>
+  <h3 style="margin:0 0 10px;font-size:18px;color:var(--text)">Analytics</h3>
+  <div id="statsBody"></div>
+</div></div>
+
+<div class="modal-overlay" id="galleryModal"><div class="modal-body gal">
+  <span class="modal-close" id="closeGalleryBtn">&times;</span>
+  <h3>Photos</h3>
+  <div class="gal-stage" id="galStage"><img id="galImg" alt="">
+    <button class="gal-nav prev" id="galPrev" aria-label="Previous photo"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" data-icon="chevron-left"></svg></button>
+    <button class="gal-nav next" id="galNext" aria-label="Next photo"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" data-icon="chevron-right"></svg></button>
+  </div>
+  <div class="gal-dots" id="galDots"></div>
+</div></div>
+
+<div class="modal-overlay" id="qrModal"><div class="modal-body">
+  <span class="modal-close" id="closeQrBtn">&times;</span>
+  <h3 id="modalQrTitle" style="margin:0 0 14px;font-size:18px;color:var(--text)">Payment QR</h3>
+  <img id="modalQrImg" src="" alt="Payment QR Code" style="width:100%;max-width:280px;border-radius:14px;border:1px solid rgba(127,127,127,.2);display:block;margin:0 auto">
+</div></div>
+
+<div class="modal-overlay" id="infoModal"><div class="modal-body" style="text-align:left">
+  <span class="modal-close" id="closeInfoBtn">&times;</span>
+  <h3 style="margin:0 0 4px;font-size:16px;color:var(--text)">Help &amp; Setup Guide</h3>
+  <a href="https://about.lynqmewithyou.workers.dev/" target="_blank" rel="noopener" class="website-brand-btn"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" data-icon="chain"></svg>LYNQ</a>
+  <a href="https://m.me/cm/o9AXOlYLAw4_DUXC/" target="_blank" rel="noopener" class="website-brand-btn" style="margin-top:8px"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" data-icon="chat"></svg>Join the LYNQ Community</a>
+  <div style="font-size:13px;color:var(--sub);line-height:1.5;margin-top:14px">
+    <h4 style="color:var(--text);font-size:14px;margin:12px 0 4px">How to set up your card</h4>
+    <p>Tap your LYNQ card with your phone. When the page opens, click <b>"Sign in"</b> at the bottom to connect your Google account and claim your card.</p>
+    <h4 style="color:var(--text);font-size:14px;margin:12px 0 4px">Why won't the Sign in button work sometimes?</h4>
+    <p>Sometimes apps like Facebook, Messenger, or Instagram trap web pages inside a tiny helper window that blocks Google from opening. The app gets confused and hides your editing powers, making you look like a regular visitor!</p>
+    <h4 style="color:var(--text);font-size:14px;margin:12px 0 4px">How to fix it and edit your card</h4>
+    <p>• <b>Open in a real browser:</b> Tap the three dots (menu) in the corner of your app and choose <b>"Open in Chrome"</b> or <b>"Open in Safari"</b>.</p>
+    <p>• <b>Use Incognito / Private mode:</b> Copy your card link, open a new Incognito tab in your browser, paste the link, and press Sign in safely.</p>
+  </div>
+</div></div>
+
+<div id="legal"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="legalTitle">
+  <div class="sheet-head"><h3 id="legalTitle">Terms of Use</h3><button class="sheet-x" id="legalX" aria-label="Close">&times;</button></div>
+  <div class="sheet-body" id="legalBody"></div>
+  <div class="sheet-foot"><button class="gbtn primary" id="legalClose">Close</button></div>
+</div></div>
+<script type="text/html" id="tplTerms">
+<p><i>Last updated: November 25, 2026</i></p>
+<p>Please read these Terms. They apply when you visit the LYNQ website, view or manage a digital Profile, claim a Card, submit a visitor note, or use another LYNQ online feature.</p>
+<h4>1. Who We Are and How You Agree</h4>
+<p><b>1.1 Operator.</b> LYNQ Systems is operated in Davao City by founder and developer Rex Belli R. Batenga, RCrim, and co-founder Jim Michael Z. Acman. “LYNQ,” “we,” and “our” refer to those operators.</p>
+<p><b>1.2 Users.</b> “You” includes website visitors, Profile viewers, Profile Owners, Customers, and anyone using the Platform.</p>
+<p><b>1.3 Acceptance.</b> You agree by clicking or tapping “I Agree,” “Accept,” “Continue,” “Save &amp; Publish,” or a similar control after these Terms are shown; by claiming a Card through Google sign-in after notice; or by continuing to use the Platform after receiving legally sufficient notice.</p>
+<p><b>1.4 Electronic contract.</b> Electronic documents, signatures, and contracts are legally recognized under Republic Act No. 8792, Sections 6–9 and 16–18. LYNQ may keep a limited record of the Terms version, date, time, acceptance action, and relevant account or Profile identifier.</p>
+<p><b>1.5 Capacity.</b> You must have legal capacity to agree. A person without full capacity must act through a parent, guardian, or authorized representative. See Civil Code Articles 1159, 1305, 1318, 1327, and 1330.</p>
+<h4>2. The Card and Digital Profile</h4>
+<p><b>2.1 Card.</b> A LYNQ Card is a physical ISO/IEC 14443 NFC card. Its chip stores a link containing the Card ID; the Profile information is stored online.</p>
+<p><b>2.2 Profile.</b> A Profile may display social links, contact details, photos, biography, work and education information, location, interests, a payment QR, business information (services or products, prices, photos, and booking, shop or message links), a status badge such as "Open to work", a verified badge where granted, and an inbox of visitor notes and shared contacts.</p>
+<p><b>2.3 Access.</b> A Profile can open through an NFC tap or direct URL. Visitors generally need no app or LYNQ account, but they need internet access and a compatible browser.</p>
+<p><b>2.4 Price.</b> The Card costs ₱169, paid once. There is no subscription or renewal fee.</p>
+<p><b>2.5 Availability.</b> Card sales are presently limited to Davao City, with an initial run of approximately 800–900 Cards. Public Profiles may be viewed online from other locations.</p>
+<h4>3. Hosting and Service Availability</h4>
+<p><b>3.1 Free-tier infrastructure.</b> The Platform presently uses a Supabase cloud database and file storage with Google sign-in, and a web address hosted through Cloudflare Workers. These services may change as LYNQ grows, including the web address.</p>
+<p><b>3.2 Meaning of “lifetime hosting.”</b> It means hosting for the operational life of the Service on then-available free-tier infrastructure. It does not guarantee perpetual service, uninterrupted uptime, permanent URLs, or unchanged features.</p>
+<p><b>3.3 Third-party changes.</b> Google, Supabase, Cloudflare, and other providers may impose limits, change free plans, pause projects, suspend services, or discontinue features.</p>
+<p><b>3.4 Maintenance.</b> LYNQ may perform maintenance, security updates, migrations, or emergency repairs. Temporary downtime may occur without advance notice when urgent.</p>
+<h4>4. Accounts and Device Requirements</h4>
+<h5>Google account security</h5>
+<p><b>4.1 Claiming.</b> The first person who successfully claims an unclaimed Card through Google sign-in and confirms &ldquo;Claim this card&rdquo; may become its Profile Owner. Claim your Card promptly. If your account already has a Card, you will be asked to confirm before another Card is added.</p>
+<p><b>4.2 Owner access.</b> Only the claiming Google Account is intended to edit the Profile. LYNQ does not receive or store your Google password.</p>
+<p><b>4.3 Your responsibility.</b> Protect your Google Account, recovery methods, devices, and sessions. Report suspected unauthorized access promptly.</p>
+<p><b>4.4 Third-party authentication.</b> LYNQ is not responsible for Google outages, OAuth changes, lost credentials, account suspensions, or restrictive in-app browsers, except where the loss is caused by LYNQ’s legally actionable conduct.</p>
+<h5>NFC and phone compatibility</h5>
+<p><b>4.5 Hardware dependency.</b> Compatibility depends on the phone model and regional version, operating system, browser, NFC hardware, antenna location, settings, device case, and internet connection.</p>
+<p><b>4.6 iPhone.</b> iPhone XS and newer models are expected to scan automatically. iPhone 7, 7 Plus, 8, 8 Plus, and X may require iOS 14 or later and “NFC Tag Reader” in Control Center. iPhone 6s and older are identified as incompatible.</p>
+<p><b>4.7 Android.</b> The phone must include NFC, and NFC may need to be enabled in Settings. Many entry-level and keypad phones do not support NFC.</p>
+<p><b>4.8 Compatibility checker.</b> The LYNQ checker covers approximately 726 models across 21 brands and is a guide based on manufacturer specifications, not a guarantee for a particular device.</p>
+<h4>5. User Content and Public Profiles</h4>
+<p><b>5.1 Your ownership.</b> You retain ownership of the content you submit.</p>
+<p><b>5.2 License to LYNQ.</b> You give LYNQ a limited, non-exclusive, royalty-free license to host, store, copy, resize, cache, display, transmit, secure, and back up your content only as needed to operate the Platform, follow your instructions, address complaints, or comply with law.</p>
+<p><b>5.3 Your promises.</b> You confirm that you own the content or have all permissions and lawful bases needed to publish it, and that it does not violate another person’s privacy, confidentiality, intellectual-property, contractual, or other rights.</p>
+<p><b>5.4 Public visibility.</b> Published Profile information is public. Anyone with the Card or URL may view, save, copy, screenshot, or share it. Publish only information you intend to make public.</p>
+<p><b>5.5 Visitor notes.</b> A visitor may leave a note. If signed in, the visitor’s email address may accompany it. Notes must not be used for spam, threats, fraud, harassment, malware, or unlawful marketing.</p>
+<p><b>5.6 No endorsement.</b> LYNQ does not verify or endorse a Profile Owner’s identity, qualifications, employment, links, goods, services, or representations.</p><p><b>5.7 Contacts shared by visitors.</b> A visitor may share a name, social handles, a phone number and a link with a Profile Owner. This information is delivered to the Profile Owner's inbox. LYNQ does not verify it. Share only what you are comfortable giving to the Profile Owner. Profile Owners must use it lawfully and only for the purpose for which it was shared.</p>
+<p><b>5.8 Saved LYNQ contacts.</b> A signed-in user may save another Profile to their LYNQ contacts. LYNQ stores the Card ID, the Profile name at the time of saving, and the date. The list is visible only to that user.</p>
+<p><b>5.9 Business mode.</b> A Profile Owner may add services or products, prices, photos, and booking, shop or message links. These are the Owner's own offers. LYNQ is not a party to any sale, order, booking or payment and does not guarantee any service, product, price or availability.</p>
+<p><b>5.10 Verified badges.</b> LYNQ may grant a verified check to staff, students or organizations. It means LYNQ confirmed that status when the badge was granted. It is not an endorsement. LYNQ may add or remove a badge at any time.</p>
+<h4>6. Acceptable Use</h4>
+<p>You must not use the Platform to:</p>
+<p><b>6.1</b> gain unauthorized access to an account, editor, visitor inbox, database, server, token, or nonpublic area;</p>
+<p><b>6.2</b> bypass ownership checks, authentication, authorization, rate limits, or security controls;</p>
+<p><b>6.3</b> scrape, crawl, harvest, or systematically copy Profile data without written permission;</p>
+<p><b>6.4</b> perform denial-of-service attacks, flooding, excessive querying, resource exhaustion, or other interference;</p>
+<p><b>6.5</b> upload or execute malware, cross-site scripting, SQL injection, credential-stealing code, or other harmful code;</p>
+<p><b>6.6</b> alter, delete, corrupt, suppress, or make data or systems unavailable;</p>
+<p><b>6.7</b> publish unlawful, infringing, defamatory, threatening, obscene, deceptive, or privacy-invasive content; or</p>
+<p><b>6.8</b> use the Platform for phishing, impersonation, identity theft, fraud, spam, harassment, or another unlawful purpose.</p>
+<p>These restrictions reflect Republic Act No. 10175, Section 4(a)(1), Section 4(a)(3)–(5), Section 4(b)(1)–(2), Section 4(c)(4), and Section 5, addressing illegal access, data and system interference, misuse of devices, computer-related forgery or fraud, cyber libel, aiding, and attempt.</p>
+<h4>7. Third-Party Links and Payment QR Codes</h4>
+<p><b>7.1 External services.</b> Profiles may link to social media, messaging platforms, websites, telephone or email functions, and other third-party services. LYNQ does not control their content, availability, security, terms, or privacy practices.</p>
+<p><b>7.2 Payment QR codes.</b> A Profile may display a User-supplied GCash, Maya, or other payment QR. The User, not LYNQ, controls the QR code and payment account.</p>
+<p><b>7.3 LYNQ is not a payment provider.</b> LYNQ is not a bank, e-money issuer, payment gateway, payment system operator, merchant acquirer, remittance company, escrow service, or financial intermediary.</p>
+<p><b>7.4 Verify before paying.</b> The payer must verify the payee, account, amount, purpose, and transaction details in the payment provider’s service.</p>
+<p><b>7.5 Payment disclaimer.</b> To the fullest extent permitted by law, LYNQ has no liability for peer-to-peer transfers, misdirected or duplicate payments, fraud, chargebacks, QR substitution by a User, provider downtime, or payer-payee disputes. This does not exclude LYNQ’s liability for its own fraud, bad faith, willful misconduct, gross negligence, actionable security breach, or non-waivable legal duties.</p>
+<h4>8. Lost, Stolen, or Shared Cards</h4>
+<p><b>8.1 Report promptly.</b> Contact LYNQ as soon as a Card or Profile URL is lost, stolen, shared, exposed, or compromised. Provide reasonable proof of ownership.</p>
+<p><b>8.2 De-linking.</b> After verification, LYNQ will use reasonable efforts to de-link the Card, restrict or remove the Profile, and delete associated personal data from the active database when legally permitted.</p>
+<p><b>8.3 Limits.</b> De-linking is not instantaneous. Data already viewed, copied, saved, indexed, cached, screenshotted, or shared may remain outside LYNQ’s control.</p>
+<p><b>8.4 Unauthorized taps.</b> To the fullest extent permitted by law, LYNQ has no liability for unauthorized taps, URL access, copying, contact, or disclosure caused by a Card or URL that the Owner lost, shared, exposed, or failed to report promptly. This waiver does not cover LYNQ’s fraud, bad faith, gross negligence, or other non-waivable liability.</p>
+<p><b>8.5 Owner controls.</b> A Profile Owner can disable a Card, enable it again, or remove it from their account at any time from the menu. A disabled Card shows a notice to visitors. A removed Card becomes unclaimed and can be claimed by whoever claims it next.</p>
+<h4>9. Privacy and Data Protection</h4>
+<p><b>9.1 Applicable law.</b> LYNQ processes personal data under Republic Act No. 10173, its Implementing Rules and Regulations, applicable National Privacy Commission issuances, and other applicable law.</p>
+<p><b>9.2 Data processed.</b> Data may include Google sign-in identifiers and email address; Profile information; photos and images you upload (profile, cover, gallery, business items and payment QR), which are kept in file storage; links; Card and Profile IDs; visitor notes; contact details that visitors choose to share with a Profile Owner (name, social handles, phone number and a link); LYNQ contacts that a signed-in user saves; daily counts of taps and link clicks for each Card; a verified badge, where granted; support and deletion requests; acceptance records; staff action logs; and security or technical data.</p>
+<p><b>9.3 Purposes.</b> Data is used to authenticate and claim Cards, host and publish Profiles, deliver notes and shared contacts to Profile Owners, show simple statistics to Profile Owners, provide support, secure and troubleshoot the Platform, limit spam and misuse, prove acceptance, respond to rights requests, and comply with law.</p>
+<p><b>9.4 Public data.</b> Profile information selected for publication, including business information such as services or products, prices, status badges and booking, shop or message links, is visible to anyone who opens the URL or taps the Card.</p>
+<p><b>9.5 Administrative access.</b> LYNQ developers do not routinely review Profiles, inbox notes or shared contacts. Authorized LYNQ staff use a private admin page to see Card serial numbers and status, each Card owner's email address and Profile name, to open public Profiles, to generate, reset or block Cards, and to grant or remove verified badges. These staff actions are recorded in a log. Technical access must be limited to operating, supporting, securing, investigating, or complying with law.</p>
+<p><b>9.6 Cloud processing.</b> Data is presently processed through Supabase (database and file storage), Cloudflare, and Google services and may be handled outside the Philippines. LYNQ remains accountable for appropriate safeguards. See Republic Act No. 10173, Sections 11-14 and 20-21; IRR, Rules IV-VI.</p>
+<p><b>9.7 Your rights.</b> Subject to lawful conditions, you may be informed, object, access, correct, erase or block, obtain damages, request portability where applicable, and complain to the National Privacy Commission. See Republic Act No. 10173, Sections 16-18; IRR, Rules VIII-IX.</p>
+<p><b>9.8 Browser storage.</b> LYNQ uses your browser's local and session storage to keep you signed in, remember that you accepted these Terms, remember your theme, keep an offline copy of Profiles you opened on that device, and time anti-spam limits. Fonts are loaded from Google Fonts. LYNQ does not use advertising or cross-site tracking cookies. Any non-essential tracking must be separately disclosed.</p>
+<p><b>9.9 Statistics.</b> LYNQ counts taps and link clicks for each Card per day so Profile Owners can see simple statistics. Taps and clicks by the Profile Owner and by LYNQ staff are not counted. Counts are not linked to the identity of the visitor.</p>
+<p><b>9.10 Spam limits.</b> To protect inboxes, LYNQ limits how many notes and shared contacts a single Card can receive per hour and per day. Submissions above the limit are rejected.</p>
+<p><b>9.11 Retention and deletion.</b> A Profile Owner can delete their Profile or their whole account from the menu at any time. Deleting a Profile erases its text and uploaded photos. Deleting an account also removes the Google sign-in record from LYNQ and the user's saved LYNQ contacts, and unlinks all of the user's Cards. When a Card is unlinked, reset or removed from an account, its notes, shared contacts and tap statistics are erased. Staff action logs may be kept for security and accountability. Data already viewed, copied or shared by others may remain outside LYNQ's control.</p>
+<p><b>9.12 Support reports.</b> If you send a report through the website, LYNQ stores your message, any image you attach, the Card code you select, your name and email address, and the status and replies, so that staff can help you. Staff can see this information in the admin page and may open or change the affected Card (for example reset or block it). Staff may also receive an email notice that a report was sent. Reports, images and notifications are deleted when you delete your account.</p>
+<p><b>9.13 Referral codes and QR codes.</b> Each Profile has a referral code. It is added to the &ldquo;Get your own LYNQ card&rdquo; link shown on your public Profile so that LYNQ can tell which Profile led to a request. QR codes are created on your device from your Profile link and are not stored by LYNQ.</p>
+<h4>10. Moderation and Termination</h4>
+<p><b>10.1 Platform action.</b> LYNQ may investigate reports and remove content, suspend editing, de-link a Card, revoke or redirect a URL, invalidate sessions, rate-limit traffic, preserve evidence, or block an account, device, network, or IP address.</p>
+<p><b>10.2 Immediate action.</b> LYNQ may act without prior notice for an active security incident, malicious code, fraud, unlawful access, credible threat, personal-data risk, legal order, or serious Terms violation.</p>
+<p><b>10.3 Other cases.</b> Where practicable, LYNQ should use proportionate measures and allow the User to respond.</p>
+<p><b>10.4 Hosting liability.</b> Republic Act No. 8792, Section 30, limits service-provider liability for merely providing access to User material only when its statutory conditions are met.</p>
+<p><b>10.5 User deletion.</b> A Profile Owner can delete their Profile or their account from the menu at any time, and can also ask LYNQ to do so. Limited records, such as staff action logs, may be kept where required for security, compliance, fraud prevention, or legal claims.</p>
+<h4>11. Warranties and Liability</h4>
+<p><b>11.1 Service basis.</b> The Platform, Profiles, links, compatibility checker, authentication, hosting, notes, and related functions are provided “AS IS” and “AS AVAILABLE,” except for warranties that cannot lawfully be excluded.</p>
+<p><b>11.2 No uptime guarantee.</b> LYNQ does not promise uninterrupted or error-free operation, universal device compatibility, permanent URLs, uninterrupted free-tier hosting, or continuous operation of Google OAuth or other third-party services.</p>
+<p><b>11.3 Consumer rights.</b> Mandatory rights under Republic Act No. 7394 remain available, including applicable protections concerning deceptive practices, warranties, defective products or services, and consumer remedies. See Articles 50, 52, 67–69, 97–106, and 159–167.</p>
+<p><b>11.4 Excluded damages.</b> To the maximum extent permitted by law, LYNQ and the founders are not liable for indirect, incidental, special, exemplary, punitive, or consequential losses; lost profits, opportunity, goodwill, contacts, data, or savings; downtime; device incompatibility; authentication failure; User conduct; external content; or QR-code transactions.</p>
+<p><b>11.5 ₱169 cap.</b> For a Customer who paid the Card fee, total liability arising from the Card, Profile, Platform, or these Terms is capped at ₱169 to the maximum extent permitted by law.</p>
+<p><b>11.6 Free visitors.</b> For a Visitor who paid no fee to LYNQ, contractual liability is limited to nominal damages lawfully established by final judgment, where such limitation is valid.</p>
+<p><b>11.7 Non-waivable liability.</b> The exclusions and caps do not apply to fraud, bad faith, willful misconduct, gross negligence, non-waivable consumer or privacy liability, Civil Code Article 1171, or liability that law prohibits LYNQ from limiting. Nothing creates immunity under Civil Code Articles 19–21, 1170–1174, 2176, and 2201–2208.</p>
+<h4>12. Disputes, Governing Law, and General Terms</h4>
+<p><b>12.1 Contact first.</b> Send a written complaint describing the issue and requested remedy to the contact details below.</p>
+<p><b>12.2 Negotiation.</b> The parties must attempt informal settlement for thirty (30) calendar days after the complaint is received.</p>
+<p><b>12.3 Urgent and statutory remedies.</b> The negotiation period does not prevent urgent relief, preservation of rights, reporting suspected crime, or complaints to the Department of Trade and Industry, National Privacy Commission, or another competent authority.</p>
+<p><b>12.4 Governing law.</b> Philippine law governs these Terms.</p>
+<p><b>12.5 Venue.</b> Court proceedings shall be filed exclusively in the proper courts of Davao City, Philippines, to the extent the venue clause is valid and enforceable. It does not remove a non-waivable consumer, privacy, criminal, regulatory, small-claims, barangay-conciliation, or statutory forum right.</p>
+<p><b>12.6 Changes.</b> LYNQ may update these Terms for legal, security, technical, or operational reasons. Updated Terms must show a revised date. Material adverse changes should receive reasonable notice and renewed acceptance where required.</p>
+<p><b>12.7 Severability and waiver.</b> An invalid provision shall be limited or severed, and the remainder shall continue. Failure to enforce a right is not a waiver.</p>
+<p><b>12.8 Entire agreement.</b> These Terms, an applicable purchase confirmation, and any incorporated Privacy Notice form the agreement concerning use of the Platform. Specific transaction terms control over inconsistent general terms.</p>
+<h4>13. Contact LYNQ</h4>
+<p><b>13.1 Email:</b> rbrbatenga@gmail.com</p>
+<p><b>13.2</b> Use these contact details for support, complaints, lost Cards, privacy requests, correction, or deletion.</p>
+</script>
+<script type="text/html" id="tplPrivacy">
+<p><i>Last updated: November 25, 2026</i></p>
+<p>This Privacy Policy is Section 9 of the LYNQ Terms of Use.</p>
+<h4>9. Privacy and Data Protection</h4>
+<p><b>9.1 Applicable law.</b> LYNQ processes personal data under Republic Act No. 10173, its Implementing Rules and Regulations, applicable National Privacy Commission issuances, and other applicable law.</p>
+<p><b>9.2 Data processed.</b> Data may include Google sign-in identifiers and email address; Profile information; photos and images you upload (profile, cover, gallery, business items and payment QR), which are kept in file storage; links; Card and Profile IDs; visitor notes; contact details that visitors choose to share with a Profile Owner (name, social handles, phone number and a link); LYNQ contacts that a signed-in user saves; daily counts of taps and link clicks for each Card; a verified badge, where granted; support and deletion requests; acceptance records; staff action logs; and security or technical data.</p>
+<p><b>9.3 Purposes.</b> Data is used to authenticate and claim Cards, host and publish Profiles, deliver notes and shared contacts to Profile Owners, show simple statistics to Profile Owners, provide support, secure and troubleshoot the Platform, limit spam and misuse, prove acceptance, respond to rights requests, and comply with law.</p>
+<p><b>9.4 Public data.</b> Profile information selected for publication, including business information such as services or products, prices, status badges and booking, shop or message links, is visible to anyone who opens the URL or taps the Card.</p>
+<p><b>9.5 Administrative access.</b> LYNQ developers do not routinely review Profiles, inbox notes or shared contacts. Authorized LYNQ staff use a private admin page to see Card serial numbers and status, each Card owner's email address and Profile name, to open public Profiles, to generate, reset or block Cards, and to grant or remove verified badges. These staff actions are recorded in a log. Technical access must be limited to operating, supporting, securing, investigating, or complying with law.</p>
+<p><b>9.6 Cloud processing.</b> Data is presently processed through Supabase (database and file storage), Cloudflare, and Google services and may be handled outside the Philippines. LYNQ remains accountable for appropriate safeguards. See Republic Act No. 10173, Sections 11-14 and 20-21; IRR, Rules IV-VI.</p>
+<p><b>9.7 Your rights.</b> Subject to lawful conditions, you may be informed, object, access, correct, erase or block, obtain damages, request portability where applicable, and complain to the National Privacy Commission. See Republic Act No. 10173, Sections 16-18; IRR, Rules VIII-IX.</p>
+<p><b>9.8 Browser storage.</b> LYNQ uses your browser's local and session storage to keep you signed in, remember that you accepted these Terms, remember your theme, keep an offline copy of Profiles you opened on that device, and time anti-spam limits. Fonts are loaded from Google Fonts. LYNQ does not use advertising or cross-site tracking cookies. Any non-essential tracking must be separately disclosed.</p>
+<p><b>9.9 Statistics.</b> LYNQ counts taps and link clicks for each Card per day so Profile Owners can see simple statistics. Taps and clicks by the Profile Owner and by LYNQ staff are not counted. Counts are not linked to the identity of the visitor.</p>
+<p><b>9.10 Spam limits.</b> To protect inboxes, LYNQ limits how many notes and shared contacts a single Card can receive per hour and per day. Submissions above the limit are rejected.</p>
+<p><b>9.11 Retention and deletion.</b> A Profile Owner can delete their Profile or their whole account from the menu at any time. Deleting a Profile erases its text and uploaded photos. Deleting an account also removes the Google sign-in record from LYNQ and the user's saved LYNQ contacts, and unlinks all of the user's Cards. When a Card is unlinked, reset or removed from an account, its notes, shared contacts and tap statistics are erased. Staff action logs may be kept for security and accountability. Data already viewed, copied or shared by others may remain outside LYNQ's control.</p>
+<p><b>9.12 Support reports.</b> If you send a report through the website, LYNQ stores your message, any image you attach, the Card code you select, your name and email address, and the status and replies, so that staff can help you. Staff can see this information in the admin page and may open or change the affected Card (for example reset or block it). Staff may also receive an email notice that a report was sent. Reports, images and notifications are deleted when you delete your account.</p>
+<p><b>9.13 Referral codes and QR codes.</b> Each Profile has a referral code. It is added to the &ldquo;Get your own LYNQ card&rdquo; link shown on your public Profile so that LYNQ can tell which Profile led to a request. QR codes are created on your device from your Profile link and are not stored by LYNQ.</p>
+<h4>Contact LYNQ</h4>
+<p><b>Email:</b> rbrbatenga@gmail.com</p>
+<p>Use these contact details for support, complaints, lost Cards, privacy requests, correction, or deletion.</p>
+</script>
+
+<div class="floating-actions">
+  <button class="inbox-fab hidden" id="inboxFab"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-icon="mail"></svg>Inbox <span id="inboxCount">0</span></button>
+  <button class="fab hidden" id="editFab">Edit Profile</button>
+</div>
+
+<script src="js/icons.js"></script>
+<script src="js/config.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/media.js"></script>
+<script src="js/render.js"></script>
+<script src="js/legal-i18n.js"></script>
+<script src="js/dialogs-account.js"></script>
+<script src="js/features.js"></script>
+<script src="js/tour-menu.js"></script>
+<script src="js/flow.js"></script>
+<script src="js/card-binding.js"></script>
+<script src="js/boot.js"></script>
+</body>
+</html>

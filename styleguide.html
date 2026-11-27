@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex"><title>LYNQ style guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/tokens.css"><link rel="stylesheet" href="css/base.css"><link rel="stylesheet" href="css/profile.css">
+<link rel="stylesheet" href="css/components.css"><link rel="stylesheet" href="css/flow.css"><link rel="stylesheet" href="css/editor.css">
+<link rel="stylesheet" href="css/overlays.css"><link rel="stylesheet" href="css/features.css"><link rel="stylesheet" href="css/themes.css">
+<style>
+/* only for this page */
+html,body{height:auto}body{padding:20px 16px 60px;max-width:760px;margin:0 auto;-webkit-user-select:text;user-select:text}
+body *{-webkit-user-select:text;user-select:text}
+.sg h2{font-size:22px;margin:34px 0 4px}.sg p.d{margin:0 0 14px;color:var(--sub);font-size:13.5px}
+.sg code{background:rgba(127,127,127,.15);padding:1px 6px;border-radius:6px;font-size:12px}
+.sg .row2{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:10px}
+.sg .cell{display:flex;flex-direction:column;gap:6px;align-items:flex-start}.sg .cell small{font-size:11px;color:var(--sub)}
+.sg .sws{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.sg .swc{border-radius:14px;padding:44px 10px 8px;font-size:11px;color:#fff;font-weight:600;border:1px solid rgba(127,127,127,.2)}
+.sg .igrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
+.sg .ig{border:1px solid rgba(127,127,127,.2);border-radius:12px;padding:12px 6px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:10.5px;color:var(--sub);background:var(--card-bg)}
+.sg .ig svg{width:26px;height:26px;stroke:var(--text);fill:none}
+.sg .dark{background:var(--night);border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:10px;color:#fff}
+.sg .dark .gbtn,.sg .dark .gfield{max-width:340px}
+</style></head><body class="sg">
+<h1>LYNQ style guide</h1>
+<p class="d">Every button, icon and color the site uses, drawn from the real files. If you change a CSS or icon file, refresh this page to see the result in one place. Not linked from the app.</p>
+
+<h2>Brand colors</h2><p class="d">Change them in <code>css/tokens.css</code>.</p>
+<div class="sws">
+<div class="swc" style="background:var(--brand)">--brand<br>main pink</div>
+<div class="swc" style="background:var(--brand-deep)">--brand-deep<br>button edge</div>
+<div class="swc" style="background:var(--ink)">--ink<br>outlines, dark text</div>
+<div class="swc" style="background:var(--night)">--night<br>dark screens</div>
+<div class="swc" style="background:var(--bg);color:var(--text)">--bg<br>page</div>
+<div class="swc" style="background:var(--sub)">--sub<br>soft text</div>
+</div>
+
+<h2>Buttons on the profile</h2><p class="d">Main styles are in <code>css/components.css</code> and <code>css/profile.css</code>.</p>
+<div class="row2">
+<div class="cell"><button class="btn">Primary .btn</button></div>
+<div class="cell"><button class="btn secondary">Secondary .btn.secondary</button></div>
+<div class="cell"><button class="contact-btn"><svg viewBox="0 0 24 24" data-icon="user-plus" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>Save .contact-btn</button></div>
+<div class="cell"><span class="tap-pill"><svg viewBox="0 0 24 24" data-icon="card-tap"></svg><span class="tl">202 taps</span></span></div>
+<div class="cell"><span class="opill"><i></i>Open to work .opill</span></div>
+<div class="cell"><span class="chip-bubble">English .chip-bubble</span></div>
+</div>
+<div class="row2">
+<div class="cell"><label class="switch" style="position:relative;display:inline-block;width:46px;height:28px"><input type="checkbox" checked><span class="slider"></span></label><small>.switch</small></div>
+<div class="cell" style="min-width:240px"><div class="seg"><button class="on">Light</button><button>Dark</button></div><small>.seg</small></div>
+<div class="cell" style="min-width:240px"><div class="tabs" style="width:100%"><button class="on">Visitor notes</button><button>Shared contacts</button></div><small>.tabs</small></div>
+</div>
+<div style="max-width:380px"><div class="meter"><div class="mt-top"><span>Profile completeness</span><b>70%</b></div><div class="mt-bar"><i style="width:70%"></i></div></div><small style="color:var(--sub);font-size:11px">.meter</small></div>
+<div style="max-width:380px;margin-top:14px"><div class="links list-layout"><a class="linkbtn"><span style="width:26px;height:26px;display:inline-block;background:var(--accent);border-radius:8px"></span>Link row .linkbtn</a></div></div>
+
+<h2>Dark-screen buttons</h2><p class="d">Used on the claim screen, setup wizard and popups. Styles in <code>css/flow.css</code>.</p>
+<div class="dark">
+<button class="gbtn primary">Primary .gbtn.primary</button>
+<button class="gbtn">Plain .gbtn</button>
+<button class="gbtn white">White .gbtn.white</button>
+<button class="gbtn danger">Danger .gbtn.danger</button>
+<button class="gbtn sm">Small .gbtn.sm</button>
+<input class="gfield" placeholder="Text field .gfield">
+<div class="gpanel">Panel .gpanel</div>
+</div>
+
+<h2>Interface icons</h2><p class="d">One list: <code>UI_ICONS</code> in <code>js/icons.js</code>. The name under each icon is what you write in <code>data-icon="..."</code>.</p>
+<div class="igrid" id="uiIcons"></div>
+
+<h2>Social and link icons</h2><p class="d">The list called <code>ICONS</code> in <code>js/config.js</code> (label, color, drawing).</p>
+<div class="igrid" id="platIcons"></div>
+
+<script>window.supabase={createClient:function(){return {}}};</script>
+<script src="js/icons.js"></script>
+<script src="js/config.js"></script>
+<script>
+document.getElementById('uiIcons').innerHTML=Object.keys(UI_ICONS).map(k=>`<div class="ig">${uiIcon(k)}${k}</div>`).join('');
+document.getElementById('platIcons').innerHTML=Object.entries(ICONS).map(([k,v])=>`<div class="ig"><svg viewBox="0 0 24 24" style="stroke:none">${v.svg.replace(/currentColor/g,v.color)}</svg>${v.label}</div>`).join('');
+</script>
+</body></html>

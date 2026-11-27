@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow">
+<title>LYNQ Admin</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/admin.css"></head>
+<body><div class="wrap">
+<div id="signin" class="card hide" style="text-align:center;margin-top:60px">
+  <h1>LYNQ Admin</h1><p class="muted">Staff only. Sign in with your LYNQ staff Google account.</p>
+  <button class="b p" id="goSign">Continue with Google</button>
+</div>
+<div id="app" class="hide">
+  <div class="top"><div><h1>LYNQ Admin</h1><div class="muted" id="who"></div></div><div class="row"><a class="b" href="./">Back to LYNQ</a><button class="b" id="out">Sign out</button></div></div>
+  <div class="tabs"><button data-t="ov" class="on">Overview</button><button data-t="cards">Cards</button><button data-t="users">Users</button><button data-t="gen">Generate</button><button data-t="rep">Reports</button><button data-t="log">Log</button></div>
+  <div id="t-ov"></div>
+  <div id="t-cards" class="hide"><div class="row" style="margin-bottom:10px"><input id="q" placeholder="Search serial or owner email" style="flex:1"><button class="b p" id="qGo">Search</button></div><div id="cards"></div></div>
+  <div id="t-users" class="hide"><input id="uq" placeholder="Filter by name, email or username" style="width:100%;margin-bottom:10px"><div id="users"></div></div>
+  <div id="t-gen" class="hide"><div class="card"><div class="muted" style="margin-bottom:8px">Creates new unclaimed cards with random serials.</div><div class="row"><input id="n" type="number" min="1" max="1000" value="100" style="width:120px"><button class="b p" id="genGo">Generate</button></div></div><div id="genOut"></div></div>
+  <div id="t-rep" class="hide"></div>
+  <div id="t-log" class="hide"></div>
+</div></div>
+<script src="js/admin.js"></script></body></html>

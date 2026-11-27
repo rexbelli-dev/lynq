@@ -1,0 +1,13 @@
+/* css/base.css
+   Page reset, fonts and the page background.
+   (Part of LYNQ 2027. See README.md, 'Where to change what'.) */
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body,button,a,div,span,svg,img,label{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+input,textarea,select,[contenteditable="true"]{-webkit-user-select:text;user-select:text}
+button,a,select,input[type=range],.linkbtn,.theme-card,.rm{outline:none}
+button:focus,a:focus,.linkbtn:focus{outline:none}
+img{-webkit-user-drag:none;user-drag:none}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);transition:background .4s cubic-bezier(.16,1,.3,1)}
+body{font-family:-apple-system,SF Pro Display,Segoe UI,Roboto,Arial,sans-serif;min-height:100%;-webkit-font-smoothing:antialiased;background-image:var(--pat,none);background-attachment:fixed}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.hidden{display:none!important}

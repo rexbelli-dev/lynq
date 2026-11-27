@@ -1,0 +1,12 @@
+/* css/tokens.css
+   Colors and sizes used everywhere. Change the brand pink here.
+   (Part of LYNQ 2027. See README.md, 'Where to change what'.) */
+
+:root{
+  /* ---- LYNQ brand: change these and the whole site follows ---- */
+  --brand:#D6248F;       /* LYNQ pink: buttons, highlights */
+  --brand-deep:#8f1561;  /* darker pink: button edges */
+  --ink:#1B1220;         /* near-black used for outlines and dark text */
+  --night:#0f0a0e;       /* background of the dark screens */
+  /* ---- page defaults (a profile theme can override these) ---- */
+  --bg:#F6F2EC;--card-bg:#fff;--text:#1d1820;--sub:#6b6470;--accent:var(--brand);--overlay:0,0,0;--ovop:.55;--border:rgba(255,255,255,.4);--wave:linear-gradient(90deg,var(--brand),#ff7ac2,#8b1d6a,#D6248F);color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box}

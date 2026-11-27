@@ -1,0 +1,31 @@
+/* css/themes.css
+   Final polish layer and the LYNQ team theme (paper and ink).
+   (Part of LYNQ 2027. See README.md, 'Where to change what'.) */
+/* ---- polish: calmer, more handmade ---- */
+button,input,select,textarea{font-family:inherit}
+body{font-family:'Instrument Sans',-apple-system,SF Pro Text,Segoe UI,Roboto,Arial,sans-serif}
+h1,h2,h3,.loader-logo,.biz-t,.sec>summary,#tourCard h3,.ed-head h2{font-family:'Bricolage Grotesque','Instrument Sans',-apple-system,Segoe UI,Arial,sans-serif}
+h1{font-size:27px;letter-spacing:-.025em;line-height:1.08}
+.card,.linkbtn,.contact-btn,.sec,.panel,.chip-bubble,.tap-pill,.gallery-btn,.modal-body,.actionbar,.meter,#scPanel,.pop{-webkit-backdrop-filter:none;backdrop-filter:none}
+.card{box-shadow:0 1px 2px rgba(0,0,0,.06),0 14px 30px -18px rgba(0,0,0,.4)}
+.linkbtn,.sec{box-shadow:none}
+.blob{display:none}
+/* ---- LYNQ theme: paper, ink and one loud pink ---- */
+html[data-theme="lynq-team"] .cover{-webkit-mask-image:none;mask-image:none;border-bottom:2px solid var(--ink)}
+html[data-theme="lynq-team"] .cover::before{content:"";position:absolute;inset:0;background:radial-gradient(rgba(255,255,255,.34) 1.3px,transparent 1.7px) 0 0/14px 14px;pointer-events:none}
+html[data-theme="lynq-team"] .card{border:2px solid var(--ink);border-radius:20px;box-shadow:6px 6px 0 var(--ink)}
+html[data-theme="lynq-team"] .avatar{border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink)}
+html[data-theme="lynq-team"] .linkbtn,html[data-theme="lynq-team"] .biz-i,html[data-theme="lynq-team"] .eduroadmap-box{border:2px solid var(--ink);border-radius:14px;box-shadow:3px 3px 0 var(--ink);background:#fff;transition:transform .12s,box-shadow .12s}
+html[data-theme="lynq-team"] .linkbtn:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
+html[data-theme="lynq-team"] .contact-btn{border:2px solid var(--ink);box-shadow:2px 2px 0 var(--ink);background:#fff;transition:transform .12s,box-shadow .12s}
+html[data-theme="lynq-team"] .contact-btn:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+html[data-theme="lynq-team"] .chip-bubble{border:1.5px solid var(--ink);background:#fff}
+html[data-theme="lynq-team"] .tap-pill{border:2px solid var(--ink);background:#FFE3F2}
+html[data-theme="lynq-team"] .tap-pill::before{display:none}
+html[data-theme="lynq-team"] .btn{border:2px solid var(--ink);box-shadow:3px 3px 0 var(--ink);color:#fff}
+html[data-theme="lynq-team"] .btn.secondary{background:#fff;color:var(--ink)}
+html[data-theme="lynq-team"] .opill{background:#DFF7E8;color:#12703a;border:2px solid var(--ink)}
+
+/* link tiles need a stronger selector than the grid/list layout rules above, so the ink outline reaches them too */
+html[data-theme="lynq-team"] .links .linkbtn{border:2px solid var(--ink);border-radius:14px;box-shadow:3px 3px 0 var(--ink);background:#fff;transition:transform .12s,box-shadow .12s}
+html[data-theme="lynq-team"] .links .linkbtn:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
