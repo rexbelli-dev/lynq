@@ -8,7 +8,7 @@ button,a,select,input[type=range],.linkbtn,.theme-card,.rm{outline:none}
 button:focus,a:focus,.linkbtn:focus{outline:none}
 img{-webkit-user-drag:none;user-drag:none}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--text);transition:background .4s cubic-bezier(.16,1,.3,1)}
-body{font-family:-apple-system,SF Pro Display,Segoe UI,Roboto,Arial,sans-serif;min-height:100%;-webkit-font-smoothing:antialiased;background-image:var(--pat,none);background-attachment:fixed}
+body{font-family:'Instrument Sans',-apple-system,SF Pro Display,Segoe UI,Roboto,Arial,sans-serif;min-height:100%;-webkit-font-smoothing:antialiased;background-image:var(--pat,none);background-attachment:fixed}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
 .hidden{display:none!important}
 
