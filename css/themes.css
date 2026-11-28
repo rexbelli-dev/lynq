@@ -24,7 +24,7 @@ html[data-theme="lynq-team"] .tap-pill{border:2px solid var(--ink);background:#F
 html[data-theme="lynq-team"] .tap-pill::before{display:none}
 html[data-theme="lynq-team"] .btn{border:2px solid var(--ink);box-shadow:3px 3px 0 var(--ink);color:#fff}
 html[data-theme="lynq-team"] .btn.secondary{background:#fff;color:var(--ink)}
-html[data-theme="lynq-team"] .opill{background:#DFF7E8;color:#12703a;border:2px solid var(--ink)}
+html[data-theme="lynq-team"] .opill{background:#fff;color:var(--ink);border:2px solid var(--ink)}
 
 /* link tiles need a stronger selector than the grid/list layout rules above, so the ink outline reaches them too */
 html[data-theme="lynq-team"] .links .linkbtn{border:2px solid var(--ink);border-radius:14px;box-shadow:3px 3px 0 var(--ink);background:#fff;transition:transform .12s,box-shadow .12s}
